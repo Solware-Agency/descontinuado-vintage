@@ -1,0 +1,98 @@
+<div data-section-id="{{ section.id }}" data-section-type="section-newsletter-v2" style="{% if section.settings.margin_top != blank %}margin-top: {{section.settings.margin_top}}px;{%endif%} {% if section.settings.margin_bottom != blank %}margin-bottom: {{section.settings.margin_bottom}}px;{% endif %}">
+  <div class="section-newsletter-v2" {% if section.settings.bg_section != blank %}style="background:{{section.settings.bg_section}}"{% endif %}>
+    <div class="container container-v1">
+      <div class="newsletter-wrap">
+        <div class="newsletter-text">
+          {% if section.settings.title_newletter != blank %}
+          <h2>{{section.settings.title_newletter}}</h2>
+          {% endif %}
+          {% if section.settings.content_newletter != blank %}
+          <p class="content">{{section.settings.content_newletter}}</p>
+          {% endif %} 
+        </div>
+
+        {% if settings.newsletter_form_action != blank %}
+        {% assign form_action = settings.newsletter_form_action %}
+        {% else %}
+        {% assign form_action = '#' %}
+        {% endif %}
+        <div class="newletter_email">          
+          <form class="content-newsletter" action="{{form_action}}" method="post">
+            <input type="email" name="email" class="input_email" placeholder="{{section.settings.input_placeholder}}" required >                 
+            <button class="btn" type="submit">{{section.settings.button_label}}</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "NEWSLETTER V2",
+  "settings": [
+	{
+      "type": "header",
+      "content": "Settings Newsletter"
+    },
+	{
+      "type": "color",
+      "id": "bg_section",
+      "label": "Background Color",
+      "default": "#E8E6D8"
+	},
+	{
+      "type": "text",
+      "id": "title_newletter",
+      "label": "Title Newletter",
+      "default": "Join our email list."
+    },
+  	{
+      "type": "textarea",
+      "id": "content_newletter",
+      "label": "Content Newletter",
+      "default": "Sign up for the latest trends, products, and inspiration."
+    },
+	{
+      "type": "text",
+      "id": "input_placeholder",
+      "label": "Placeholder",
+      "default": "Email address"
+    },
+	{
+      "type": "text",
+      "id": "button_label",
+      "label": "Name Button",
+      "default": "SUBSCRICE"
+    },
+    {
+      "type": "header",
+      "content": "Section Space"
+    },
+    {
+      "type": "text",
+      "id": "margin_top",
+      "label": "Margin Top",
+      "info": "Defined in pixels. Do not add the 'px' unit."
+    },
+    {
+      "type": "text",
+      "id": "margin_bottom",
+      "label": "Margin Bottom",
+      "info": "Defined in pixels. Do not add the 'px' unit."
+    }
+  ],
+  "presets": [
+    {
+      "name": "NEWSLETTER V2",
+      "category": "HOME"
+    }
+  ]
+}
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

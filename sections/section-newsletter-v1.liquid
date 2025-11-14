@@ -1,0 +1,109 @@
+<div data-section-id="{{ section.id }}" data-section-type="section-newsletter-v1" style="{% if section.settings.margin_top != blank %}margin-top: {{section.settings.margin_top}}px;{%endif%} {% if section.settings.margin_bottom != blank %}margin-bottom: {{section.settings.margin_bottom}}px;{% endif %}">
+  {% if settings.newsletter_form_action != blank %}
+  {% assign form_action = settings.newsletter_form_action %}
+  {% else %}
+  {% assign form_action = '#' %}
+  {% endif %}
+  
+  <div class="container container-v1">
+    <div class="section-newsletter-v1" style="background: {{section.settings.bg_color}}">
+      <div class="row align-items-center"> 
+        <div class="col-md-6 newsletter-left">
+          <div class="newsletter-wrap">
+            <div class="image-icon">
+              {% if section.settings.img_icon != blank %}
+              <img data-src="{{section.settings.img_icon | img_url : 'master'}}" class="lazyload img-fluid" alt >
+              {% else %}
+              <img data-src="//via.placeholder.com/56x56" class="lazyload img-fluid" alt>
+              {% endif %}
+            </div>
+            <div class="newsletter-content">
+              {% if section.settings.title_newletter != blank %}
+              <div class="title_newletter">
+                <h3>{{section.settings.title_newletter}}</h3>
+              </div>
+              {% endif %}
+
+              {% if section.settings.content_newletter != blank %}
+              <p class="mb-0 content">{{section.settings.content_newletter}}</p>
+              {% endif %}      
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6 newsletter-right">
+          <div class="newletter_email">          
+            <form class="needs-validation form-inline" action="{{form_action}}" method="post">
+              <input type="email" name="EMAIL" placeholder="{{ 'general.newsletter_form.newsletter_email' | t }}" required >                 
+              <button class="btn" type="submit">{{ 'general.newsletter_form.submit2' | t }}</button>
+            </form>
+          </div> 
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{% schema %}
+{
+  "name": "NEWSLETTER V1",
+  "settings": [
+  	{
+      "type": "header",
+      "content": "Settings Newsletter"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background Color",
+      "default": "#ECF6E3"
+    },
+    {
+      "type": "image_picker",
+      "id": "img_icon",
+      "label": "Icon Newletter"
+    },
+	{
+      "type": "text",
+      "id": "title_newletter",
+      "label": "Title Newletter",
+      "default": "Sign up for newsletter"
+    },
+    {
+      "type": "textarea",
+      "id": "content_newletter",
+      "label": "Content Newletter",
+      "default": "Subscribe to the weekly newsletter for all the latest updates"
+    },
+    {
+      "type": "header",
+      "content": "Section Space"
+    },
+    {
+      "type": "text",
+      "id": "margin_top",
+      "label": "Margin Top",
+      "info": "Defined in pixels. Do not add the 'px' unit."
+    },
+    {
+      "type": "text",
+      "id": "margin_bottom",
+      "label": "Margin Bottom",
+      "info": "Defined in pixels. Do not add the 'px' unit."
+    }
+  ],
+  "presets": [
+    {
+      "name": "NEWSLETTER V1",
+      "category": "HOME"
+    }
+  ]
+}
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

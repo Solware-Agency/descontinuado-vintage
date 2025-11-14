@@ -1,0 +1,313 @@
+{% if section.settings.select_fts == "footer_v2" %}
+{% if template contains 'index' %}
+<footer class=" footer_v2">
+  <div class="top-footer">
+    <div class="container container-v1">    
+      <div class="row">
+        <div class="col-lg-3 col-md-6">
+          <div class="info_footer">
+            <div class="logo-top">
+              {% if settings.logo_svg2 !=blank %}
+              <div class="logosvg" style="max-width:{{settings.fv2_main_logo_maxwidth}}px;">
+                <a class="d-block" href="{{shop.url}}">{{settings.logo_svg2}}</a>
+              </div>          
+              {% else %}            
+              <a href="{{shop.url}}" class="logo">
+                {% if settings.fv2_main_logo != blank %}
+                <img src="{{settings.fv2_main_logo | img_url:'master'}}"  width="{{settings.fv2_main_logo_maxwidth}}" alt="{{shop.name}}" class="img-fluid">
+                {% else %}
+                <img src="//via.placeholder.com/145x62" width="{{settings.fv2_main_logo_maxwidth}}" alt="{{shop.name}}" class="img-fluid">
+                {% endif %}
+              </a>
+              {% endif %}
+            </div>
+            
+            <div class="content_footer">
+              {% if settings.content_colum_fv2_1 != blank  %}
+              {{settings.content_colum_fv2_1}}
+              {% else %}
+              <ul class="list-unstyled mb-0">
+                <li class="address"><span>121 King Street, Collins Melbourne <br> West Victoria 8007, Australia</span></li>
+                <li class="phone"><span>Phone:</span><a href="tel:(+01) 234-567-89"> (+01) 234-567-89</a></li>
+                <li class="mail"><span>Email:</span><a href="mailto:support@mycompany.com"> support@mycompany.com</a></li>
+              </ul>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-menu">
+          <div class="info_footer">
+            <div class="title_footer">          
+              <h4>{{settings.titlecolum_fv2_1}}</h4>         
+            </div>
+            <ul class="list-unstyled mb-0">
+              {% for link in linklists[settings.menu_fv2_1].links %}
+              <li><a href="{{link.url}}" title="{{link.title}}">{{link.title}}</a></li>
+              {% endfor %}
+            </ul>        
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-menu">
+          <div class="info_footer">
+            <div class="title_footer">          
+              <h4>{{settings.titlecolum_fv2_2}}</h4>         
+            </div>
+            <ul class="list-unstyled mb-0">
+              {% for link in linklists[settings.menu_fv2_2].links %}
+              <li><a href="{{link.url}}" title="{{link.title}}">{{link.title}}</a></li>
+              {% endfor %}
+            </ul>        
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-newsletter">
+          <div class="info_footer">
+            <div class="title_footer">          
+              <h4>{{settings.titlecolum_fv2_3}}</h4>         
+            </div>
+            <div class="content_newsletter">
+              {{settings.content_colum_fv2_2}}
+            </div> 
+            
+            {% if settings.newsletter_form_action != blank %}
+            {% assign form_action = settings.newsletter_form_action %}
+            {% else %}
+            {% assign form_action = '#' %}
+            {% endif %}
+            <div class="newletter_email">          
+              <form class="needs-validation form-inline" action="{{form_action}}" method="post">
+                <input type="email" name="EMAIL" class="form-control" placeholder="{{ 'general.newsletter_form.newsletter_email2' | t }}" required >                 
+                <button class="btn" type="submit"><svg width="20" height="17" viewBox="0 0 20 17" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18.5714 14.6429V6.07143C18.3333 6.33929 18.0766 6.58482 17.8013 6.80804C15.8073 8.34077 14.2225 9.59821 13.0469 10.5804C12.6674 10.9003 12.3586 11.1496 12.1205 11.3281C11.8824 11.5067 11.5588 11.689 11.1496 11.875C10.7478 12.0536 10.3683 12.1429 10.0112 12.1429H10H9.98884C9.6317 12.1429 9.24851 12.0536 8.83929 11.875C8.4375 11.689 8.11756 11.5067 7.87946 11.3281C7.64137 11.1496 7.33259 10.9003 6.95313 10.5804C5.77753 9.59821 4.19271 8.34077 2.19866 6.80804C1.92336 6.58482 1.66667 6.33929 1.42857 6.07143V14.6429C1.42857 14.7396 1.46205 14.8251 1.52902 14.8996C1.60342 14.9665 1.68899 15 1.78571 15H18.2143C18.311 15 18.3929 14.9665 18.4598 14.8996C18.5342 14.8251 18.5714 14.7396 18.5714 14.6429ZM18.5714 2.91295C18.5714 2.89807 18.5714 2.85714 18.5714 2.79018C18.5714 2.72321 18.5714 2.67485 18.5714 2.64509C18.5714 2.60789 18.5677 2.55952 18.5603 2.5C18.5603 2.43304 18.5491 2.38467 18.5268 2.35491C18.5119 2.32515 18.4933 2.29167 18.471 2.25446C18.4487 2.21726 18.4152 2.19122 18.3705 2.17634C18.3259 2.15402 18.2738 2.14286 18.2143 2.14286H1.78571C1.68899 2.14286 1.60342 2.18006 1.52902 2.25446C1.46205 2.32143 1.42857 2.40327 1.42857 2.5C1.42857 3.75 1.97545 4.80655 3.0692 5.66964C4.50521 6.8006 5.99702 7.97991 7.54464 9.20759C7.58929 9.24479 7.71949 9.3564 7.93527 9.54241C8.15104 9.72098 8.32217 9.85863 8.44866 9.95536C8.57515 10.0521 8.73884 10.1711 8.93973 10.3125C9.14807 10.4464 9.3378 10.5469 9.50893 10.6138C9.68006 10.6808 9.84003 10.7143 9.98884 10.7143H10H10.0112C10.16 10.7143 10.3199 10.6808 10.4911 10.6138C10.6622 10.5469 10.8482 10.4464 11.0491 10.3125C11.2574 10.1711 11.4249 10.0521 11.5513 9.95536C11.6778 9.85863 11.849 9.72098 12.0647 9.54241C12.2805 9.3564 12.4107 9.24479 12.4554 9.20759C14.003 7.97991 15.4948 6.8006 16.9308 5.66964C17.3326 5.3497 17.7046 4.92187 18.0469 4.38616C18.3966 3.84301 18.5714 3.35193 18.5714 2.91295ZM20 2.5V14.6429C20 15.1339 19.8251 15.5543 19.4754 15.904C19.1257 16.2537 18.7054 16.4286 18.2143 16.4286H1.78571C1.29464 16.4286 0.874256 16.2537 0.524554 15.904C0.174851 15.5543 0 15.1339 0 14.6429V2.5C0 2.00893 0.174851 1.58854 0.524554 1.23884C0.874256 0.889136 1.29464 0.714285 1.78571 0.714285H18.2143C18.7054 0.714285 19.1257 0.889136 19.4754 1.23884C19.8251 1.58854 20 2.00893 20 2.5Z" fill="white"/></svg></button>
+              </form>
+            </div> 
+            
+            <div class="list-icon">
+              {% if settings.icon_sc_fv2_1 !=blank %}
+              <a href="{{settings.url_sc_fv2_1}}" title="" target="_blank" class="social-item"><i class="{{settings.icon_sc_fv2_1}}"></i></a>
+              {% endif %}
+              {% if settings.icon_sc_fv2_2 !=blank %}
+              <a href="{{settings.url_sc_fv2_2}}" title="" target="_blank" class="social-item"><i class="{{settings.icon_sc_fv2_2}}"></i></a>
+              {% endif %}
+              {% if settings.icon_sc_fv2_3 !=blank %}
+              <a href="{{settings.url_sc_fv2_3}}" title="" target="_blank" class="social-item"><i class="{{settings.icon_sc_fv2_3}}"></i></a>
+              {% endif %}
+              {% if settings.icon_sc_fv2_4 !=blank %}
+              <a href="{{settings.url_sc_fv2_4}}" title="" target="_blank" class="social-item"><i class="{{settings.icon_sc_fv2_4}}"></i></a>
+              {% endif %}         
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% if settings.enable_fv2_bottom %}
+  <div class="copyright">
+    <div class="container container-v1">
+      <div class="row align-items-center">
+        <div class="col-lg-6 col-md-6 {% if settings.enable_rtl_mode %} text-md-right {% else %} text-md-left{% endif %} text-center">
+          {% if settings.fv2_bottom_copyright != blank %}
+          <p class="text-copyright mb-0">{{settings.fv2_bottom_copyright}}</p>
+          {% else %}
+          <div class="text-copyright mb-0"><p class="mb-0">© Copyright 2022 | <a href="http://themeocean.net/" rel="nofollow" target="_blank" class="underline_hover"> OAL </a> By <a href="http://themeocean.net/" rel="nofollow" target="_blank" class="underline_hover"> ThemeOcean.</a><a href="https://www.shopify.com/?ref=shopifycenter" rel="nofollow" target="_blank" class=""> Powered by Shopify.</a></p>
+          </div> 
+          {% endif %}
+        </div>
+        <div class="col-lg-6 col-md-6 {% if settings.enable_rtl_mode %}text-md-left {% else %}text-md-right {% endif %}text-center">
+          {% if settings.fv2_bottom_payment_img != blank %}
+          <img src="{{settings.fv2_bottom_payment_img | img_url:'master'}}"  alt="">
+          {% else %}
+          <img src="//via.placeholder.com/310x32"  alt="">
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</footer>
+<style>
+  .footer_v2 .top-footer{
+    background-color : {{section.settings.ft_home_bg_footer}}
+  }
+  .footer_v2 .copyright{
+    background-color : {{section.settings.ft_home_bg_footer}}
+  }
+  .footer_v2 .top-footer .title_footer h4{
+    color : {{section.settings.ft_home_color_heading}};
+  }
+  .footer_v2 .top-footer .list-icon a{
+    color : {{section.settings.ft_home_color_heading}};
+  }
+  .footer_v2 .top-footer .col-menu ul li a{
+    color : {{section.settings.ft_home_color_text}};
+  }
+  .footer_v2 .top-footer .info_footer .content_footer{
+    color : {{section.settings.ft_home_color_text}};
+  }
+  .footer_v2 .top-footer .content_newsletter{
+    color : {{section.settings.ft_home_color_text}};
+  }
+  .footer_v2 .copyright p{
+    color : {{section.settings.ft_home_color_text}};
+  }
+   .footer_v2 .copyright p a{
+    color : {{section.settings.ft_home_color_text}};
+  }
+</style>
+{% endif %}
+{% endif %}
+
+{% if section.settings.select_fts_all == "footer_ver2" %}
+{% unless template contains 'index' %}
+<footer class=" footer_v2">
+  <div class="top-footer">
+    <div class="container container-v1">    
+      <div class="row">
+        <div class="col-lg-3 col-md-6">
+          <div class="info_footer">
+            <div class="logo-top">
+              {% if settings.logo_svg2 !=blank %}
+              <div class="logosvg" style="max-width:{{settings.fv2_main_logo_maxwidth}}px;">
+                <a class="d-block" href="{{shop.url}}">{{settings.logo_svg2}}</a>
+              </div>          
+              {% else %}            
+              <a href="{{shop.url}}" class="logo">
+                {% if settings.fv2_main_logo != blank %}
+                <img src="{{settings.fv2_main_logo | img_url:'master'}}"  width="{{settings.fv2_main_logo_maxwidth}}" alt="{{shop.name}}" class="img-fluid">
+                {% else %}
+                <img src="//via.placeholder.com/145x62" width="{{settings.fv2_main_logo_maxwidth}}" alt="{{shop.name}}" class="img-fluid">
+                {% endif %}
+              </a>
+              {% endif %}
+            </div>
+            
+            <div class="content_footer">
+              {% if settings.content_colum_fv2_1 != blank  %}
+              {{settings.content_colum_fv2_1}}
+              {% else %}
+              <ul class="list-unstyled mb-0">
+                <li class="address"><span>121 King Street, Collins Melbourne <br> West Victoria 8007, Australia</span></li>
+                  <li class="phone"><span>Phone:</span><a href="tel:(+01) 234-567-89"> (+01) 234-567-89</a></li>
+                  <li class="mail"><span>Email:</span><a href="mailto:support@mycompany.com"> support@mycompany.com</a></li>
+              </ul>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-menu">
+          <div class="info_footer">
+            <div class="title_footer">          
+              <h4>{{settings.titlecolum_fv2_1}}</h4>         
+            </div>
+            <ul class="list-unstyled mb-0">
+              {% for link in linklists[settings.menu_fv2_1].links %}
+              <li><a href="{{link.url}}" title="{{link.title}}">{{link.title}}</a></li>
+              {% endfor %}
+            </ul>        
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-menu">
+          <div class="info_footer">
+            <div class="title_footer">          
+              <h4>{{settings.titlecolum_fv2_2}}</h4>         
+            </div>
+            <ul class="list-unstyled mb-0">
+              {% for link in linklists[settings.menu_fv2_2].links %}
+              <li><a href="{{link.url}}" title="{{link.title}}">{{link.title}}</a></li>
+              {% endfor %}
+            </ul>        
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-newsletter">
+          <div class="info_footer">
+            <div class="title_footer">          
+              <h4>{{settings.titlecolum_fv2_3}}</h4>         
+            </div>
+            <div class="content_newsletter">
+              {{settings.content_colum_fv2_2}}
+            </div> 
+            
+            {% if settings.newsletter_form_action != blank %}
+            {% assign form_action = settings.newsletter_form_action %}
+            {% else %}
+            {% assign form_action = '#' %}
+            {% endif %}
+            <div class="newletter_email">          
+              <form class="needs-validation form-inline" action="{{form_action}}" method="post">
+                <input type="email" name="EMAIL" class="form-control" placeholder="{{ 'general.newsletter_form.newsletter_email2' | t }}" required >                 
+                <button class="btn" type="submit"><svg width="20" height="17" viewBox="0 0 20 17" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18.5714 14.6429V6.07143C18.3333 6.33929 18.0766 6.58482 17.8013 6.80804C15.8073 8.34077 14.2225 9.59821 13.0469 10.5804C12.6674 10.9003 12.3586 11.1496 12.1205 11.3281C11.8824 11.5067 11.5588 11.689 11.1496 11.875C10.7478 12.0536 10.3683 12.1429 10.0112 12.1429H10H9.98884C9.6317 12.1429 9.24851 12.0536 8.83929 11.875C8.4375 11.689 8.11756 11.5067 7.87946 11.3281C7.64137 11.1496 7.33259 10.9003 6.95313 10.5804C5.77753 9.59821 4.19271 8.34077 2.19866 6.80804C1.92336 6.58482 1.66667 6.33929 1.42857 6.07143V14.6429C1.42857 14.7396 1.46205 14.8251 1.52902 14.8996C1.60342 14.9665 1.68899 15 1.78571 15H18.2143C18.311 15 18.3929 14.9665 18.4598 14.8996C18.5342 14.8251 18.5714 14.7396 18.5714 14.6429ZM18.5714 2.91295C18.5714 2.89807 18.5714 2.85714 18.5714 2.79018C18.5714 2.72321 18.5714 2.67485 18.5714 2.64509C18.5714 2.60789 18.5677 2.55952 18.5603 2.5C18.5603 2.43304 18.5491 2.38467 18.5268 2.35491C18.5119 2.32515 18.4933 2.29167 18.471 2.25446C18.4487 2.21726 18.4152 2.19122 18.3705 2.17634C18.3259 2.15402 18.2738 2.14286 18.2143 2.14286H1.78571C1.68899 2.14286 1.60342 2.18006 1.52902 2.25446C1.46205 2.32143 1.42857 2.40327 1.42857 2.5C1.42857 3.75 1.97545 4.80655 3.0692 5.66964C4.50521 6.8006 5.99702 7.97991 7.54464 9.20759C7.58929 9.24479 7.71949 9.3564 7.93527 9.54241C8.15104 9.72098 8.32217 9.85863 8.44866 9.95536C8.57515 10.0521 8.73884 10.1711 8.93973 10.3125C9.14807 10.4464 9.3378 10.5469 9.50893 10.6138C9.68006 10.6808 9.84003 10.7143 9.98884 10.7143H10H10.0112C10.16 10.7143 10.3199 10.6808 10.4911 10.6138C10.6622 10.5469 10.8482 10.4464 11.0491 10.3125C11.2574 10.1711 11.4249 10.0521 11.5513 9.95536C11.6778 9.85863 11.849 9.72098 12.0647 9.54241C12.2805 9.3564 12.4107 9.24479 12.4554 9.20759C14.003 7.97991 15.4948 6.8006 16.9308 5.66964C17.3326 5.3497 17.7046 4.92187 18.0469 4.38616C18.3966 3.84301 18.5714 3.35193 18.5714 2.91295ZM20 2.5V14.6429C20 15.1339 19.8251 15.5543 19.4754 15.904C19.1257 16.2537 18.7054 16.4286 18.2143 16.4286H1.78571C1.29464 16.4286 0.874256 16.2537 0.524554 15.904C0.174851 15.5543 0 15.1339 0 14.6429V2.5C0 2.00893 0.174851 1.58854 0.524554 1.23884C0.874256 0.889136 1.29464 0.714285 1.78571 0.714285H18.2143C18.7054 0.714285 19.1257 0.889136 19.4754 1.23884C19.8251 1.58854 20 2.00893 20 2.5Z" fill="white"/></svg></button>
+              </form>
+            </div> 
+            
+            <div class="list-icon">
+              {% if settings.icon_sc_fv2_1 !=blank %}
+              <a href="{{settings.url_sc_fv2_1}}" title="" target="_blank" class="social-item"><i class="{{settings.icon_sc_fv2_1}}"></i></a>
+              {% endif %}
+              {% if settings.icon_sc_fv2_2 !=blank %}
+              <a href="{{settings.url_sc_fv2_2}}" title="" target="_blank" class="social-item"><i class="{{settings.icon_sc_fv2_2}}"></i></a>
+              {% endif %}
+              {% if settings.icon_sc_fv2_3 !=blank %}
+              <a href="{{settings.url_sc_fv2_3}}" title="" target="_blank" class="social-item"><i class="{{settings.icon_sc_fv2_3}}"></i></a>
+              {% endif %}
+              {% if settings.icon_sc_fv2_4 !=blank %}
+              <a href="{{settings.url_sc_fv2_4}}" title="" target="_blank" class="social-item"><i class="{{settings.icon_sc_fv2_4}}"></i></a>
+              {% endif %}         
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% if settings.enable_fv2_bottom %}
+  <div class="copyright">
+    <div class="container container-v1">
+      <div class="row align-items-center">
+        <div class="col-lg-6 col-md-6 {% if settings.enable_rtl_mode %} text-md-right {% else %} text-md-left{% endif %} text-center">
+          {% if settings.fv2_bottom_copyright != blank %}
+          <p class="text-copyright mb-0">{{settings.fv2_bottom_copyright}}</p>
+          {% else %}
+          <div class="text-copyright mb-0"><p class="mb-0">© Copyright 2022 | <a href="http://themeocean.net/" rel="nofollow" target="_blank" class="underline_hover"> OAL </a> By <a href="http://themeocean.net/" rel="nofollow" target="_blank" class="underline_hover"> ThemeOcean.</a><a href="https://www.shopify.com/?ref=shopifycenter" rel="nofollow" target="_blank" class=""> Powered by Shopify.</a></p>
+          </div> 
+          {% endif %}
+        </div>
+        <div class="col-lg-6 col-md-6 {% if settings.enable_rtl_mode %}text-md-left {% else %}text-md-right {% endif %}text-center">
+          {% if settings.fv2_bottom_payment_img != blank %}
+          <img src="{{settings.fv2_bottom_payment_img | img_url:'master'}}"  alt="">
+          {% else %}
+          <img src="//via.placeholder.com/310x32"  alt="">
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</footer>
+<style>
+  .footer_v2 .top-footer{
+    background-color : {{section.settings.ft_other_bg_footer}}
+  }
+  .footer_v2 .copyright{
+    background-color : {{section.settings.ft_other_bg_footer}}
+  }
+  .footer_v2 .top-footer .title_footer h4{
+    color : {{section.settings.ft_other_color_heading}};
+  }
+  .footer_v2 .top-footer .list-icon a{
+    color : {{section.settings.ft_other_color_heading}};
+  }
+  .footer_v2 .top-footer .col-menu ul li a{
+    color : {{section.settings.ft_other_color_text}};
+  }
+  .footer_v2 .top-footer .info_footer .content_footer{
+    color : {{section.settings.ft_other_color_text}};
+  }
+  .footer_v2 .top-footer .content_newsletter{
+    color : {{section.settings.ft_other_color_text}};
+  }
+  .footer_v2 .copyright p{
+    color : {{section.settings.ft_other_color_text}};
+  }
+   .footer_v2 .copyright p a{
+    color : {{section.settings.ft_other_color_text}};
+  }
+</style>
+{% endunless %}
+{% endif %}

@@ -1,0 +1,10 @@
+{
+  "sections": {
+    "privacy_template": {
+      "type": "privacy-template-descontinuado",
+      "settings": {}
+    }
+  },
+  "order": ["privacy_template"]
+}
+

@@ -1,0 +1,146 @@
+<div data-section-id="{{ section.id }}" data-section-type="section-countdown-v2" style="{% if section.settings.margin_top != blank %}margin-top: {{section.settings.margin_top}}px;{%endif%} {% if section.settings.margin_bottom != blank %}margin-bottom: {{section.settings.margin_bottom}}px;{% endif %} {% if section.settings.sections_layout == "dark" %}background: {{section.settings.sections_bg_color}};{% endif %}">
+  <div class="section-countdown-v2" >
+    <div class="container container-v2">
+      <div class="row no-gutters align-items-center justify-content-end" {% if section.settings.bg_section != blank %}style="background:{{section.settings.bg_section}}" {% endif %}>
+        <div class="col-lg-6 countdownt-left">
+          <div class="box-image">
+            {% if section.settings.img_banner1 != blank %}
+            <img data-src="{{section.settings.img_banner1 | img_url:'master'}}" class="lazyload img-fluid w-100" alt="_img_banner">
+            {% else %}
+            <img data-src="//via.placeholder.com/712x657" class="lazyload img-fluid w-100" alt="_img_banner">
+            {% endif %}
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="box-info-content">
+            <div class=" content-section">
+              <div class=" info-deal">
+                {% if section.settings.deal-to != blank %}
+                <div class="sub_top_12">{{section.settings.deal-to}}</div>
+                {% endif %}
+                {% if section.settings.title-deal != blank %}
+                <h2 class="title-deal">{{section.settings.title-deal}}</h2>
+                {% endif %}
+                {% if section.settings.content_co != blank %}
+                <div class="desc">{{section.settings.content_co}}</div>
+                {% endif %}
+              </div>
+
+              <div class="countdown-timer">
+                {% if section.settings.countdown-date != blank %}
+                <ul class="mb-0" data-countdown="countdown-v2" data-date="{{section.settings.countdown-date}}">
+                </ul>
+                {% else %}
+                <ul class="mb-0" data-countdown="" data-date="2022-12-12-12-12-12"><li><span id="days"><b>238</b></span>Days</li><li><span id="hours"><b>11</b></span>Hrs</li><li><span id="minutes"><b>58</b></span>Mins</li><li><span id="seconds"><b>52</b></span>Sec</li></ul>
+                {% endif %}
+              </div>
+
+              {% if section.settings.buttom_banner != blank %}
+              <div class="div-button"><a class="button-main2" href="{{section.settings.button_banner_url}}">{{section.settings.buttom_banner}}</a></div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{% schema %}
+{
+  "name": "COUNTDOWN V2",
+  "class": "index-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Settings Countdownt"
+    },
+	{
+      "type": "color",
+      "id": "bg_section",
+      "label": "Background Color",
+      "default": "#F4F7E3"
+    },
+    {
+      "type": "image_picker",
+      "id": "img_banner1",
+      "label": "Banner Image",
+      "info": "712 x 657px recommended"
+    },
+    {
+      "type": "header",
+      "content": "Info Countdown"
+    },
+	{
+      "type": "text",
+      "id": "deal-to",
+      "label": "Sub Title",
+      "default": "Best deal"
+    },
+	{
+      "type": "text",
+      "id": "title-deal",
+      "label": "Title",
+      "default": "Save on Sets"
+    },
+    {
+      "type": "text",
+      "id": "content_co",
+      "label": "Content",
+      "default": "With over  300 differrent fruits on the planet were certain you haven't tries them all. Each week we aim ti tantalise you"
+    },	
+    {
+      "type": "header",
+      "content": "Countdown Date"
+    },
+    {
+      "type": "text",
+      "id": "countdown-date",
+      "label": "Enter the date you want",
+      "info": "Format: Year-Month-Day-Hour-Minute-Second"
+    },
+    {
+      "type": "text",
+      "id": "buttom_banner",
+      "label": "Button name",
+      "default": "Shop now"
+    },
+    {
+      "type": "url",
+      "id": "button_banner_url",
+      "label": "URL button",
+      "default": "/collections/all"
+    },
+    {
+      "type": "header",
+      "content": "Section Space"
+    },
+    {
+      "type": "text",
+      "id": "margin_top",
+      "label": "Margin Top",
+      "info": "Defined in pixels. Do not add the 'px' unit."
+    },
+    {
+      "type": "text",
+      "id": "margin_bottom",
+      "label": "Margin Bottom",
+      "info": "Defined in pixels. Do not add the 'px' unit."
+    }
+  ],
+  "presets": [
+    {
+      "name": "COUNTDOWN V2",
+      "category": "HOME"
+    }
+  ]
+}
+{% endschema %}
+
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

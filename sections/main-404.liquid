@@ -1,0 +1,32 @@
+<!-- /templates/404.liquid -->
+<style>
+.content-404 .title-404 {
+    font-family: D-DIN !important;
+}
+.content-404 .page-title {
+    font-family: D-DIN !important;
+}
+.content-404 .sub-title {
+    font-family: D-DIN !important;
+}
+.content-404 .sub-link {
+    font-family: D-DIN !important;
+}
+.content-404 .sub-link a {
+    font-family: D-DIN !important;
+}
+</style>
+<div id="content" style="background-image : url({% if settings.bg_error != blank  %}{{settings.bg_error | img_url : 'master'}} {% else %}//via.placeholder.com/1900x1000 {% endif %}) ; background-repeat: no-repeat;
+    background-size: cover;">
+  <div class="content-page">
+    <div class="container">
+      <div class="content-404">
+        <h1 class="title-404">{{settings.title_page}}</h1>
+        <h2 class="page-title">{{settings.des_page}}</h2>
+        <p class="sub-title">{{settings.sub_page}}</p>
+        <p class="sub-link">{{settings.sub_title_404}} <a href="/">{{settings.sub_link}}</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+

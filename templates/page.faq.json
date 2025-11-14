@@ -1,0 +1,10 @@
+{
+  "sections": {
+    "faq_template": {
+      "type": "FAQ-template-descontinuado",
+      "settings": {}
+    }
+  },
+  "order": ["faq_template"]
+}
+

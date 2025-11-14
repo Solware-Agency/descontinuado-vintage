@@ -1,0 +1,85 @@
+<div data-section-id="{{ section.id }}" data-section-type="section-banner-v12" style="{% if section.settings.margin_top != blank %}margin-top: {{section.settings.margin_top}}px;{%endif%} {% if section.settings.margin_bottom != blank %}margin-bottom: {{section.settings.margin_bottom}}px;{% endif %}">
+  <div class="section-banner-v12">
+    <div class="container container-v1">
+      <div class="banner-box">
+        <div class="box-img-banner">
+          {% if section.settings.img_banner1 != blank %}
+          <img data-src="{{section.settings.img_banner1 | img_url:'master'}}" class="lazyload img-fluid w-100" alt="_img_banner">
+          {% else %}
+          <img data-src="//via.placeholder.com/1920x682" class="lazyload img-fluid w-100" alt="_img_banner">
+          {% endif %}
+        </div>
+
+        <div class="banner-button">
+          <div class="link_video">
+            <a data-fancybox="" href="{{section.settings.url_button1}}">
+              {% if section.settings.icon_svg != blank %}
+              {{section.settings.icon_svg}}
+              {% else %}
+              <svg width="21" height="26" viewBox="0 0 21 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M21 13L-1.14193e-06 25.1244L-8.1987e-08 0.875644L21 13Z" fill="#BA7A2D"/>
+              </svg>
+              {% endif %}
+            </a>
+          </div>
+        </div>      
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "BANNER V12",
+  "settings": [
+	{
+      "type": "header",
+      "content": "Settings Banner 12"
+    },
+    {
+      "type": "image_picker",
+      "id": "img_banner1",
+      "label": "Banner Image",
+      "info": "1920 x 682px recommended"
+    },
+	{
+      "type": "textarea",
+      "id": "icon_svg",
+      "label": "Icon video"
+    },
+    {
+      "type": "url",
+      "id": "url_button1",
+      "label": "URL video"
+    },
+    {
+      "type": "header",
+      "content": "Section Space"
+    },
+    {
+      "type": "text",
+      "id": "margin_top",
+      "label": "Margin Top",
+      "info": "Defined in pixels. Do not add the 'px' unit."
+    },
+    {
+      "type": "text",
+      "id": "margin_bottom",
+      "label": "Margin Bottom",
+      "info": "Defined in pixels. Do not add the 'px' unit."
+    }
+  ],
+  "presets": [
+    {
+      "name": "BANNER V12",
+      "category": "HOME"
+    }
+  ]
+}
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

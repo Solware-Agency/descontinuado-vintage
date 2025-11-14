@@ -1,0 +1,10 @@
+{
+  "sections": {
+    "shipping_template": {
+      "type": "shipping-template",
+      "settings": {}
+    }
+  },
+  "order": ["shipping_template"]
+}
+

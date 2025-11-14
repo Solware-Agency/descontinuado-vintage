@@ -1,0 +1,388 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+{% for block in section.blocks %}
+{% if block.type == "slideshow" %}
+  {% if block.settings.fonts_sub_top !=blank %}
+  <link href="https://fonts.googleapis.com/css2?family={{block.settings.fonts_sub_top}}:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+  {% endif %}
+  {% if block.settings.fonts_sub_1 !=blank %}
+  <link href="https://fonts.googleapis.com/css2?family={{block.settings.fonts_sub_1}}:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+  {% endif %}
+  {% if block.settings.fonts_button !=blank %}
+  <link href="https://fonts.googleapis.com/css2?family={{block.settings.fonts_button}}:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+  {% endif %}
+  {% if block.settings.fonts_title_top !=blank %}
+  <link href="https://fonts.googleapis.com/css2?family={{block.settings.fonts_title_top}}:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+  {% endif %}
+{% endif %}
+{% endfor %}
+
+<div data-section-id="{{ section.id }}" data-section-type="section-slideshow-v4" style="{% if section.settings.margin_top != blank %}margin-top: {{section.settings.margin_top}}px;{%endif%} {% if section.settings.margin_bottom != blank %}margin-bottom: {{section.settings.margin_bottom}}px;{% endif %}">
+  <div class="section-slideshow-v4 ">
+    <div class="container container-v1">
+      <div class="row">
+        <div class="col-lg-8 col-9_slider">
+          <div class="js-slide-item4 p-0">
+            {% if section.blocks.size > 0 %}
+            {% for block in section.blocks %}
+            {% if block.type == "slide" %}
+            <div class="slide-item">
+              <div class="slider-image">
+                {% if block.settings.img_slider != blank %}
+                <a href="{{block.settings.button_url}}" class="d-block">
+                  <img data-src="{{block.settings.img_slider | img_url : 'master'}}" class="lazyload img-fluid w-100" alt="_img">
+                </a> 
+                {% else %}
+                <img data-src="//via.placeholder.com/940x590" class="lazyload img-fluid w-100" alt="_img">
+                {% endif %}
+              </div>
+              <div class="slider-content">
+                {% if block.settings.slider_sub_title_top != blank %}
+                <p class="sub_top_12 subtitle-{{block.id}}">{{block.settings.slider_sub_title_top}}</p>
+                {% endif %}
+                {% if block.settings.slider_title != blank %}
+                <h3 class="slider-title title-{{block.id}}">{{block.settings.slider_title}}</h3>
+                {% endif %}
+                {% if block.settings.slider_sub_title != blank %}
+                <p class="mb-0 sub-title sub-title-{{block.id}}">{{block.settings.slider_sub_title}}</p>
+                {% endif %}
+                <div class="box-button">
+                  {% if block.settings.slider_button != blank %}
+                  <a href="{{block.settings.button_url}}" class="button-main2 button-shop-{{block.id}}">{{block.settings.slider_button}}</a>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+            {% endif %}
+          </div>
+        </div>
+        <div class="col-lg-4 col-3_slider">
+          <div class="row">
+            <div class="col-12 col_12_slider">
+              <div class="slider-banner slider-banner1">
+                <a href="{{section.settings.url_banner1}}" class="slider-banner">
+                  {% if section.settings.img_banner1 != blank %}
+                  <img data-src="{{section.settings.img_banner1 | img_url : 'master'}}" class="lazyload img-fluid w-100" alt="_img">
+                  {% else %}
+                  <img data-src="//via.placeholder.com/455x590" class="lazyload img-fluid w-100" alt="_img">
+                  {%  endif%}
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<style>
+  .section-slideshow-v4{
+    {% if section.settings.bg_section != blank %}
+    background-image : url({{section.settings.bg_section|img_url : 'master'}});
+    {% else %}background-image : url(//via.placeholder.com/1920x800);
+    {% endif %}
+    background-size:cover;
+    background-repeat:no-repeat;
+    background-position:center;
+  }
+  
+  {% for block in section.blocks %}
+  {% if block.type == 'slide' %}
+  .section-slideshow-v4 .slide-item.slick-active .slider-content .subtitle-{{block.id}}{
+    color: {{block.settings.sub_title_top_color}};
+    {% if block.settings.fonts_sub_top != blank %}
+    font-family: '{{block.settings.fonts_sub_top}}';
+      {% endif %}
+  }
+  
+  .section-slideshow-v4 .slide-item.slick-active .slider-content .title-{{block.id}}{
+    color: {{block.settings.title_color}};
+    {% if block.settings.fonts_title_top != blank %}
+    font-family: '{{block.settings.fonts_title_top}}';
+      {% endif %}
+  }
+  
+  .section-slideshow-v4 .slide-item.slick-active .slider-content .sub-title-{{block.id}}{
+    color: {{block.settings.sub_title_color}};
+    {% if block.settings.fonts_sub_1 != blank %}
+    font-family: '{{block.settings.fonts_sub_1}}';
+      {% endif %}
+  }
+  
+  .section-slideshow-v4 .slide-item .slider-content .box-button .button-shop-{{block.id}} {
+  	color:{{block.settings.color_button}};
+    background:{{block.settings.bg_color_button}};
+    {% if block.settings.fonts_button != blank %}
+    font-family: '{{block.settings.fonts_button}}';
+      {% endif %}
+  }
+  .section-slideshow-v4 .slide-item .slider-content .box-button .button-shop-{{block.id}}:hover {
+    color: {{block.settings.color_button_hover}}!important;
+    background: {{block.settings.bg_color_button_hover}}!important;
+  }
+  
+  @media(min-width:1900px){
+    .section-slideshow-v4 .slide-item.slick-active .slider-content .subtitle-{{block.id}}{
+      font-size:{{block.settings.font_size_top}}px;
+    }
+    .section-slideshow-v4 .slide-item.slick-active .slider-content .title-{{block.id}}{
+      font-size:{{block.settings.font_size_title_top}}px;
+    }
+
+    .section-slideshow-v4 .slide-item.slick-active .slider-content .sub-title-{{block.id}}{
+      font-size:{{block.settings.font_size_top1}}px;
+    }
+
+    .section-slideshow-v4 .slide-item .slider-content .box-button .button-shop-{{block.id}} {
+      font-size:{{block.settings.font_size_button}}px;
+    }
+  }
+  
+  {% endif %}
+  {% endfor %}
+</style>
+{% schema %}
+{
+  "name": "SLIDESHOW V4",
+  "class": "index-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section Space"
+    },
+    {
+      "type": "text",
+      "id": "margin_top",
+      "label": "Margin Top",
+      "info": "Defined in pixels. Do not add the 'px' unit."
+    },
+    {
+      "type": "text",
+      "id": "margin_bottom",
+      "label": "Margin Bottom",
+      "info": "Defined in pixels. Do not add the 'px' unit."
+    },
+	{
+      "type": "header",
+      "content": "Background Section"
+    },
+	{
+      "type": "image_picker",
+      "id": "bg_section",
+      "info": "1920 x 800px recommended",
+      "label": "Background Image"
+    },
+    {
+      "type": "header",
+      "content": "Slider Banner"
+    },
+    {
+      "type": "image_picker",
+      "id": "img_banner1",
+      "info": "455 x 590px recommended",
+      "label": "Banner1"
+    },
+    {
+      "type": "url",
+      "id": "url_banner1",
+      "label": "URL Banner 1 ",
+      "default": "/collections/all"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "SlideShow",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "img_slider",
+          "info": "940 x 590px recommended",
+          "label": "Slide Image"
+        },
+		{
+          "type": "header",
+          "content": "Subheading Slideshow"
+        },
+        {
+          "type": "text",
+          "id": "slider_sub_title_top",
+          "label": "Subheading",
+          "default": "New arrival"
+        },
+        {
+          "type": "color",
+          "id": "sub_title_top_color",
+          "label": "Color",
+          "default": "#BA7A2D"
+        },
+		{
+          "type": "range",
+          "id": "font_size_top",
+          "min": 12,
+          "max": 20,
+          "step": 1,
+          "unit": "px",
+          "label": "Font Size",
+          "default": 12
+        },
+		{
+          "type": "text",
+          "id": "fonts_sub_top",
+          "label": "Fonts Family"
+        },
+        {
+          "type": "header",
+          "content": "Heading Slideshow"
+        },
+        {
+          "type": "text",
+          "id": "slider_title",
+          "label": "Heading",
+          "default": "The Turtleneck <br> Top in Lupine."
+        },
+        {
+          "type": "color",
+          "id": "title_color",
+          "label": "Color",
+          "default": "#2C2C2C"
+        },
+		{
+          "type": "range",
+          "id": "font_size_title_top",
+          "min": 40,
+          "max": 80,
+          "step": 1,
+          "unit": "px",
+          "label": "Font Size",
+          "default": 42
+        },
+		{
+          "type": "text",
+          "id": "fonts_title_top",
+          "label": "Fonts Family",
+		  "default": "Playfair Display"
+        },
+        {
+          "type": "header",
+          "content": "Subheading Slideshow"
+        },
+        {
+          "type": "text",
+          "id": "slider_sub_title",
+          "label": "Subheading",
+          "default": "Spirited sleeveless crop top"
+        },
+        {
+          "type": "color",
+          "id": "sub_title_color",
+          "label": "Color",
+          "default": "#6D7178"
+        },
+		{
+          "type": "range",
+          "id": "font_size_top1",
+          "min": 15,
+          "max": 30,
+          "step": 1,
+          "unit": "px",
+          "label": "Font Size",
+          "default": 16
+        },
+		{
+          "type": "text",
+          "id": "fonts_sub_1",
+          "label": "Fonts Family"
+        },
+		{
+          "type": "header",
+          "content": "Button Slideshow"
+        },
+        {
+          "type": "text",
+          "id": "slider_button",
+          "label": "Button label",
+          "default": "see more"
+        },
+        {
+          "type": "color",
+          "id": "color_button",
+          "label": "Color",
+          "default": "#fff"
+        },
+        {
+          "type": "color",
+          "id": "bg_color_button",
+          "label": "Background Color",
+          "default": "#BA7A2D"
+        },
+		{
+          "type": "range",
+          "id": "font_size_button",
+          "min": 14,
+          "max": 50,
+          "step": 1,
+          "unit": "px",
+          "label": "Font Size",
+          "default": 14
+        },
+		{
+          "type": "text",
+          "id": "fonts_button",
+          "label": "Fonts Family"
+        },
+        {
+          "type": "url",
+          "id": "button_url",
+          "label": "URL Button ",
+          "default": "/collections/all"
+        },
+        {
+          "type": "header",
+          "content": "Button Hover"
+        },
+        {
+          "type": "color",
+          "id": "color_button_hover",
+          "label": "Color Button Hover",
+          "default": "#fff"
+        },
+        {
+          "type": "color",
+          "id": "bg_color_button_hover",
+          "label": "Bg Color Button Hover",
+          "default": "#956224"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "SLIDESHOW V4",
+      "category": "HOME",
+      "blocks": [
+        {
+          "type": "slide",
+          "settings": {
+            
+          }
+        },
+        {
+          "type": "slide",
+          "settings": {
+            
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

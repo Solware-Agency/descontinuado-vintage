@@ -1,0 +1,480 @@
+<!-- /sections/returns-template-descontinuado.liquid -->
+<style>
+  /* === Fuentes desde assets === */
+  @font-face {
+    font-family: 'Galgo';
+    src: url('{{ "Galgo.woff2" | asset_url }}') format('woff2'),
+         url('{{ "Galgo.woff" | asset_url }}') format('woff'),
+         url('{{ "Galgo.otf" | asset_url }}') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'Chivo-Medium';
+    src: url('{{ "Chivo-Medium.woff2" | asset_url }}') format('woff2'),
+         url('{{ "Chivo-Medium.woff" | asset_url }}') format('woff'),
+         url('{{ "Chivo-Medium.ttf" | asset_url }}') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'D-DIN';
+    src: url('{{ "D-DIN.woff2" | asset_url }}') format('woff2'),
+         url('{{ "D-DIN.woff" | asset_url }}') format('woff'),
+         url('{{ "D-DIN.otf" | asset_url }}') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  /* === Estilos del acordeón === */
+  .returns-accordion-item {
+    border-bottom: 1px solid #000;
+    padding: 20px 0;
+  }
+
+  .returns-question {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    padding: 0;
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+    font-family: 'Chivo-Medium', sans-serif;
+    font-size: 18px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #000;
+    transition: opacity 0.3s ease;
+    line-height: 1.4;
+    margin-bottom: 0;
+  }
+  
+  .returns-question span:first-child {
+    flex: 1;
+  }
+
+  .returns-question:hover {
+    opacity: 0.7;
+  }
+
+  .returns-icon-wrapper {
+    flex-shrink: 0;
+    margin-left: 20px;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .returns-icon {
+    width: 20px;
+    height: 20px;
+    transition: transform 0.3s ease;
+  }
+
+  .returns-icon-plus,
+  .returns-icon-minus {
+    display: none;
+  }
+
+  .returns-question[aria-expanded="false"] .returns-icon-plus {
+    display: block;
+  }
+
+  .returns-question[aria-expanded="true"] .returns-icon-minus {
+    display: block;
+  }
+
+  .returns-answer {
+    font-family: 'D-DIN', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #333;
+    padding-top: 15px;
+    padding-left: 0;
+  }
+
+  .returns-answer ul {
+    margin: 10px 0;
+    padding-left: 20px;
+  }
+
+  .returns-answer li {
+    margin-bottom: 8px;
+  }
+
+  .returns-answer p {
+    margin-bottom: 10px;
+  }
+</style>
+
+<section class="page-returns">
+  <div class="container">
+    <div class="returns-content" style="max-width: 800px; margin: 0 auto; padding: 50px 0;">
+      
+      <!-- Título Principal - Galgo -->
+      <h1 class="text-center" style="font-family: 'Galgo', sans-serif; font-size: 72px; font-weight: 400; text-transform: uppercase; margin-bottom: 20px; letter-spacing: 2px; color: #000;">
+        DEVOLUCIONES Y CAMBIOS
+      </h1>
+      
+      <!-- Acordeón de secciones -->
+      <div class="returns-accordion">
+        
+        <!-- Sección 1: ALCANCE -->
+        <div class="returns-accordion-item">
+          <button class="returns-question" type="button" data-toggle="collapse" data-target="#returns1" aria-expanded="false" aria-controls="returns1" data-parent=".returns-accordion">
+            <span>ALCANCE</span>
+            <span class="returns-icon-wrapper">
+              <svg class="returns-icon returns-icon-plus" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                <polygon points="276,236 276,0 236,0 236,236 0,236 0,276 236,276 236,512 276,512 276,276 512,276 512,236"/>
+              </svg>
+              <svg class="returns-icon returns-icon-minus" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                <rect y="236" width="512" height="40"/>
+              </svg>
+            </span>
+          </button>
+          <div id="returns1" class="collapse">
+            <div class="returns-answer">
+              <p>Esta política se aplica a todos los productos adquiridos en Descontinuado Vintage a partir de 11/11/2025. Debido a nuestra oferta de artículos de segunda mano/vintage, el estado de cada producto está descrito en su ficha. Aceptas que pueden existir signos de uso.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sección 2: ¿QUÉ SE PUEDE DEVOLVER O CAMBIAR? -->
+        <div class="returns-accordion-item">
+          <button class="returns-question" type="button" data-toggle="collapse" data-target="#returns2" aria-expanded="false" aria-controls="returns2" data-parent=".returns-accordion">
+            <span>¿QUÉ SE PUEDE DEVOLVER O CAMBIAR?</span>
+            <span class="returns-icon-wrapper">
+              <svg class="returns-icon returns-icon-plus" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                <polygon points="276,236 276,0 236,0 236,236 0,236 0,276 236,276 236,512 276,512 276,276 512,276 512,236"/>
+              </svg>
+              <svg class="returns-icon returns-icon-minus" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                <rect y="236" width="512" height="40"/>
+              </svg>
+            </span>
+          </button>
+          <div id="returns2" class="collapse">
+            <div class="returns-answer">
+              <p>Aceptamos devoluciones o cambios de productos que estén:</p>
+              <ul>
+                <li>En el mismo estado en que los recibiste (salvo el uso habitual de prueba).</li>
+                <li>Con todas las etiquetas o estatus indicados.</li>
+                <li>Dentro del plazo: máximo 30 días desde la fecha de entrega.</li>
+              </ul>
+              <p><strong>No se aceptan devoluciones de:</strong></p>
+              <ul>
+                <li>Artículos marcados como "venta final".</li>
+                <li>Productos deteriorados por el cliente o usados de forma inadecuada.</li>
+                <li>Productos sin su identificación o packaging original (si aplica).</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sección 3: PLAZO PARA DEVOLUCIONES/CAMBIOS -->
+        <div class="returns-accordion-item">
+          <button class="returns-question" type="button" data-toggle="collapse" data-target="#returns3" aria-expanded="false" aria-controls="returns3" data-parent=".returns-accordion">
+            <span>PLAZO PARA DEVOLUCIONES/CAMBIOS</span>
+            <span class="returns-icon-wrapper">
+              <svg class="returns-icon returns-icon-plus" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                <polygon points="276,236 276,0 236,0 236,236 0,236 0,276 236,276 236,512 276,512 276,276 512,276 512,236"/>
+              </svg>
+              <svg class="returns-icon returns-icon-minus" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                <rect y="236" width="512" height="40"/>
+              </svg>
+            </span>
+          </button>
+          <div id="returns3" class="collapse">
+            <div class="returns-answer">
+              <p>Tienes derecho a solicitar la devolución o cambio hasta 30 días (o el plazo que se ajuste a tus políticas) tras la entrega. Pasado ese plazo, no se aceptará ningún pedido de devolución o cambio.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sección 4: CÓMO INICIAR UNA DEVOLUCIÓN O CAMBIO -->
+        <div class="returns-accordion-item">
+          <button class="returns-question" type="button" data-toggle="collapse" data-target="#returns4" aria-expanded="false" aria-controls="returns4" data-parent=".returns-accordion">
+            <span>CÓMO INICIAR UNA DEVOLUCIÓN O CAMBIO</span>
+            <span class="returns-icon-wrapper">
+              <svg class="returns-icon returns-icon-plus" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                <polygon points="276,236 276,0 236,0 236,236 0,236 0,276 236,276 236,512 276,512 276,276 512,276 512,236"/>
+              </svg>
+              <svg class="returns-icon returns-icon-minus" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                <rect y="236" width="512" height="40"/>
+              </svg>
+            </span>
+          </button>
+          <div id="returns4" class="collapse">
+            <div class="returns-answer">
+              <p>Para iniciar el proceso:</p>
+              <ul>
+                <li>Envíanos un correo a descontinuadovintage@gmail.com con tu número de pedido y motivo de la devolución/cambio.</li>
+                <li>Espera nuestra confirmación con instrucciones de envío.</li>
+                <li>Empaca el producto adecuadamente y remítelo a la dirección que te indiquemos.</li>
+                <li>Una vez recibido y verificado, te informaremos del resultado (aprobado / rechazado).</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sección 5: COSTES DE ENVÍO Y RESPONSABILIDADES -->
+        <div class="returns-accordion-item">
+          <button class="returns-question" type="button" data-toggle="collapse" data-target="#returns5" aria-expanded="false" aria-controls="returns5" data-parent=".returns-accordion">
+            <span>COSTES DE ENVÍO Y RESPONSABILIDADES</span>
+            <span class="returns-icon-wrapper">
+              <svg class="returns-icon returns-icon-plus" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                <polygon points="276,236 276,0 236,0 236,236 0,236 0,276 236,276 236,512 276,512 276,276 512,276 512,236"/>
+              </svg>
+              <svg class="returns-icon returns-icon-minus" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                <rect y="236" width="512" height="40"/>
+              </svg>
+            </span>
+          </button>
+          <div id="returns5" class="collapse">
+            <div class="returns-answer">
+              <p>Generalmente, el coste de envío de devolución corre a cargo del Cliente, salvo que se trate de error nuestro (producto equivocado, defecto no declarado).</p>
+              <p>En caso de cambio, el envío del nuevo producto puede correr a cargo de la Tienda o Cliente, según condición que se indique.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sección 6: REEMBOLSO, CRÉDITO EN TIENDA O CAMBIO -->
+        <div class="returns-accordion-item">
+          <button class="returns-question" type="button" data-toggle="collapse" data-target="#returns6" aria-expanded="false" aria-controls="returns6" data-parent=".returns-accordion">
+            <span>REEMBOLSO, CRÉDITO EN TIENDA O CAMBIO</span>
+            <span class="returns-icon-wrapper">
+              <svg class="returns-icon returns-icon-plus" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                <polygon points="276,236 276,0 236,0 236,236 0,236 0,276 236,276 236,512 276,512 276,276 512,276 512,236"/>
+              </svg>
+              <svg class="returns-icon returns-icon-minus" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                <rect y="236" width="512" height="40"/>
+              </svg>
+            </span>
+          </button>
+          <div id="returns6" class="collapse">
+            <div class="returns-answer">
+              <p>Una vez verificada la devolución:</p>
+              <ul>
+                <li><strong>Reemplazo:</strong> te enviaremos el artículo de cambio.</li>
+                <li><strong>Crédito en tienda:</strong> se acreditará a tu cuenta y podrás usarlo en futuras compras.</li>
+                <li><strong>Reembolso:</strong> se efectuará al mismo método de pago, en un plazo de hasta [número] días hábiles.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sección 7: PRODUCTOS EXCLUIDOS -->
+        <div class="returns-accordion-item">
+          <button class="returns-question" type="button" data-toggle="collapse" data-target="#returns7" aria-expanded="false" aria-controls="returns7" data-parent=".returns-accordion">
+            <span>PRODUCTOS EXCLUIDOS</span>
+            <span class="returns-icon-wrapper">
+              <svg class="returns-icon returns-icon-plus" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                <polygon points="276,236 276,0 236,0 236,236 0,236 0,276 236,276 236,512 276,512 276,276 512,276 512,236"/>
+              </svg>
+              <svg class="returns-icon returns-icon-minus" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                <rect y="236" width="512" height="40"/>
+              </svg>
+            </span>
+          </button>
+          <div id="returns7" class="collapse">
+            <div class="returns-answer">
+              <p>Están excluidos de esta política los artículos indicados como "final sale", piezas con daño por uso inapropiado, productos sin etiquetas originales, y aquellos que no cumplan con la condición especificada.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sección 8: REFERENCIAS LEGALES -->
+        <div class="returns-accordion-item">
+          <button class="returns-question" type="button" data-toggle="collapse" data-target="#returns8" aria-expanded="false" aria-controls="returns8" data-parent=".returns-accordion">
+            <span>REFERENCIAS LEGALES</span>
+            <span class="returns-icon-wrapper">
+              <svg class="returns-icon returns-icon-plus" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                <polygon points="276,236 276,0 236,0 236,236 0,236 0,276 236,276 236,512 276,512 276,276 512,276 512,236"/>
+              </svg>
+              <svg class="returns-icon returns-icon-minus" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                <rect y="236" width="512" height="40"/>
+              </svg>
+            </span>
+          </button>
+          <div id="returns8" class="collapse">
+            <div class="returns-answer">
+              <p>Consulta también nuestros Términos & Condiciones y la Política de Envíos para completar la información legal.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sección 9: INFORMACIÓN DE CONTACTO -->
+        <div class="returns-accordion-item">
+          <button class="returns-question" type="button" data-toggle="collapse" data-target="#returns9" aria-expanded="false" aria-controls="returns9" data-parent=".returns-accordion">
+            <span>INFORMACIÓN DE CONTACTO</span>
+            <span class="returns-icon-wrapper">
+              <svg class="returns-icon returns-icon-plus" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                <polygon points="276,236 276,0 236,0 236,236 0,236 0,276 236,276 236,512 276,512 276,276 512,276 512,236"/>
+              </svg>
+              <svg class="returns-icon returns-icon-minus" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                <rect y="236" width="512" height="40"/>
+              </svg>
+            </span>
+          </button>
+          <div id="returns9" class="collapse">
+            <div class="returns-answer">
+              <p>Para cualquier consulta, contáctanos en:</p>
+              <p><strong>Correo electrónico:</strong> <a href="mailto:descontinuadovintage@gmail.com" target="_blank" style="color: #333; text-decoration: underline;">descontinuadovintage@gmail.com</a></p>
+              <p><strong>Dirección:</strong> Alto Hatillo, Caracas</p>
+              <p><strong>Teléfono:</strong> <a href="https://wa.me/584122150171" target="_blank" style="color: #333; text-decoration: underline;">+584122150171</a></p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      
+    </div>
+  </div>
+</section>
+
+<script>
+  (function() {
+    function initReturnsAccordion() {
+      if (typeof jQuery === 'undefined') {
+        setTimeout(initReturnsAccordion, 100);
+        return;
+      }
+      
+      jQuery(document).ready(function($) {
+        var $returnsAccordion = $('.returns-accordion');
+        if ($returnsAccordion.length === 0) return;
+        
+        var $allCollapseElements = $returnsAccordion.find('.collapse');
+        var $allQuestions = $returnsAccordion.find('.returns-question');
+        
+        // Función para actualizar todos los botones basándose en el estado actual
+        function updateAllButtons() {
+          $allQuestions.each(function() {
+            var $question = $(this);
+            var targetId = $question.attr('data-target');
+            var $target = $(targetId);
+            
+            if ($target.length) {
+              var isExpanded = $target.hasClass('show');
+              $question.attr('aria-expanded', isExpanded);
+            }
+          });
+        }
+        
+        // Función para cerrar todas las secciones excepto la especificada
+        function closeAllExcept($exceptElement) {
+          $allCollapseElements.not($exceptElement).each(function() {
+            var $otherElement = $(this);
+            if ($otherElement.hasClass('show')) {
+              // Usar el método de Bootstrap para cerrar
+              if (typeof $otherElement.collapse === 'function') {
+                $otherElement.collapse('hide');
+              } else {
+                // Fallback si Bootstrap no está disponible
+                $otherElement.removeClass('show');
+                var $question = $allQuestions.filter('[data-target="#' + $otherElement.attr('id') + '"]');
+                if ($question.length) {
+                  $question.attr('aria-expanded', 'false');
+                }
+              }
+            }
+          });
+        }
+        
+        // Escuchar eventos de Bootstrap collapse
+        $allCollapseElements.on('show.bs.collapse', function(e) {
+          // Cuando se va a abrir una sección, cerrar todas las demás
+          var $currentTarget = $(e.target);
+          closeAllExcept($currentTarget);
+        });
+        
+        $allCollapseElements.on('shown.bs.collapse', function(e) {
+          // Después de que se abrió completamente, actualizar todos los botones
+          setTimeout(updateAllButtons, 50);
+        });
+        
+        $allCollapseElements.on('hide.bs.collapse', function(e) {
+          // Cuando se va a cerrar, actualizar el botón correspondiente inmediatamente
+          var targetId = '#' + $(e.target).attr('id');
+          var $question = $allQuestions.filter('[data-target="' + targetId + '"]');
+          if ($question.length) {
+            $question.attr('aria-expanded', 'false');
+          }
+        });
+        
+        $allCollapseElements.on('hidden.bs.collapse', function(e) {
+          // Después de que se cerró completamente, actualizar todos los botones
+          setTimeout(updateAllButtons, 50);
+        });
+        
+        // Manejar clicks en los botones para asegurar que solo uno esté abierto
+        $allQuestions.on('click', function(e) {
+          var $question = $(this);
+          var targetId = $question.attr('data-target');
+          var $target = $(targetId);
+          var isCurrentlyExpanded = $target.hasClass('show');
+          
+          // Si se está abriendo una nueva sección, cerrar todas las demás primero
+          if (!isCurrentlyExpanded) {
+            closeAllExcept($target);
+          }
+          
+          // Actualizar todos los botones después de un delay
+          setTimeout(function() {
+            updateAllButtons();
+          }, 400);
+        });
+        
+        // Inicializar: asegurar que todos los botones tengan el estado correcto al cargar
+        updateAllButtons();
+        
+        // Observar cambios en las clases usando MutationObserver como respaldo
+        if (window.MutationObserver) {
+          var observer = new MutationObserver(function(mutations) {
+            var shouldUpdate = false;
+            mutations.forEach(function(mutation) {
+              if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                shouldUpdate = true;
+              }
+            });
+            if (shouldUpdate) {
+              setTimeout(updateAllButtons, 50);
+            }
+          });
+          
+          $allCollapseElements.each(function() {
+            observer.observe(this, {
+              attributes: true,
+              attributeFilter: ['class']
+            });
+          });
+        }
+      });
+    }
+    
+    // Iniciar cuando el DOM esté listo
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initReturnsAccordion);
+    } else {
+      initReturnsAccordion();
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Returns Template",
+  "settings": []
+}
+{% endschema %}
+

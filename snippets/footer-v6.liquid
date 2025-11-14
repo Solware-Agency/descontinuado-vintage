@@ -1,0 +1,257 @@
+{% if section.settings.select_fts == "footer_v6" %}
+{% if template contains 'index' %}
+<footer class="footer_v6" style="background-color : {{section.settings.ft_home_bg_footer}}">
+  <div class="top-footer">
+    <div class="container container-v1"> 
+      <div class="row">
+        <div class="col-lg-3 col-md-6">
+          <div class="info_footer end">
+            <div class="logo-top">
+              {% if settings.logo_svg6 !=blank %}
+              <div class="logosvg" style="max-width:{{settings.fv6_main_logo_maxwidth}}px;">
+                <a class="d-block" href="{{shop.url}}">{{settings.logo_svg6}}</a>
+              </div>          
+              {% else %}            
+              <a href="{{shop.url}}" class="logo">
+                {% if settings.fv6_main_logo != blank %}
+                <img src="{{settings.fv1_main_logo | img_url:'master'}}"  width="{{settings.fv6_main_logo_maxwidth}}" alt="{{shop.name}}" class="img-fluid">
+                {% else %}
+                <img src="//via.placeholder.com/145x62" width="{{settings.fv6_main_logo_maxwidth}}" alt="{{shop.name}}" class="img-fluid">
+                {% endif %}
+              </a>
+              {% endif %}
+            </div>
+
+            <div class="content_footer">
+              {% if settings.content_colum_fv6_1 != blank  %}
+              {{settings.content_colum_fv6_1}}
+              {% else %}
+              <ul class="list-unstyled mb-0">
+                <li class="address">121 King Street, Collins Melbourne <br> West Victoria 8007, Australia</li>
+                <li class="phone">Phone:<a href="tel:(+01) 234-567-89"> (+01) 234-567-89</a></li>
+                <li class="mail">Email:<a href="mailto:support@mycompany.com"> support@mycompany.com</a></li>
+              </ul>
+              {% endif %}
+            </div>
+
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-menu">
+          <div class="info_footer">
+            <div class="title_footer">          
+              <h4 >{{settings.titlecolum_fv6_1}}</h4>         
+            </div>
+            <ul class="list-unstyled mb-0">
+              {% for link in linklists[settings.menu_fv6].links %}
+              <li><a href="{{link.url}}" title="{{link.title}}">{{link.title}}</a></li>
+              {% endfor %}
+            </ul>        
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-menu">
+          <div class="info_footer">
+            <div class="title_footer">          
+              <h4>{{settings.titlecolum_fv6_2}}</h4>         
+            </div>
+            <ul class="list-unstyled mb-0">
+              {% for link in linklists[settings.menu_fv6_2].links %}
+              <li><a href="{{link.url}}" title="{{link.title}}">{{link.title}}</a></li>
+              {% endfor %}
+            </ul>        
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <div class="info_footer">
+            <div class="title_footer">          
+              <h4>{{settings.titlecolum_fv6_3}}</h4>         
+            </div>
+            <div class="image_map">
+              {% if settings.fv6_maps_img != blank  %}
+              <a href="{{settings.fv6_maps_link}}">
+                <img src="{{settings.fv6_maps_img | img_url:'master'}}" class="img-fluid">
+              </a>
+              {% else %}
+              <a href="{{settings.fv6_maps_link}}"><img src="//via.placeholder.com/330px180" class="img-fluid"></a>
+              {% endif %}       
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% if settings.enable_fv6_bottom %}
+  <div class="copyright">
+    <div class="container container-v1">
+      <div class="row align-items-center">
+        <div class="col-lg-6 col-md-6 {% if settings.enable_rtl_mode %} text-md-right {% else %} text-md-left{% endif %} text-center">
+          {% if settings.fv6_bottom_copyright != blank %}
+          <p class="text-copyright mb-0">{{settings.fv6_bottom_copyright}}</p>
+          {% else %}
+          <div class="text-copyright mb-0"><p class="mb-0">© Copyright 2022 | <a href="http://themeocean.net/" rel="nofollow" target="_blank" class="underline_hover"> OAL </a> By <a href="http://themeocean.net/" rel="nofollow" target="_blank" class="underline_hover"> ThemeOcean.</a><a href="https://www.shopify.com/?ref=shopifycenter" rel="nofollow" target="_blank" class=""> Powered by Shopify.</a></p>
+          </div> 
+          {% endif %}
+        </div>
+        <div class="col-lg-6 col-md-6 {% if settings.enable_rtl_mode %} text-lg-left {% else %}text-lg-right {% endif %} text-center">
+          {% if settings.fv4_bottom_payment_img != blank %}
+          <img src="{{settings.fv4_bottom_payment_img | img_url:'master'}}"  alt="">
+          {% else %}
+          <img src="//via.placeholder.com/247x23"  alt="">
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</footer>
+
+<style>
+  .footer_v6 .top-footer .title_footer h4{
+    color : {{section.settings.ft_home_color_heading}};
+  }
+  .footer_v6 .top-footer .col-menu ul li a{
+    color : {{section.settings.ft_home_color_text}};
+  }
+  .footer_v6 .top-footer .info_footer .content_footer{
+    color : {{section.settings.ft_home_color_text}};
+  }
+  .footer_v6 .top-footer .content_newsletter{
+    color : {{section.settings.ft_home_color_text}};
+  }
+  .footer_v6 .copyright p{
+    color : {{section.settings.ft_home_color_text}};
+  }
+  .footer_v6 .copyright p a{
+    color : {{section.settings.ft_home_color_text}};
+  }
+</style>
+{% endif %}
+{% endif %}
+
+{% if section.settings.select_fts_all == "footer_ver6" %}
+{% unless template contains 'index' %}
+<footer class="footer_v6" style="background-color : {{section.settings.ft_other_bg_footer}}">
+  <div class="top-footer">
+    <div class="container container-v1"> 
+      <div class="row">
+        <div class="col-lg-3 col-md-6">
+          <div class="info_footer end">
+            <div class="logo-top">
+              {% if settings.logo_svg6 !=blank %}
+              <div class="logosvg" style="max-width:{{settings.fv6_main_logo_maxwidth}}px;">
+                <a class="d-block" href="{{shop.url}}">{{settings.logo_svg6}}</a>
+              </div>          
+              {% else %}            
+              <a href="{{shop.url}}" class="logo">
+                {% if settings.fv6_main_logo != blank %}
+                <img src="{{settings.fv1_main_logo | img_url:'master'}}"  width="{{settings.fv6_main_logo_maxwidth}}" alt="{{shop.name}}" class="img-fluid">
+                {% else %}
+                <img src="//via.placeholder.com/145x62" width="{{settings.fv6_main_logo_maxwidth}}" alt="{{shop.name}}" class="img-fluid">
+                {% endif %}
+              </a>
+              {% endif %}
+            </div>
+
+            <div class="content_footer">
+              {% if settings.content_colum_fv6_1 != blank  %}
+              {{settings.content_colum_fv6_1}}
+              {% else %}
+              <ul class="list-unstyled mb-0">
+                <li class="address">121 King Street, Collins Melbourne <br> West Victoria 8007, Australia</li>
+                <li class="phone">Phone:<a href="tel:(+01) 234-567-89"> (+01) 234-567-89</a></li>
+                <li class="mail">Email:<a href="mailto:support@mycompany.com"> support@mycompany.com</a></li>
+              </ul>
+              {% endif %}
+            </div>
+
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-menu">
+          <div class="info_footer">
+            <div class="title_footer">          
+              <h4 >{{settings.titlecolum_fv6_1}}</h4>         
+            </div>
+            <ul class="list-unstyled mb-0">
+              {% for link in linklists[settings.menu_fv6].links %}
+              <li><a href="{{link.url}}" title="{{link.title}}">{{link.title}}</a></li>
+              {% endfor %}
+            </ul>        
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-menu">
+          <div class="info_footer">
+            <div class="title_footer">          
+              <h4>{{settings.titlecolum_fv6_2}}</h4>         
+            </div>
+            <ul class="list-unstyled mb-0">
+              {% for link in linklists[settings.menu_fv6_2].links %}
+              <li><a href="{{link.url}}" title="{{link.title}}">{{link.title}}</a></li>
+              {% endfor %}
+            </ul>        
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <div class="info_footer">
+            <div class="title_footer">          
+              <h4>{{settings.titlecolum_fv6_3}}</h4>         
+            </div>
+            <div class="image_map">
+              {% if settings.fv6_maps_img != blank  %}
+              <a href="{{settings.fv6_maps_link}}">
+                <img src="{{settings.fv6_maps_img | img_url:'master'}}" class="img-fluid">
+              </a>
+              {% else %}
+              <a href="{{settings.fv6_maps_link}}"><img src="//via.placeholder.com/330px180" class="img-fluid"></a>
+              {% endif %}       
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% if settings.enable_fv6_bottom %}
+  <div class="copyright">
+    <div class="container container-v1">
+      <div class="row align-items-center">
+        <div class="col-lg-6 col-md-6 {% if settings.enable_rtl_mode %} text-md-right {% else %} text-md-left{% endif %} text-center">
+          {% if settings.fv6_bottom_copyright != blank %}
+          <p class="text-copyright mb-0">{{settings.fv6_bottom_copyright}}</p>
+          {% else %}
+          <div class="text-copyright mb-0"><p class="mb-0">© Copyright 2022 | <a href="http://themeocean.net/" rel="nofollow" target="_blank" class="underline_hover"> OAL </a> By <a href="http://themeocean.net/" rel="nofollow" target="_blank" class="underline_hover"> ThemeOcean.</a><a href="https://www.shopify.com/?ref=shopifycenter" rel="nofollow" target="_blank" class=""> Powered by Shopify.</a></p>
+          </div> 
+          {% endif %}
+        </div>
+        <div class="col-lg-6 col-md-6 {% if settings.enable_rtl_mode %} text-lg-left {% else %}text-lg-right {% endif %} text-center">
+          {% if settings.fv4_bottom_payment_img != blank %}
+          <img src="{{settings.fv4_bottom_payment_img | img_url:'master'}}"  alt="">
+          {% else %}
+          <img src="//via.placeholder.com/247x23"  alt="">
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</footer>
+
+<style>
+  .footer_v6 .top-footer .title_footer h4{
+    color : {{section.settings.ft_other_color_heading}};
+  }
+  .footer_v6 .top-footer .col-menu ul li a{
+    color : {{section.settings.ft_other_color_text}};
+  }
+  .footer_v6 .top-footer .info_footer .content_footer{
+    color : {{section.settings.ft_other_color_text}};
+  }
+  .footer_v6 .top-footer .content_newsletter{
+    color : {{section.settings.ft_other_color_text}};
+  }
+  .footer_v6 .copyright p{
+    color : {{section.settings.ft_other_color_text}};
+  }
+  .footer_v6 .copyright p a{
+    color : {{section.settings.ft_other_color_text}};
+  }
+</style>
+{% endunless %}
+{% endif %}

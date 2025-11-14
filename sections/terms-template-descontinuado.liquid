@@ -1,0 +1,230 @@
+<!-- /sections/terms-template-descontinuado.liquid -->
+<style>
+  /* === Fuentes desde assets === */
+  @font-face {
+    font-family: 'Galgo';
+    src: url('{{ "Galgo.woff2" | asset_url }}') format('woff2'),
+         url('{{ "Galgo.woff" | asset_url }}') format('woff'),
+         url('{{ "Galgo.otf" | asset_url }}') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'Chivo-Medium';
+    src: url('{{ "Chivo-Medium.woff2" | asset_url }}') format('woff2'),
+         url('{{ "Chivo-Medium.woff" | asset_url }}') format('woff'),
+         url('{{ "Chivo-Medium.ttf" | asset_url }}') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'D-DIN';
+    src: url('{{ "D-DIN.woff2" | asset_url }}') format('woff2'),
+         url('{{ "D-DIN.woff" | asset_url }}') format('woff'),
+         url('{{ "D-DIN.otf" | asset_url }}') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  .terms-section {
+    margin-bottom: 50px;
+    text-align: left;
+  }
+
+  .terms-section-title {
+    font-family: 'Chivo-Medium', sans-serif;
+    font-size: 24px;
+    font-weight: 500;
+    text-transform: uppercase;
+    margin-bottom: 15px;
+    letter-spacing: 1px;
+    color: #000;
+  }
+
+  .terms-section-content {
+    font-family: 'D-DIN', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #333;
+  }
+
+  .terms-section-content ul {
+    margin: 10px 0;
+    padding-left: 20px;
+  }
+
+  .terms-section-content li {
+    margin-bottom: 8px;
+  }
+
+  .terms-section-content p {
+    margin-bottom: 10px;
+  }
+
+  .terms-last-updated {
+    font-family: 'D-DIN', sans-serif;
+    font-size: 14px;
+    color: #666;
+    font-style: italic;
+    margin-bottom: 30px;
+  }
+</style>
+
+<section class="page-terms">
+  <div class="container">
+    <div class="pt-65 pb-30">
+      <div class="wrap-bread-crumb">
+        {% comment %} Breadcrumb eliminado {% endcomment %}
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="terms-content" style="max-width: 800px; margin: 0 auto; padding: 50px 0;">
+      
+      <!-- Título Principal - Galgo -->
+      <h1 class="text-center" style="font-family: 'Galgo', sans-serif; font-size: 72px; font-weight: 400; text-transform: uppercase; margin-bottom: 20px; letter-spacing: 2px; color: #000;">
+        TÉRMINOS Y CONDICIONES
+      </h1>
+      
+      <!-- Fecha de última actualización -->
+      <p class="terms-last-updated text-center">Última actualización: {{ "now" | date: "%d/%m/%Y" }}</p>
+      
+      <!-- Sección 1: Introducción -->
+      <div class="terms-section">
+        <h2 class="terms-section-title">1. INTRODUCCIÓN</h2>
+        <div class="terms-section-content">
+          <p>Bienvenido a Descontinuado Vintage (en adelante "Nosotros", "la Tienda"). Al acceder o efectuar una compra en nuestro sitio web <a href="{{ shop.url }}" target="_blank" style="color: #333; text-decoration: underline;">{{ shop.url }}</a>, aceptas quedar vinculado por estos Términos y Condiciones ("T&C"). Si no estás de acuerdo con alguna parte, por favor no utilices nuestros servicios.</p>
+        </div>
+      </div>
+      
+      <!-- Sección 2: Definiciones -->
+      <div class="terms-section">
+        <h2 class="terms-section-title">2. DEFINICIONES</h2>
+        <div class="terms-section-content">
+          <ul>
+            <li><strong>Cliente, "Tú", "Tu":</strong> persona física o jurídica que accede al sitio o realiza compras.</li>
+            <li><strong>Productos:</strong> prendas de ropa de segunda mano, vintage, accesorios y demás artículos disponibles en la Tienda.</li>
+            <li><strong>La Tienda, "Nosotros":</strong> Descontinuado Vintage.</li>
+            <li><strong>Pedido:</strong> la solicitud de compra que realizas a través de nuestra web.</li>
+            <li><strong>Variante:</strong> cada opción de un producto (talla, color, estado, etc.).</li>
+          </ul>
+        </div>
+      </div>
+      
+      <!-- Sección 3: Ámbito del servicio y elegibilidad -->
+      <div class="terms-section">
+        <h2 class="terms-section-title">3. ÁMBITO DEL SERVICIO Y ELEGIBILIDAD</h2>
+        <div class="terms-section-content">
+          <p>Nuestra tienda vende productos de segunda mano / vintage, los cuales pueden mostrar signos de uso o desgaste según el estado indicado. Debes tener al menos 18 años para realizar una compra. Nos reservamos el derecho de rechazar pedidos.</p>
+        </div>
+      </div>
+      
+      <!-- Sección 4: Proceso de pedido y aceptación -->
+      <div class="terms-section">
+        <h2 class="terms-section-title">4. PROCESO DE PEDIDO Y ACEPTACIÓN</h2>
+        <div class="terms-section-content">
+          <p>Cuando realizas un pedido, recibes un correo de confirmación con los detalles. No estamos obligados a aceptar un pedido hasta que enviemos la confirmación final. Nos reservamos el derecho de cancelar o rechazar pedidos (por ejemplo, por error de stock, error de precio, información de pago incorrecta).</p>
+        </div>
+      </div>
+      
+      <!-- Sección 5: Precios y pagos -->
+      <div class="terms-section">
+        <h2 class="terms-section-title">5. PRECIOS Y PAGOS</h2>
+        <div class="terms-section-content">
+          <p>Los precios se muestran en {{ shop.currency }} e incluyen/excluyen impuestos según se indique. Nos reservamos el derecho de cambiar precios en cualquier momento antes de la aceptación del pedido. Aceptamos los métodos de pago disponibles en nuestra plataforma.</p>
+          <p>El pago se cobrará en el momento de la aceptación del pedido.</p>
+        </div>
+      </div>
+      
+      <!-- Sección 6: Envío y entrega -->
+      <div class="terms-section">
+        <h2 class="terms-section-title">6. ENVÍO Y ENTREGA</h2>
+        <div class="terms-section-content">
+          <p>Consulta los plazos, costes y condiciones de envío en nuestra página de Envíos. Nos esforzamos por entregar en el plazo estimado, pero no garantizamos una fecha de entrega exacta. Las demoras no nos hacen responsables por daños indirectos.</p>
+          <p>Los costes de envío, tasas de aduana o importación que puedan aplicar son responsabilidad del Cliente, salvo que se indique lo contrario.</p>
+        </div>
+      </div>
+      
+      <!-- Sección 7: Devoluciones & Cambios -->
+      <div class="terms-section">
+        <h2 class="terms-section-title">7. DEVOLUCIONES Y CAMBIOS</h2>
+        <div class="terms-section-content">
+          <p>Para conocer nuestra política completa de devoluciones y cambios consulta nuestra página Devoluciones y Cambios.</p>
+          <p>Cuando los Productos son de segunda mano, aplica con carácter especial que su estado puede mostrar signos de uso, lo cual se indicará en la ficha del producto.</p>
+        </div>
+      </div>
+      
+      <!-- Sección 8: Propiedad intelectual -->
+      <div class="terms-section">
+        <h2 class="terms-section-title">8. PROPIEDAD INTELECTUAL</h2>
+        <div class="terms-section-content">
+          <p>Todos los contenidos del sitio web (logotipo, diseño, textos, imágenes) son propiedad de Descontinuado Vintage y están protegidos por derechos de autor, marcas registradas o similares. Queda prohibido su reproducción, distribución o modificación sin autorización expresa.</p>
+        </div>
+      </div>
+      
+      <!-- Sección 9: Limitación de responsabilidad e indemnidad -->
+      <div class="terms-section">
+        <h2 class="terms-section-title">9. LIMITACIÓN DE RESPONSABILIDAD E INDEMNIDAD</h2>
+        <div class="terms-section-content">
+          <p>La Tienda no se hace responsable por:</p>
+          <ul>
+            <li>Pérdidas, daños o gastos indirectos, especiales o consecuenciales derivados del uso del sitio o adquisición de Productos.</li>
+            <li>Errores tipográficos, inexactitudes o omisiones en los contenidos.</li>
+          </ul>
+          <p>La responsabilidad máxima de la tienda frente a ti por un pedido incorrecto o defectuoso se limitará al importe del propio pedido.</p>
+          <p>Indemnizarás a la tienda frente a reclamaciones de terceros derivadas de tu uso indebido.</p>
+        </div>
+      </div>
+      
+      <!-- Sección 10: Ley aplicable y jurisdicción -->
+      <div class="terms-section">
+        <h2 class="terms-section-title">10. LEY APLICABLE Y JURISDICCIÓN</h2>
+        <div class="terms-section-content">
+          <p>Estos T&C se rigen por la ley de Venezuela. Cualquier disputa será sometida a los tribunales competentes de Caracas, Venezuela.</p>
+        </div>
+      </div>
+      
+      <!-- Sección 11: Enlaces a terceros -->
+      <div class="terms-section">
+        <h2 class="terms-section-title">11. ENLACES A TERCEROS</h2>
+        <div class="terms-section-content">
+          <p>Nuestro sitio puede contener enlaces a webs de terceros. No nos responsabilizamos del contenido de dichos sitios ni de las consecuencias de utilizarlos.</p>
+        </div>
+      </div>
+      
+      <!-- Sección 12: Modificaciones de los Términos -->
+      <div class="terms-section">
+        <h2 class="terms-section-title">12. MODIFICACIONES DE LOS TÉRMINOS</h2>
+        <div class="terms-section-content">
+          <p>Nos reservamos el derecho de modificar estos T&C en cualquier momento. Las versiones actualizadas se publicarán en esta página con la fecha de "última actualización".</p>
+        </div>
+      </div>
+      
+      <!-- Sección 13: Información de contacto -->
+      <div class="terms-section">
+        <h2 class="terms-section-title">13. INFORMACIÓN DE CONTACTO</h2>
+        <div class="terms-section-content">
+          <p>Si tienes preguntas sobre estos T&C puedes contactar con nosotros:</p>
+          <p><strong>Correo electrónico:</strong> <a href="mailto:descontinuadovintage@gmail.com" target="_blank" style="color: #333; text-decoration: underline;">descontinuadovintage@gmail.com</a></p>
+          <p><strong>Dirección física:</strong> Alto Hatillo, Caracas, Venezuela</p>
+          <p><strong>Teléfono:</strong> <a href="https://wa.me/584122150171" target="_blank" style="color: #333; text-decoration: underline;">+584122150171</a></p>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Terms Template",
+  "settings": []
+}
+{% endschema %}
+

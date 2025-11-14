@@ -1,0 +1,227 @@
+<!-- /sections/privacy-template-descontinuado.liquid -->
+<style>
+  /* === Fuentes desde assets === */
+  @font-face {
+    font-family: 'Galgo';
+    src: url('{{ "Galgo.woff2" | asset_url }}') format('woff2'),
+         url('{{ "Galgo.woff" | asset_url }}') format('woff'),
+         url('{{ "Galgo.otf" | asset_url }}') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'Chivo-Medium';
+    src: url('{{ "Chivo-Medium.woff2" | asset_url }}') format('woff2'),
+         url('{{ "Chivo-Medium.woff" | asset_url }}') format('woff'),
+         url('{{ "Chivo-Medium.ttf" | asset_url }}') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'D-DIN';
+    src: url('{{ "D-DIN.woff2" | asset_url }}') format('woff2'),
+         url('{{ "D-DIN.woff" | asset_url }}') format('woff'),
+         url('{{ "D-DIN.otf" | asset_url }}') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  .privacy-section {
+    margin-bottom: 50px;
+    text-align: left;
+  }
+
+  .privacy-section-title {
+    font-family: 'Chivo-Medium', sans-serif;
+    font-size: 24px;
+    font-weight: 500;
+    text-transform: uppercase;
+    margin-bottom: 15px;
+    letter-spacing: 1px;
+    color: #000;
+  }
+
+  .privacy-section-content {
+    font-family: 'D-DIN', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #333;
+  }
+
+  .privacy-section-content ul {
+    margin: 10px 0;
+    padding-left: 20px;
+  }
+
+  .privacy-section-content li {
+    margin-bottom: 8px;
+  }
+
+  .privacy-section-content p {
+    margin-bottom: 10px;
+  }
+
+  .privacy-last-updated {
+    font-family: 'D-DIN', sans-serif;
+    font-size: 14px;
+    color: #666;
+    font-style: italic;
+    margin-bottom: 30px;
+  }
+</style>
+
+<section class="page-privacy">
+  <div class="container">
+    <div class="pt-65 pb-30">
+      <div class="wrap-bread-crumb">
+        {% comment %} Breadcrumb eliminado {% endcomment %}
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="privacy-content" style="max-width: 800px; margin: 0 auto; padding: 50px 0;">
+      
+      <!-- Título Principal - Galgo -->
+      <h1 class="text-center" style="font-family: 'Galgo', sans-serif; font-size: 72px; font-weight: 400; text-transform: uppercase; margin-bottom: 20px; letter-spacing: 2px; color: #000;">
+        POLÍTICA DE PRIVACIDAD
+      </h1>
+      
+      <!-- Fecha de última actualización -->
+      <p class="privacy-last-updated text-center">Última actualización: {{ "now" | date: "%d/%m/%Y" }}</p>
+      
+      <!-- Sección 1: Introducción -->
+      <div class="privacy-section">
+        <h2 class="privacy-section-title">1. INTRODUCCIÓN</h2>
+        <div class="privacy-section-content">
+          <p>En Descontinuado Vintage ("Tienda", "Nosotros"), valoramos tu privacidad y nos comprometemos a proteger tus datos personales. Esta política explica qué datos recogemos, cómo los usamos y tus derechos respecto a ellos.</p>
+        </div>
+      </div>
+      
+      <!-- Sección 2: Datos que recogemos -->
+      <div class="privacy-section">
+        <h2 class="privacy-section-title">2. DATOS QUE RECOGEMOS</h2>
+        <div class="privacy-section-content">
+          <p>Podemos recopilar:</p>
+          <ul>
+            <li><strong>Datos de identidad:</strong> nombre, fecha de nacimiento (si aplica).</li>
+            <li><strong>Datos de contacto:</strong> dirección de correo electrónico, dirección postal, teléfono.</li>
+            <li><strong>Datos de pago:</strong> cuando realizas una compra (gestionados por terceros).</li>
+            <li><strong>Datos de uso:</strong> información sobre cómo usas nuestro sitio, historial de compras, preferencias.</li>
+            <li><strong>Cookies y tecnologías similares:</strong> para personalización, analíticas, funcionalidad.</li>
+          </ul>
+        </div>
+      </div>
+      
+      <!-- Sección 3: Cómo usamos los datos -->
+      <div class="privacy-section">
+        <h2 class="privacy-section-title">3. CÓMO USAMOS LOS DATOS</h2>
+        <div class="privacy-section-content">
+          <p>Usamos tus datos para:</p>
+          <ul>
+            <li>Procesar pedidos, pagos y envíos.</li>
+            <li>Mejorar nuestro catálogo, presentarte productos que podrían interesarte.</li>
+            <li>Enviarte comunicaciones promocionales (si has dado tu consentimiento).</li>
+            <li>Cumplir obligaciones legales y fiscales.</li>
+            <li>Prevenir fraude o actividades no autorizadas.</li>
+          </ul>
+        </div>
+      </div>
+      
+      <!-- Sección 4: Cookies y seguimiento -->
+      <div class="privacy-section">
+        <h2 class="privacy-section-title">4. COOKIES Y SEGUIMIENTO</h2>
+        <div class="privacy-section-content">
+          <p>Usamos cookies propias y de terceros (Google Analytics, Facebook Pixels, etc) para análisis de tráfico, optimización y marketing. Puedes gestionar tus preferencias de cookies desde la configuración de tu navegador.</p>
+        </div>
+      </div>
+      
+      <!-- Sección 5: Servicios de terceros -->
+      <div class="privacy-section">
+        <h2 class="privacy-section-title">5. SERVICIOS DE TERCEROS</h2>
+        <div class="privacy-section-content">
+          <p>Podemos compartir tus datos con:</p>
+          <ul>
+            <li>Servicios de pago (Stripe, PayPal, etc).</li>
+            <li>Servicios de envío, fulfillment.</li>
+            <li>Plataformas de email marketing.</li>
+            <li>Analíticas web.</li>
+          </ul>
+          <p>Siempre exigimos que los terceros procesen los datos conforme al RGPD/ley aplicable.</p>
+        </div>
+      </div>
+      
+      <!-- Sección 6: Derechos del usuario -->
+      <div class="privacy-section">
+        <h2 class="privacy-section-title">6. DERECHOS DEL USUARIO</h2>
+        <div class="privacy-section-content">
+          <p>Tienes derecho a:</p>
+          <ul>
+            <li>Acceder a tus datos personales que tenemos.</li>
+            <li>Solicitarnos corrección o eliminación de tus datos.</li>
+            <li>Oponerte al tratamiento de tus datos con fines de marketing.</li>
+            <li>Solicitar la portabilidad de tus datos (según legislación aplicable).</li>
+            <li>Retirar tu consentimiento en cualquier momento (cuando el tratamiento se base en él).</li>
+          </ul>
+        </div>
+      </div>
+      
+      <!-- Sección 7: Seguridad de los datos -->
+      <div class="privacy-section">
+        <h2 class="privacy-section-title">7. SEGURIDAD DE LOS DATOS</h2>
+        <div class="privacy-section-content">
+          <p>Implementamos medidas técnicas y organizativas para proteger tus datos. Sin embargo, ningún método es 100% seguro; no podemos garantizar seguridad absoluta.</p>
+        </div>
+      </div>
+      
+      <!-- Sección 8: Conservación de los datos -->
+      <div class="privacy-section">
+        <h2 class="privacy-section-title">8. CONSERVACIÓN DE LOS DATOS</h2>
+        <div class="privacy-section-content">
+          <p>Retenemos tus datos durante el tiempo necesario para cumplir con la finalidad para la que fueron recogidos, o para cumplir obligaciones legales. Una vez finalizado dicho periodo, los eliminaremos o anonimizaremos.</p>
+        </div>
+      </div>
+      
+      <!-- Sección 9: Transferencias internacionales -->
+      <div class="privacy-section">
+        <h2 class="privacy-section-title">9. TRANSFERENCIAS INTERNACIONALES</h2>
+        <div class="privacy-section-content">
+          <p>En caso de transferir los datos fuera de Venezuela, nos aseguramos de que existan garantías adecuadas (por ejemplo cláusulas estándar de protección de datos).</p>
+        </div>
+      </div>
+      
+      <!-- Sección 10: Cambios en la política -->
+      <div class="privacy-section">
+        <h2 class="privacy-section-title">10. CAMBIOS EN LA POLÍTICA</h2>
+        <div class="privacy-section-content">
+          <p>Podemos actualizar esta política de privacidad cuando sea necesario. Todas las modificaciones se publicarán aquí y la fecha de "Última actualización" se actualizará.</p>
+        </div>
+      </div>
+      
+      <!-- Sección 11: Información de contacto -->
+      <div class="privacy-section">
+        <h2 class="privacy-section-title">11. INFORMACIÓN DE CONTACTO</h2>
+        <div class="privacy-section-content">
+          <p>Si tienes preguntas sobre esta política puedes contactarnos en:</p>
+          <p><strong>Correo electrónico:</strong> <a href="mailto:descontinuadovintage@gmail.com" target="_blank" style="color: #333; text-decoration: underline;">descontinuadovintage@gmail.com</a></p>
+          <p><strong>Dirección física:</strong> Alto Hatillo, Caracas, Venezuela</p>
+          <p><strong>Teléfono:</strong> <a href="https://wa.me/584122150171" target="_blank" style="color: #333; text-decoration: underline;">+584122150171</a></p>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Privacy Template",
+  "settings": []
+}
+{% endschema %}
+

@@ -1,0 +1,530 @@
+<div data-section-id="{{ section.id }}" data-section-type="section-product-v1" style="{% if section.settings.margin_top != blank %}margin-top: {{section.settings.margin_top}}px;{%endif%} {% if section.settings.margin_bottom != blank %}margin-bottom: {{section.settings.margin_bottom}}px;{% endif %}">
+  <div class="section-product-v1" {% if section.settings.bg_section != blank %}style="background:{{section.settings.bg_section}}"{% endif %}>
+    <div class="container container-v2">
+      <div class="text-center title_block">            
+        {% if section.settings.sub_title != blank %}
+        <p class="sub_title">{{section.settings.sub_title}}</p>
+        {% endif %}
+        {% if section.settings.section_title != blank %}
+        <h3>{{section.settings.section_title}}</h3>      
+        {% endif %}
+        {% if section.settings.desc_content != blank %}
+        <p class="desc">{{section.settings.desc_content}}</p>
+        {% endif %}
+      </div>
+      
+      <div class="row js_section_product mt-50">   
+        {% assign products_limit = section.settings.products_limit %}
+        {% assign col = section.settings.select_collection %}
+        {% for product in collections[col].products limit: products_limit %}
+        <div class="col-md-4 col-12 product_item">
+          {% include 'product-item-v1' %}
+        </div>
+        {% else %}
+        {% for i in (1..products_limit) %}
+        <div class="col-md-4 col-12 product_item">
+          {% include 'empty-product-item' %}
+        </div>
+        {% endfor %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "PRODUCT V1",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Product 1"
+    },
+    {
+      "type": "color",
+      "id": "bg_section",
+      "label": "Background Color"
+	},
+    {
+      "type": "text",
+      "id": "section_title",
+      "label": "Title section",
+      "default": "New Arrival"
+    },
+	{
+      "type": "text",
+      "id": "desc_content",
+      "label": "Description",
+      "default": "Find a bright ideal to suit your taste with our great selection of suspension, wall, floor and table lights."
+    },
+    {
+      "type": "header",
+      "content": "Info Product"
+    },
+    {
+      "type": "collection",
+      "id": "select_collection",
+      "label": "Select Collection"
+    },
+    {
+      "type": "range",
+      "id": "products_limit",
+      "label": "Limit products",
+      "min": 2,
+      "max": 50,
+      "step": 1,
+      "default": 6
+    },
+    {
+      "type": "header",
+      "content": "Section Space"
+    },
+    {
+      "type": "text",
+      "id": "margin_top",
+      "label": "Margin Top",
+      "info": "Defined in pixels. Do not add the 'px' unit."
+    },
+    {
+      "type": "text",
+      "id": "margin_bottom",
+      "label": "Margin Bottom",
+      "info": "Defined in pixels. Do not add the 'px' unit."
+    }
+  ],
+  "presets": [
+    {
+      "name": "PRODUCT V1",
+      "category": "HOME"
+    }
+  ]
+}
+{% endschema %}
+
+{% stylesheet %}
+/* Ocultar iconos de acción en home (container-v2) */
+.section-product-v1 .product-icon-action,
+.section-product-v1 .product-icon-action *,
+.section-product-v1 .add-to-cart,
+.section-product-v1 .quick-view,
+.section-product-v1 .add-wishlist,
+.section-product-v1:hover .product-icon-action,
+.section-product-v1:hover .product-icon-action *,
+.section-product-v1 .product-item-v1 .product-icon-action,
+.section-product-v1 .product-item-v1:hover .product-icon-action,
+.section-product-v1 .product-item-v2 .product-icon-action,
+.section-product-v1 .product-item-v2:hover .product-icon-action,
+.section-product-v1 .product-item-v3 .product-icon-action,
+.section-product-v1 .product-item-v3:hover .product-icon-action,
+.section-product-v1 .product-item-v4 .product-icon-action,
+.section-product-v1 .product-item-v4:hover .product-icon-action,
+.section-product-v1 .product-item-v5 .product-icon-action,
+.section-product-v1 .product-item-v5:hover .product-icon-action,
+.section-product-v1 .product-item-v6 .product-icon-action,
+.section-product-v1 .product-item-v6:hover .product-icon-action,
+.section-product-v1 .product-item-v7 .product-icon-action,
+.section-product-v1 .product-item-v7:hover .product-icon-action,
+.section-product-v1 .product-item-v8 .product-icon-action,
+.section-product-v1 .product-item-v8:hover .product-icon-action,
+.section-product-v1 .product-item-v9 .product-icon-action,
+.section-product-v1 .product-item-v9:hover .product-icon-action {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transform: none !important;
+}
+
+/* Ocultar iconos en collections (col-lg-12) */
+.col-lg-12 .product-icon-action,
+.col-lg-12 .product-icon-action *,
+.col-lg-12:hover .product-icon-action,
+.col-lg-12:hover .product-icon-action *,
+.col-lg-12 .product-item-v1 .product-icon-action,
+.col-lg-12 .product-item-v1:hover .product-icon-action,
+.col-lg-12 .product-item-v2 .product-icon-action,
+.col-lg-12 .product-item-v2:hover .product-icon-action,
+.col-lg-12 .product-item-v3 .product-icon-action,
+.col-lg-12 .product-item-v3:hover .product-icon-action,
+.col-lg-12 .product-item-v4 .product-icon-action,
+.col-lg-12 .product-item-v4:hover .product-icon-action,
+.col-lg-12 .product-item-v5 .product-icon-action,
+.col-lg-12 .product-item-v5:hover .product-icon-action,
+.col-lg-12 .product-item-v6 .product-icon-action,
+.col-lg-12 .product-item-v6:hover .product-icon-action,
+.col-lg-12 .product-item-v7 .product-icon-action,
+.col-lg-12 .product-item-v7:hover .product-icon-action,
+.col-lg-12 .product-item-v8 .product-icon-action,
+.col-lg-12 .product-item-v8:hover .product-icon-action,
+.col-lg-12 .product-item-v9 .product-icon-action,
+.col-lg-12 .product-item-v9:hover .product-icon-action {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transform: none !important;
+}
+
+/* Ocultar iconos en related-tabs */
+.related-tabs .product-icon-action,
+.related-tabs .product-icon-action *,
+.related-tabs:hover .product-icon-action,
+.related-tabs:hover .product-icon-action *,
+.related-tabs .product-item-v1 .product-icon-action,
+.related-tabs .product-item-v1:hover .product-icon-action,
+.related-tabs .product-item-v2 .product-icon-action,
+.related-tabs .product-item-v2:hover .product-icon-action,
+.related-tabs .product-item-v3 .product-icon-action,
+.related-tabs .product-item-v3:hover .product-icon-action,
+.related-tabs .product-item-v4 .product-icon-action,
+.related-tabs .product-item-v4:hover .product-icon-action,
+.related-tabs .product-item-v5 .product-icon-action,
+.related-tabs .product-item-v5:hover .product-icon-action,
+.related-tabs .product-item-v6 .product-icon-action,
+.related-tabs .product-item-v6:hover .product-icon-action,
+.related-tabs .product-item-v7 .product-icon-action,
+.related-tabs .product-item-v7:hover .product-icon-action,
+.related-tabs .product-item-v8 .product-icon-action,
+.related-tabs .product-item-v8:hover .product-icon-action,
+.related-tabs .product-item-v9 .product-icon-action,
+.related-tabs .product-item-v9:hover .product-icon-action {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transform: none !important;
+}
+
+/* Ocultar círculos de colores y fondo gris de variantes */
+.section-product-v1 .engoj_select_color,
+.section-product-v1 .engoj_select_color *,
+.section-product-v1 .variant-product,
+.section-product-v1 .circle,
+.section-product-v1 .circle.mr-0,
+.section-product-v1 .circle-thumb,
+.section-product-v1 .variant-image-group,
+.col-lg-12 .engoj_select_color,
+.col-lg-12 .engoj_select_color *,
+.col-lg-12 .variant-product,
+.col-lg-12 .circle,
+.col-lg-12 .circle.mr-0,
+.col-lg-12 .circle-thumb,
+.col-lg-12 .variant-image-group,
+.related-tabs .engoj_select_color,
+.related-tabs .engoj_select_color *,
+.related-tabs .variant-product,
+.related-tabs .circle,
+.related-tabs .circle.mr-0,
+.related-tabs .circle-thumb,
+.related-tabs .variant-image-group,
+.engoj_select_color,
+.variant-product,
+.circle.mr-0,
+.variant-image-group.engoj_select_color {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  height: 0 !important;
+  width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+
+/* Eliminar fondo gris y ajustar tipografía */
+.section-product-v1,
+.section-product-v1 .container,
+.section-product-v1 .container-v2,
+.section-product-v1 .row,
+.section-product-v1 .col-md-4,
+.section-product-v1 .product_item,
+.section-product-v1 .product-item-v1,
+.section-product-v1 .product-item-v1 .info-product,
+.section-product-v1 .product-item-v1 .product,
+.section-product-v1 .product-item-v1 .engoj_grid_parent {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+.section-product-v1 .product-item-v1 .info-product {
+  background: transparent !important;
+  background-color: transparent !important;
+  padding-top: 15px;
+}
+
+/* Tipografía D-DIN en negro y eliminar hover gris - Alta especificidad */
+.section-product-v1 .product-item-v1 .info-product h4.des-font.title-product,
+.section-product-v1 .product-item-v1 .info-product h4.des-font.capital.title-product,
+.section-product-v1 .product-item-v1 .info-product h4.des-font.title-product.mb-0,
+.section-product-v1 .product-item-v1 .info-product h4.des-font.capital.title-product.mb-0,
+.section-product-v1 .product-item-v1 .info-product .des-font.title-product,
+.section-product-v1 .product-item-v1 .info-product .title-product,
+.section-product-v1 .product-item-v1 .title-product,
+.section-product-v1 .product-item-v1 .title-product a,
+.section-product-v1 .product-item-v1 h4.title-product,
+.section-product-v1 .product-item-v1 h4.title-product a {
+  font-family: "D-DIN", "DIN", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+  font-size: 14px !important;
+  font-weight: 400 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  color: #000000 !important;
+  opacity: 1 !important;
+  text-decoration: none !important;
+  line-height: 1.4 !important;
+  margin-bottom: 8px !important;
+}
+
+.section-product-v1 .product-item-v1 .info-product h4.des-font.title-product:hover,
+.section-product-v1 .product-item-v1 .info-product h4.des-font.title-product:hover a,
+.section-product-v1 .product-item-v1 .title-product:hover,
+.section-product-v1 .product-item-v1 .title-product:hover a {
+  color: #000000 !important;
+  text-decoration: none !important;
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+.section-product-v1 .product-item-v1 .info-product .price-product,
+.section-product-v1 .product-item-v1 .info-product .price-product.mb-0,
+.section-product-v1 .product-item-v1 .info-product .price-product .price,
+.section-product-v1 .product-item-v1 .price-product,
+.section-product-v1 .product-item-v1 .price-product .price {
+  font-family: "D-DIN", "DIN", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+  font-size: 14px !important;
+  font-weight: 400 !important;
+  color: #000000 !important;
+  opacity: 1 !important;
+  line-height: 1.4 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.section-product-v1 .product-item-v1 .price-product .price-old {
+  font-family: "D-DIN", "DIN", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+  font-size: 12px !important;
+  color: #999 !important;
+  opacity: 1 !important;
+}
+
+/* Eliminar hover gris en productos */
+.section-product-v1 .product-item-v1:hover,
+.section-product-v1 .product-item-v1:hover .info-product,
+.section-product-v1 .product-item-v1:hover .product,
+.section-product-v1 .product-item-v1:hover .engoj_grid_parent,
+.section-product-v1 .product-item-v1 .product:hover,
+.section-product-v1 .product-item-v1 .engoj_grid_parent:hover {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+.section-product-v1 .col-md-4:hover,
+.section-product-v1 .product_item:hover {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+{% endstylesheet %}
+
+{% javascript %}
+(function() {
+  // Ocultar iconos de acción inmediatamente en todos los lugares
+  function hideActionIcons() {
+    // Home (container-v2)
+    var $iconsHome = jQuery('.section-product-v1 .product-icon-action, .container-v2 .product-icon-action');
+    if ($iconsHome.length > 0) {
+      $iconsHome.hide().css({
+        'display': 'none !important',
+        'visibility': 'hidden !important',
+        'opacity': '0 !important',
+        'pointer-events': 'none !important'
+      });
+    }
+    
+    // Collections (col-lg-12)
+    var $iconsCollections = jQuery('.col-lg-12 .product-icon-action');
+    if ($iconsCollections.length > 0) {
+      $iconsCollections.hide().css({
+        'display': 'none !important',
+        'visibility': 'hidden !important',
+        'opacity': '0 !important',
+        'pointer-events': 'none !important'
+      });
+    }
+    
+    // Related products (related-tabs)
+    var $iconsRelated = jQuery('.related-tabs .product-icon-action, .related-tabs.pt-4 .product-icon-action, .related-tabs.pt-lg-5 .product-icon-action');
+    if ($iconsRelated.length > 0) {
+      $iconsRelated.hide().css({
+        'display': 'none !important',
+        'visibility': 'hidden !important',
+        'opacity': '0 !important',
+        'pointer-events': 'none !important'
+      });
+    }
+  }
+  
+  function initProductCarousel() {
+    var $carousel = jQuery('.js_section_product');
+    
+    if ($carousel.length === 0) {
+      return;
+    }
+    
+    // Ocultar iconos antes de inicializar
+    hideActionIcons();
+    
+    // Si ya está inicializado, destruirlo primero
+    if ($carousel.hasClass('slick-initialized')) {
+      try {
+        $carousel.slick('unslick');
+      } catch(e) {
+        $carousel.removeClass('slick-initialized');
+        $carousel.find('.slick-track').remove();
+      }
+    }
+    
+    // Esperar un momento antes de reinicializar
+    setTimeout(function() {
+      $carousel.slick({
+        slidesToShow: 3,
+        slidesToScroll: 1,
+        speed: 900,
+        autoplay: false,
+        autoplaySpeed: 3500,
+        dots: false,
+        arrows: false,
+        swipe: true,
+        draggable: true,
+        prevArrow:'<button type="button" class="prev-slide slick-arrow"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15.0003 20.67C14.8103 20.67 14.6203 20.6 14.4703 20.45L7.95027 13.93C6.89027 12.87 6.89027 11.13 7.95027 10.07L14.4703 3.55002C14.7603 3.26002 15.2403 3.26002 15.5303 3.55002C15.8203 3.84002 15.8203 4.32002 15.5303 4.61002L9.01027 11.13C8.53027 11.61 8.53027 12.39 9.01027 12.87L15.5303 19.39C15.8203 19.68 15.8203 20.16 15.5303 20.45C15.3803 20.59 15.1903 20.67 15.0003 20.67Z" fill="#292D32"/></svg></button>',
+        nextArrow:'<button type="button" class="next-slide slick-arrow"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8.90961 20.67C8.71961 20.67 8.52961 20.6 8.37961 20.45C8.08961 20.16 8.08961 19.68 8.37961 19.39L14.8996 12.87C15.3796 12.39 15.3796 11.61 14.8996 11.13L8.37961 4.61002C8.08961 4.32002 8.08961 3.84002 8.37961 3.55002C8.66961 3.26002 9.14961 3.26002 9.43961 3.55002L15.9596 10.07C16.4696 10.58 16.7596 11.27 16.7596 12C16.7596 12.73 16.4796 13.42 15.9596 13.93L9.43961 20.45C9.28961 20.59 9.09961 20.67 8.90961 20.67Z" fill="#292D32"/></svg></button>',
+        responsive: [
+          {
+            breakpoint: 1200,
+            settings: {
+              slidesToShow: 3,
+              slidesToScroll: 1,
+            }
+          },
+          {
+            breakpoint: 768,
+            settings: {
+              slidesToShow: 2,
+              slidesToScroll: 1
+            }
+          }
+        ]
+      });
+      
+      // Ocultar iconos después de inicializar también
+      hideActionIcons();
+    }, 50);
+  }
+  
+  // Ejecutar cuando jQuery y Slick estén listos
+  function waitForSlick() {
+    if (typeof jQuery !== 'undefined' && typeof jQuery.fn.slick !== 'undefined') {
+      // Ocultar iconos inmediatamente
+      hideActionIcons();
+      
+      // Esperar a que el script original se ejecute primero
+      setTimeout(function() {
+        initProductCarousel();
+      }, 1500);
+    } else {
+      // Si Slick no está disponible, esperar un poco más
+      setTimeout(waitForSlick, 100);
+    }
+  }
+  
+  // Ocultar iconos inmediatamente si jQuery ya está disponible
+  if (typeof jQuery !== 'undefined') {
+    hideActionIcons();
+    jQuery(document).ready(function($) {
+      hideActionIcons();
+      waitForSlick();
+      
+      // Ocultar iconos continuamente cada 500ms para asegurar que no aparezcan
+      setInterval(function() {
+        hideActionIcons();
+      }, 500);
+      
+      // Forzar tipografía D-DIN y color negro
+      function forceTypography() {
+        jQuery('.section-product-v1 .product-item-v1 .title-product, .section-product-v1 .product-item-v1 .title-product a').css({
+          'font-family': '"D-DIN", "DIN", sans-serif',
+          'font-size': '14px',
+          'color': '#000000',
+          'opacity': '1'
+        });
+        
+        jQuery('.section-product-v1 .product-item-v1 .price-product, .section-product-v1 .product-item-v1 .price-product .price').css({
+          'font-family': '"D-DIN", "DIN", sans-serif',
+          'font-size': '14px',
+          'color': '#000000',
+          'opacity': '1'
+        });
+        
+        // Eliminar hover gris
+        jQuery('.section-product-v1 .product-item-v1, .section-product-v1 .product-item-v1 .info-product, .section-product-v1 .product-item-v1 .product').css({
+          'background': 'transparent',
+          'background-color': 'transparent'
+        });
+      }
+      
+      forceTypography();
+      setInterval(forceTypography, 500);
+    });
+  } else {
+    window.addEventListener('load', function() {
+      if (typeof jQuery !== 'undefined') {
+        hideActionIcons();
+        waitForSlick();
+        
+        // Ocultar iconos continuamente cada 500ms para asegurar que no aparezcan
+        setInterval(function() {
+          hideActionIcons();
+        }, 500);
+        
+        // Forzar tipografía D-DIN y color negro
+        function forceTypography() {
+          jQuery('.section-product-v1 .product-item-v1 .title-product, .section-product-v1 .product-item-v1 .title-product a').css({
+            'font-family': '"D-DIN", "DIN", sans-serif',
+            'font-size': '14px',
+            'color': '#000000',
+            'opacity': '1'
+          });
+          
+          jQuery('.section-product-v1 .product-item-v1 .price-product, .section-product-v1 .product-item-v1 .price-product .price').css({
+            'font-family': '"D-DIN", "DIN", sans-serif',
+            'font-size': '14px',
+            'color': '#000000',
+            'opacity': '1'
+          });
+          
+          // Eliminar hover gris
+          jQuery('.section-product-v1 .product-item-v1, .section-product-v1 .product-item-v1 .info-product, .section-product-v1 .product-item-v1 .product').css({
+            'background': 'transparent',
+            'background-color': 'transparent'
+          });
+        }
+        
+        forceTypography();
+        setInterval(forceTypography, 500);
+      }
+    });
+  }
+  
+  // Reinicializar si la sección se carga dinámicamente en el editor
+  if (typeof Shopify !== 'undefined' && Shopify.designMode) {
+    document.addEventListener('shopify:section:load', function(event) {
+      if (event.detail.sectionId === '{{ section.id }}') {
+        setTimeout(function() {
+          hideActionIcons();
+          initProductCarousel();
+        }, 500);
+      }
+    });
+  }
+})();
+{% endjavascript %}

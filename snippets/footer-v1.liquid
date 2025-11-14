@@ -1,0 +1,225 @@
+<footer class="footer-v1">
+  <div class="footer-container">
+
+    <!-- Izquierda: Logo grande -->
+<div class="footer-col footer-logo">
+  {% if section.settings.footer_logo_svg != blank %}
+    <div class="footer-logo-svg">{{ section.settings.footer_logo_svg }}</div>
+  {% elsif section.settings.footer_logo != blank %}
+    <img src="{{ section.settings.footer_logo | img_url: 'master' }}" alt="{{ shop.name }}" class="footer-logo-img">
+  {% else %}
+    <img src="{{ 'LOGO-BLANCO.png' | asset_url }}" alt="{{ shop.name }}" class="footer-logo-img">
+  {% endif %}
+</div>
+
+
+    <!-- Centro: Quick links en doble columna -->
+    <div class="footer-col footer-links">
+      <div class="links-grid">
+        <ul class="links-column">
+          <li><a href="/collections/all">Shop All</a></li>
+          <li><a href="/collections/best-sellers">Best Sellers</a></li>
+          <li><a href="/pages/about-us">About Us</a></li>
+          <li><a href="/pages/showroom">Showroom</a></li>
+          <li><a href="/pages/contact">Contact Us</a></li>
+        </ul>
+        <ul class="links-column">
+          <li><a href="/pages/shipping">Shipping</a></li>
+          <li><a href="/pages/privacy-policy">Privacy Policy</a></li>
+          <li><a href="/pages/care-guide">Care Guide</a></li>
+          <li><a href="/pages/terms-and-conditions">Terms & Conditions</a></li>
+          <li><a href="/pages/returns">Returns & Exchanges</a></li>
+          <li><a href="/pages/faq">FAQ</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Derecha: Newsletter -->
+    <div class="footer-col footer-newsletter">
+      <h3>SUBSCRIBE AND GET 10% OFF YOUR FIRST ORDER</h3>
+      <form method="post" action="{{ routes.root_url }}contact#contact_form" class="footer-form">
+        <input type="email" name="contact[email]" placeholder="email address" required>
+        <label class="checkbox-container">
+          <input type="checkbox" name="agree" required>
+          <span>I agree to receive emails from Descontinuado.</span>
+        </label>
+        <button type="submit" class="footer-button">SUBSCRIBE</button>
+      </form>
+    </div>
+
+  </div>
+
+  <!-- Franja inferior: copyright + desarrollado por -->
+  <div class="footer-bottom">
+    <p>© 2025 Descontinuado. All rights reserved. — Developed by <a href="https://solware.agency" target="_blank">Solware</a></p>
+  </div>
+</footer>
+
+<style>
+  /* Fuentes */
+  @font-face {
+    font-family: 'D-DIN';
+    src: url('{{ "D-DIN.woff2" | asset_url }}') format('woff2'),
+         url('{{ "D-DIN.woff" | asset_url }}') format('woff'),
+         url('{{ "D-DIN.otf" | asset_url }}') format('opentype');
+    font-weight: 400; font-style: normal; font-display: swap;
+  }
+  @font-face {
+    font-family: 'Chivo-Medium';
+    src: url('{{ "Chivo-Medium.woff2" | asset_url }}') format('woff2'),
+         url('{{ "Chivo-Medium.woff" | asset_url }}') format('woff'),
+         url('{{ "Chivo-Medium.ttf" | asset_url }}') format('truetype');
+    font-weight: 500; font-style: normal; font-display: swap;
+  }
+
+  /* Contenedor general */
+  .footer-v1 {
+    background-color: #000;
+    color: #fff;
+    padding: 70px 5% 20px;
+    font-family: 'D-DIN', sans-serif;
+  }
+
+  .footer-container {
+    display: grid;
+    grid-template-columns: 35% 1fr 1fr; /* Logo ocupa ~35% */
+    gap: 50px;
+    max-width: 1300px;
+    margin: 0 auto 50px;
+    align-items: start;
+  }
+
+  /* Logo */
+  .footer-logo .footer-logo-img,
+  .footer-logo .footer-logo-svg {
+    width: 100%;
+    height: auto;
+    display: block;
+    max-width: none;
+  }
+
+  /* Ajuste de links en doble columna */
+  .footer-links .links-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+  }
+  .links-column {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .links-column li {
+    margin-bottom: 6px;
+  }
+  .links-column a {
+    color: #fff;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    text-decoration: none;
+    transition: opacity 0.3s ease;
+    font-family: 'D-DIN', sans-serif;
+  }
+  .links-column a:hover {
+    opacity: 0.7;
+  }
+
+  /* Newsletter */
+  .footer-newsletter h3 {
+    font-family: 'Chivo-Medium', sans-serif;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #fff;
+    margin-bottom: 15px;
+  }
+  .footer-newsletter .footer-form input[type="email"] {
+    width: 100%;
+    background: transparent;
+    border: 1px solid #fff;
+    padding: 10px 12px;
+    font-size: 13px;
+    color: #fff;
+    margin-bottom: 10px;
+    font-family: 'D-DIN', sans-serif;
+  }
+  .footer-newsletter .checkbox-container {
+    display: flex;
+    align-items: flex-start;
+    font-size: 12px;
+    margin-bottom: 15px;
+    color: #aaa;
+    font-family: 'D-DIN', sans-serif;
+    line-height: 1.4;
+  }
+  .footer-newsletter .checkbox-container input {
+    margin-right: 8px;
+    margin-top: 2px;
+  }
+  .footer-button {
+    width: 100%;
+    background: #fff;
+    color: #000;
+    border: none;
+    padding: 10px 0;
+    font-family: 'D-DIN', sans-serif;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  .footer-button:hover {
+    background: #e4e4e4;
+  }
+
+  /* Franja inferior */
+  .footer-bottom {
+    border-top: 1px solid rgba(255,255,255,0.1);
+    text-align: center;
+    padding-top: 15px;
+  }
+  .footer-bottom p {
+    font-size: 12px;
+    color: #aaa;
+    margin: 0;
+    font-family: 'D-DIN', sans-serif;
+  }
+  .footer-bottom p a {
+    color: #fff;
+    font-weight: 500;
+    text-decoration: none;
+    font-family: 'D-DIN', sans-serif;
+  }
+  .footer-bottom p a:hover {
+    text-decoration: underline;
+  }
+
+  /* Responsive */
+  @media (max-width: 992px) {
+    .footer-container {
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+    }
+    .footer-newsletter {
+      grid-column: span 2;
+    }
+  }
+  @media (max-width: 600px) {
+    .footer-container {
+      grid-template-columns: 1fr;
+      text-align: center;
+    }
+    .footer-logo {
+      display: flex;
+      justify-content: center;
+    }
+    .footer-links .links-grid {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    .footer-bottom p {
+      font-size: 11px;
+    }
+  }
+</style>

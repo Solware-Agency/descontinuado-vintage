@@ -1,0 +1,10 @@
+{
+  "sections": {
+    "terms_template": {
+      "type": "terms-template-descontinuado",
+      "settings": {}
+    }
+  },
+  "order": ["terms_template"]
+}
+

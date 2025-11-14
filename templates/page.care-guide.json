@@ -1,0 +1,10 @@
+{
+  "sections": {
+    "care_guide_template": {
+      "type": "care-guide-template",
+      "settings": {}
+    }
+  },
+  "order": ["care_guide_template"]
+}
+

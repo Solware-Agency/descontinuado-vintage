@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if IE 9 ]><html class="ie9 no-js"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> <html class="no-js p-0" {% if settings.enable_rtl_mode %} dir="rtl"{% endif %} > <!--<![endif]-->
+<head>
+
+  <!-- Basic page needs ================================================== -->
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  <!-- Title and description ================================================== -->
+  <title>
+    {{ page_title }}{% if current_tags %}{% assign meta_tags = current_tags | join: ', ' %} &ndash; {{ 'general.meta.tags' | t: tags: meta_tags }}{% endif %}{% if current_page != 1 %} &ndash; {{ 'general.meta.page' | t: page: current_page }}{% endif %}{% unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless %}
+  </title>
+
+  {% if page_description %}
+  <meta name="description" content="{{ page_description | escape }}">
+  {% endif %}
+
+  <!-- Helpers ================================================== -->
+  {% include 'social-meta-tags' %}
+  <link rel="canonical" href="{{ canonical_url }}">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="{{ settings.m_primary_color }}">
+  <link rel="icon" href="{{'favicon.png'| asset_url}}" type="image/png" sizes="16x16">
+
+
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- font -->
+  {% include 'engo-header-fonts' %}
+  <!-- CSS ================================================== -->
+  {% if settings.po_style == "po_swatchs" %}
+  {{ 'timber.scss.css' | asset_url | stylesheet_tag }}
+  {% endif %}
+  {% if settings.po_style == "po_dropdown" %}
+  {{ 'timber_2.scss.css' | asset_url | stylesheet_tag }}
+  {% endif %}
+
+  {{ 'bootstrap.min.css' | asset_url | stylesheet_tag }}
+  {{ 'slick.css' | asset_url | stylesheet_tag }}
+  {{ 'slick-theme.css' | asset_url | stylesheet_tag }}
+  <link rel="stylesheet" href="{{ 'jquery.fancybox.min.css' | asset_url }}" media="nope!" onload="this.media='all'">
+  {{ 'style-main.scss.css' | asset_url | stylesheet_tag }}
+  {{ 'engo-customizes.css' | asset_url | stylesheet_tag }}
+  {{ 'animate.min.css'| asset_url | stylesheet_tag}}
+  
+  <style>
+  /* Tipografía D-DIN global para todos los nombres de productos - MÁXIMA ESPECIFICIDAD */
+  h4.des-font.capital.title-product.mb-0,
+  h4.des-font.title-product.mb-0,
+  h4.des-font.capital.title-product,
+  h4.des-font.title-product,
+  .des-font.capital.title-product.mb-0,
+  .des-font.title-product.mb-0,
+  .des-font.capital.title-product,
+  .des-font.title-product,
+  .title-product,
+  h4.title-product,
+  .info-product h4.des-font.capital.title-product.mb-0,
+  .info-product h4.des-font.title-product.mb-0,
+  .info-product h4.des-font.capital.title-product,
+  .info-product h4.des-font.title-product,
+  .info-product h4.title-product,
+  .info-product .title-product,
+  .product-item-v1 .info-product h4.des-font.capital.title-product.mb-0,
+  .product-item-v1 .info-product h4.des-font.title-product.mb-0,
+  .product-item-v1 .info-product h4.des-font.capital.title-product,
+  .product-item-v1 .info-product h4.des-font.title-product,
+  .product-item-v1 .info-product .title-product,
+  .product-item-v1 .title-product,
+  .product-item-v2 .info-product .title-product,
+  .product-item-v2 .title-product,
+  .product-item-v3 .info-product .title-product,
+  .product-item-v3 .title-product,
+  .product-item-v4 .info-product .title-product,
+  .product-item-v4 .title-product,
+  .product-item-v5 .info-product .title-product,
+  .product-item-v5 .title-product,
+  .product-item-v6 .info-product .title-product,
+  .product-item-v6 .title-product,
+  .product-item-v7 .info-product .title-product,
+  .product-item-v7 .title-product,
+  .product-item-v8 .info-product .title-product,
+  .product-item-v8 .title-product,
+  .product-item-v9 .info-product .title-product,
+  .product-item-v9 .title-product,
+  .product-item-list .title-product,
+  .product-item-grid .title-product,
+  .col-lg-12 .title-product,
+  .col-md-4 .title-product,
+  .col-md-6 .title-product,
+  .col-md-4 h4.title-product,
+  .col-md-6 h4.title-product,
+  .col-lg-12 h4.title-product,
+  .related-tabs .title-product,
+  .related-tabs h4.title-product,
+  .section-product-v1 .title-product,
+  .section-product-v1 h4.title-product,
+  .section-product-v2 .title-product,
+  .section-product-v3 .title-product,
+  .section-product-v4 .title-product {
+    font-family: "D-DIN", "DIN", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+    font-size: 14px !important;
+    font-weight: 400 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    color: #000000 !important;
+    opacity: 1 !important;
+  }
+
+  h4.des-font.capital.title-product.mb-0 a,
+  h4.des-font.title-product.mb-0 a,
+  h4.des-font.capital.title-product a,
+  h4.des-font.title-product a,
+  .des-font.capital.title-product.mb-0 a,
+  .des-font.title-product.mb-0 a,
+  .des-font.capital.title-product a,
+  .des-font.title-product a,
+  .title-product a,
+  h4.title-product a,
+  .info-product h4.des-font.capital.title-product.mb-0 a,
+  .info-product h4.des-font.title-product.mb-0 a,
+  .info-product h4.des-font.capital.title-product a,
+  .info-product h4.des-font.title-product a,
+  .info-product h4.title-product a,
+  .info-product .title-product a,
+  .product-item-v1 .info-product h4.des-font.capital.title-product.mb-0 a,
+  .product-item-v1 .info-product h4.des-font.title-product.mb-0 a,
+  .product-item-v1 .info-product h4.des-font.capital.title-product a,
+  .product-item-v1 .info-product h4.des-font.title-product a,
+  .product-item-v1 .info-product .title-product a,
+  .product-item-v1 .title-product a,
+  .product-item-v2 .title-product a,
+  .product-item-v3 .title-product a,
+  .product-item-v4 .title-product a,
+  .product-item-v5 .title-product a,
+  .product-item-v6 .title-product a,
+  .product-item-v7 .title-product a,
+  .product-item-v8 .title-product a,
+  .product-item-v9 .title-product a {
+    font-family: "D-DIN", "DIN", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+    font-size: 14px !important;
+    font-weight: 400 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    color: #000000 !important;
+    opacity: 1 !important;
+    text-decoration: none !important;
+  }
+
+  /* Eliminar todas las transiciones y delays en hover */
+  .title-product,
+  .title-product a,
+  h4.title-product,
+  h4.title-product a,
+  .des-font.title-product,
+  .des-font.title-product a,
+  .info-product .title-product,
+  .info-product .title-product a,
+  .product-item-v1,
+  .product-item-v1 .info-product,
+  .product-item-v2,
+  .product-item-v2 .info-product,
+  .product-item-v3,
+  .product-item-v3 .info-product,
+  .col-md-4,
+  .col-md-6,
+  .col-lg-12,
+  .product_item {
+    -webkit-transition: none !important;
+    -moz-transition: none !important;
+    -ms-transition: none !important;
+    -o-transition: none !important;
+    transition: none !important;
+    transition-delay: 0 !important;
+    -webkit-transition-delay: 0 !important;
+    -moz-transition-delay: 0 !important;
+    -ms-transition-delay: 0 !important;
+    -o-transition-delay: 0 !important;
+  }
+
+  .title-product:hover,
+  .title-product:hover a,
+  h4.title-product:hover,
+  h4.title-product:hover a,
+  h4.des-font.capital.title-product.mb-0:hover,
+  h4.des-font.capital.title-product.mb-0:hover a {
+    color: #000000 !important;
+    text-decoration: none !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    -webkit-transition: none !important;
+    -moz-transition: none !important;
+    -ms-transition: none !important;
+    -o-transition: none !important;
+    transition: none !important;
+    transition-delay: 0 !important;
+  }
+
+  /* Eliminar hover gris en productos y sus transiciones */
+  .product-item-v1:hover,
+  .product-item-v1:hover .info-product,
+  .product-item-v2:hover,
+  .product-item-v2:hover .info-product,
+  .product-item-v3:hover,
+  .product-item-v3:hover .info-product,
+  .col-md-4:hover,
+  .col-md-6:hover,
+  .col-lg-12:hover,
+  .product_item:hover {
+    background: transparent !important;
+    background-color: transparent !important;
+    -webkit-transition: none !important;
+    -moz-transition: none !important;
+    -ms-transition: none !important;
+    -o-transition: none !important;
+    transition: none !important;
+    transition-delay: 0 !important;
+  }
+
+  /* Permitir clicks en imágenes - elementos superpuestos no deben bloquear */
+  .img-product .label-sale,
+  .img-product .label-new,
+  .img-product .countdown-timer,
+  .img-product .sold-out,
+  .img-product .countdown-timer ul,
+  .img-product .countdown-timer li,
+  .product-item-v1 .img-product .label-sale,
+  .product-item-v1 .img-product .label-new,
+  .product-item-v1 .img-product .countdown-timer,
+  .product-item-v1 .img-product .sold-out,
+  .product-item-v2 .img-product .label-sale,
+  .product-item-v2 .img-product .label-new,
+  .product-item-v2 .img-product .countdown-timer,
+  .product-item-v2 .img-product .sold-out,
+  .product-item-v3 .img-product .label-sale,
+  .product-item-v3 .img-product .label-new,
+  .product-item-v3 .img-product .countdown-timer,
+  .product-item-v3 .img-product .sold-out,
+  .product-item-v4 .img-product .label-sale,
+  .product-item-v4 .img-product .label-new,
+  .product-item-v4 .img-product .countdown-timer,
+  .product-item-v4 .img-product .sold-out,
+  .product-item-v5 .img-product .label-sale,
+  .product-item-v5 .img-product .label-new,
+  .product-item-v5 .img-product .countdown-timer,
+  .product-item-v5 .img-product .sold-out,
+  .product-item-v6 .img-product .label-sale,
+  .product-item-v6 .img-product .label-new,
+  .product-item-v6 .img-product .countdown-timer,
+  .product-item-v6 .img-product .sold-out,
+  .product-item-v7 .img-product .label-sale,
+  .product-item-v7 .img-product .label-new,
+  .product-item-v7 .img-product .countdown-timer,
+  .product-item-v7 .img-product .sold-out,
+  .product-item-v8 .img-product .label-sale,
+  .product-item-v8 .img-product .label-new,
+  .product-item-v8 .img-product .countdown-timer,
+  .product-item-v8 .img-product .sold-out,
+  .product-item-v9 .img-product .label-sale,
+  .product-item-v9 .img-product .label-new,
+  .product-item-v9 .img-product .countdown-timer,
+  .product-item-v9 .img-product .sold-out {
+    pointer-events: none !important;
+  }
+
+  /* Asegurar que el enlace sea clickeable */
+  .engoj_find_img {
+    display: block !important;
+    position: relative !important;
+    z-index: 1 !important;
+    cursor: pointer !important;
+    text-decoration: none !important;
+  }
+
+  /* Asegurar que las imágenes dentro del enlace no bloqueen */
+  .engoj_find_img img {
+    pointer-events: none !important;
+  }
+
+  /* Asegurar que el contenedor img-product permita clicks */
+  .img-product {
+    position: relative !important;
+  }
+
+  .img-product .engoj_find_img {
+    position: relative !important;
+    z-index: 2 !important;
+  }
+  </style>
+
+  <!-- Header hook for plugins ================================================== -->
+  {{ content_for_header }}
+  {% include 'oldIE-js' %}
+  <script src="{{ 'jquery-3.5.0.min.js' | asset_url }}" type="text/javascript"></script>
+  {{ 'api.jquery.js' | shopify_asset_url | script_tag }}
+  {{ 'modernizr-2.8.3.min.js' | asset_url | script_tag }}
+  {{ 'option_selection.js' | shopify_asset_url | script_tag }}
+  {{ 'lazysizes.min.js' | asset_url | script_tag }}
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
+  <script>
+    window.ajax_cart = true;
+    window.money_format = '{{shop.money_with_currency_format}}';
+    window.shop_currency = '{{ shop.currency }}';
+    window.show_multiple_currencies = true;
+    window.loading_url = "{{ 'loader.gif' | asset_url}}";
+    window.use_color_swatch = true;
+    window.product_image_resize = true;
+    window.enable_sidebar_multiple_choice = true;
+
+    window.file_url = "{{''|file_url}}";
+    window.asset_url = "{{''|asset_url}}";
+    window.images_size = {
+      is_crop: true,
+      ratio_width : 1,
+      ratio_height : 1,
+    };
+    window.inventory_text = {
+      in_stock: "{{ 'products.product.in_stock' | t }}",
+      many_in_stock: "{{ 'products.product.many_in_stock' | t }}",
+      out_of_stock: "{{ 'products.product.out_of_stock' | t }}",
+      add_to_cart: "{{ 'products.product.add_to_cart' | t }}",
+      sold_out: "{{ 'products.product.sold_out' | t }}",
+      unavailable: "{{ 'products.product.unavailable' | t }}"
+    };
+
+    window.sidebar_toggle = {
+      show_sidebar_toggle: "{{ 'general.sidebar_toggle.show_sidebar_toggle' | t }}",
+      hide_sidebar_toggle: "{{ 'general.sidebar_toggle.hide_sidebar_toggle' | t }}"
+    };
+
+  </script>
+
+  {% comment %}
+  If you store has customer accounts disabled, you can remove the following JS file
+  {% endcomment %}
+  {% if template contains 'customers' %}
+  {{ 'shopify_common.js' | shopify_asset_url | script_tag }}
+  {% endif %}
+
+  {% include 'social-meta-tags' %}
+
+  {% render 'weglot_hreftags' %}
+  {% render 'weglot_switcher' %}
+</head>
+{% comment %}
+Add the page template as a class for easy page or template specific styling.
+{% endcomment %}
+<body class="{% if settings.enable_rtl_mode %}rtl{% endif %} preload push_filter_left js_overhidden relative" {% if settings.bg_color_body != blank %}style="background: {{settings.bg_color_body}};"{% endif %}>
+
+  <div class="wrap">
+    <div class="contentbody">
+      {% if settings.enable_promo_topbar %}
+      {% include 'promo-topbar' %}
+      {% endif %}
+      {% section 'header' %}
+
+      <!-- HEADING HIDDEN SEO -->
+      {% if template contains 'index' %}
+      <h1 class="sr-only">{{shop.name}}</h1>
+      {% endif %}
+
+      {% include 'search' %}
+      {% include 'minicart' %}
+      {% include 'menu_mobile' %}
+      {% include 'popup-login' %}
+      {{ content_for_layout }}
+
+      {% section 'footer' %}
+
+    </div>
+  </div>
+  
+  {% if settings.ena_back_to_top %}
+  <a href="javascript:void(0)" class="back-to-top"> 
+    <svg width="10" height="17" viewBox="0 0 10 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0.0802641 5.1485L0.526264 5.5885C0.577331 5.63877 0.646111 5.66694 0.717764 5.66694C0.789416 5.66694 0.858196 5.63877 0.909264 5.5885L4.40926 2.1385L4.40926 16.7325C4.40979 16.8035 4.43837 16.8714 4.48876 16.9214C4.53915 16.9714 4.60727 16.9995 4.67826 16.9995H5.30926C5.34459 16.9998 5.37962 16.9931 5.41236 16.9798C5.4451 16.9665 5.4749 16.9469 5.50006 16.9221C5.52523 16.8973 5.54526 16.8678 5.55902 16.8353C5.57278 16.8028 5.58 16.7678 5.58026 16.7325L5.58026 2.1385L9.08026 5.5885C9.13133 5.63877 9.20011 5.66694 9.27176 5.66694C9.34342 5.66694 9.4122 5.63877 9.46326 5.5885L9.90926 5.1485C9.93433 5.12393 9.95424 5.0946 9.96783 5.06223C9.98143 5.02986 9.98843 4.99511 9.98843 4.96C9.98843 4.9249 9.98143 4.89015 9.96783 4.85778C9.95424 4.82541 9.93433 4.79608 9.90926 4.7715L5.18526 0.113504C5.1342 0.063242 5.06542 0.0350723 4.99376 0.0350723C4.92211 0.0350723 4.85333 0.063242 4.80226 0.113504L0.0802641 4.7715C0.0551984 4.79608 0.0352865 4.82541 0.0216932 4.85778C0.00809999 4.89015 0.00109863 4.9249 0.00109863 4.96C0.00109863 4.99511 0.00809999 5.02986 0.0216932 5.06223C0.0352865 5.0946 0.0551984 5.12393 0.0802641 5.1485Z" fill="#3A3A3A"/>
+    </svg>
+  </a>
+  {% endif %}
+
+
+  {{ 'fastclick.js' | asset_url | script_tag }}
+  {% include 'currencies' %}
+  {{ 'timber.js' | asset_url | script_tag }}
+
+  {% comment %}
+  Template-specific js
+  {% endcomment %}
+  <script>
+    {% if resetPassword %}
+    $(function() {
+      timber.resetPasswordSuccess();
+    });
+    {% endif %}
+  </script>
+
+  <script>
+    jQuery(function() {
+      jQuery('.swatch :radio').change(function() {
+        var optionIndex = jQuery(this).closest('.swatch').attr('data-option-index');
+        var optionValue = jQuery(this).val();
+        jQuery(this)
+        .closest('form')
+        .find('.single-option-selector')
+        .eq(optionIndex)
+        .val(optionValue)
+        .trigger('change');
+      });
+    });
+  </script>
+
+  {% if settings.ajax_cart_method == "drawer" %}
+  {{ 'handlebars.min.js' | asset_url | script_tag }}
+  {% include 'ajax-cart-template' %}
+  {{ 'ajax-cart.js' | asset_url | script_tag }}
+  <script>
+    var ajaxCartConfig = {
+      cartContainer: '.enj-minicart-ajax',
+      addToCartSelector: '.enj-add-to-cart-btn',
+      cartCountSelector: '.enj-cartcount',
+      cartCostSelector: '.enj-cartcost',
+      moneyFormat: {{ shop.money_format | json }}
+    };
+      jQuery(function($) {
+      ajaxCart.init(ajaxCartConfig);
+    });
+
+    jQuery('body').on('ajaxCart.afterCartLoad', function(evt, cart) {
+      // Bind to 'ajaxCart.afterCartLoad' to run any javascript after the cart has loaded in the DOM
+      /*   timber.RightDrawer.open(); */
+    });
+  </script>
+  {% endif %}
+
+  {% if template contains 'contact' %}
+  {{ 'gmaps.min.js' | asset_url | script_tag }}
+  {% endif %}
+
+  {{ 'bootstrap.bundle.min.js' | asset_url | script_tag }}
+  {{ 'slick.min.js' | asset_url | script_tag }}
+  {{ 'instafeed.min.js' | asset_url | script_tag }}
+  {{ 'jquery.fancybox.min.js' | asset_url | script_tag }}
+  {{ 'engo-plugins.js' | asset_url | script_tag }}
+  {{ 'quickview.js' | asset_url | script_tag }}
+  {% comment %}
+  {{ 'wish-list.js' | asset_url | script_tag }}
+  {% endcomment %}
+  {{ 'collection.js' | asset_url | script_tag }}
+  {{ 'engo-scripts.js' | asset_url | script_tag }}
+  {{ 'masonry.pkgd.min.js' | asset_url | script_tag }}
+
+
+
+  {% include 'product-quick-view' %}
+  {% include 'template-popup' %}
+  {% include 'template-popup-ajax-addtocart' %}
+
+  {% include 'linked-options' %}
+  {% include 'remove-sold-out' %}
+  {% if settings.ena_popup_cookie %}
+  {% include 'popup-cookie' %}
+  {% endif %}
+
+  {% include 'popup-product-random' %}
+
+  {% if settings.show_menu_toolbar %}
+  {% include 'menu-toolbar' %}
+  {% endif %}
+
+  {% if settings.ena_popup_news %}
+  {% if template contains 'index' %}
+  {% include 'popup-newletter' %}
+  {% endif%}
+  {% endif %}
+
+  {% if template contains 'product' %}
+  <script>
+    jQuery(document).ready(function($) {
+      if($(window).width() > 1024){
+        $(window).scroll(function(){
+          if ($(window).scrollTop() >= 100) {
+            $('.sticky_addcart').addClass('active'); 
+            $('.popup_random_prod').addClass('active'); 
+            $('.popup-cookie').addClass('active'); 
+
+          }
+          else {
+            $('.sticky_addcart').removeClass('active');
+            $('.popup_random_prod').removeClass('active');
+
+            $('.popup-cookie').removeClass('active');
+          }
+        });
+      }
+    });
+
+    jQuery(document).ready(function($) {
+
+      if($(window).width() < 576){
+
+
+
+        if($('.popup-cookie').length){
+          $('.popup_random_prod').css('bottom','208px');
+        }
+        else{
+          $('.popup_random_prod').css('bottom','0px');
+        }
+        $('.got_it').on('click', function() {
+          $('.popup_random_prod').css('bottom','0px');
+
+        }); 
+
+
+
+        $(window).scroll(function(){
+          if ($(window).scrollTop() >= 300) {
+            $('.sticky_addcart').addClass('active'); 
+            $('.popup-cookie').css('bottom','114px');
+            $('.menu_toolbar').addClass('active'); 
+            $('.got_it').on('click', function() {
+              $('.popup_random_prod').css('bottom','114px');
+
+            }); 
+
+            if($('.popup-cookie').length){
+              $('.popup_random_prod').css('bottom','323px');
+            }
+            else{
+              $('.popup_random_prod').css('bottom','114px');
+            }
+            if($('.popup-cookie').hasClass('d-none')){
+              $('.popup_random_prod').css('bottom','114px');
+            }
+
+          }
+          else {
+            $('.menu_toolbar').removeClass('active');
+            $('.sticky_addcart').removeClass('active');
+            $('.popup-cookie').css('bottom','0px');
+            if($('.popup-cookie').length){
+              $('.popup_random_prod').css('bottom','208px');
+            }
+            else{
+              $('.popup_random_prod').css('bottom','0px');
+            }
+            if($('.popup-cookie').hasClass('d-none')){
+              $('.popup_random_prod').css('bottom','0px');
+            }
+          }
+        });
+      }
+    });
+  </script>
+  {% endif %}
+
+  {% unless template contains 'product' %}
+  <script>
+    jQuery(document).ready(function($) {
+      if($(window).width() < 577){
+
+        if($('.popup-cookie').length){
+          $('.popup_random_prod').css('bottom','208px');
+        }
+        else{
+          $('.popup_random_prod').css('bottom','0px');
+        }
+        $('.got_it').on('click', function() {
+          $('.popup_random_prod').css('bottom','0px');
+
+        }); 
+
+
+        $(window).scroll(function(){
+
+          if ($(window).scrollTop() >= 300) {
+            $('.menu_toolbar').addClass('active'); 
+            $('.popup_random_prod').css('bottom','260px');
+            $('.popup-cookie').css('bottom','50px');
+            $('.got_it').on('click', function() {
+              $('.popup_random_prod').css('bottom','50px');
+            });
+
+            if($('.popup-cookie').length){
+              $('.popup_random_prod').css('bottom','258px');
+            }
+            else{
+              $('.popup_random_prod').css('bottom','50px');
+            }
+
+            if($('.popup-cookie').hasClass('d-none')){
+              $('.popup_random_prod').css('bottom','50px');
+            }
+          }
+          else {
+
+            if($('.popup-cookie').length){
+              $('.popup_random_prod').css('bottom','208px');
+            }
+            else{
+              $('.popup_random_prod').css('bottom','0px');
+            }
+            if($('.popup-cookie').hasClass('d-none')){
+              $('.popup_random_prod').css('bottom','0px');
+            }
+            $('.menu_toolbar').removeClass('active');
+            $('.popup-cookie').css('bottom','0px');
+
+          }
+        });
+      }
+    });
+  </script>
+  {% endunless %}
+
+  <script>
+  (function() {
+    // Forzar tipografía D-DIN y color negro globalmente - MÁXIMA ESPECIFICIDAD
+    function forceGlobalTypography() {
+      if (typeof jQuery !== 'undefined') {
+        // Selector específico para el elemento exacto que vemos en el inspector
+        var selectors = [
+          'h4.des-font.capital.title-product.mb-0',
+          'h4.des-font.title-product.mb-0',
+          'h4.des-font.capital.title-product',
+          'h4.des-font.title-product',
+          '.des-font.capital.title-product.mb-0',
+          '.des-font.title-product.mb-0',
+          '.des-font.capital.title-product',
+          '.des-font.title-product',
+          '.title-product',
+          'h4.title-product',
+          '.info-product h4.des-font.capital.title-product.mb-0',
+          '.info-product h4.des-font.title-product.mb-0',
+          '.info-product h4.des-font.capital.title-product',
+          '.info-product h4.des-font.title-product',
+          '.info-product h4.title-product',
+          '.info-product .title-product',
+          '.product-item-v1 .info-product h4.des-font.capital.title-product.mb-0',
+          '.product-item-v1 .info-product h4.des-font.title-product.mb-0',
+          '.product-item-v1 .info-product h4.des-font.capital.title-product',
+          '.product-item-v1 .info-product h4.des-font.title-product',
+          '.product-item-v1 .info-product .title-product',
+          '.product-item-v1 .title-product'
+        ];
+        
+        // Aplicar a todos los títulos de productos - solo si no tienen el estilo ya aplicado
+        selectors.forEach(function(selector) {
+          jQuery(selector).each(function() {
+            var $el = jQuery(this);
+            // Solo aplicar si no tiene el estilo D-DIN ya aplicado
+            if (!$el.attr('data-din-applied')) {
+              $el.css({
+                'font-family': '"D-DIN", "DIN", sans-serif',
+                'font-size': '14px',
+                'color': '#000000',
+                'opacity': '1',
+                'text-transform': 'uppercase',
+                'letter-spacing': '0.5px'
+              });
+              $el.attr('data-din-applied', 'true');
+            }
+          });
+        });
+        
+        // Aplicar a todos los enlaces dentro de títulos de productos
+        selectors.forEach(function(selector) {
+          jQuery(selector + ' a').each(function() {
+            var $el = jQuery(this);
+            // Solo aplicar si no tiene el estilo D-DIN ya aplicado
+            if (!$el.attr('data-din-applied')) {
+              $el.css({
+                'font-family': '"D-DIN", "DIN", sans-serif',
+                'font-size': '14px',
+                'color': '#000000',
+                'opacity': '1',
+                'text-transform': 'uppercase',
+                'letter-spacing': '0.5px',
+                'text-decoration': 'none'
+              });
+              $el.attr('data-din-applied', 'true');
+            }
+          });
+        });
+        
+        // Eliminar hover gris en productos - solo una vez
+        jQuery('.product-item-v1, .product-item-v2, .product-item-v3, .product-item-v4, .product-item-v5, .product-item-v6, .product-item-v7, .product-item-v8, .product-item-v9, .info-product, .col-md-4, .col-md-6, .col-lg-12, .product_item').each(function() {
+          var $el = jQuery(this);
+          // Solo aplicar si no tiene el estilo ya aplicado
+          if (!$el.attr('data-bg-transparent')) {
+            $el.css({
+              'background': 'transparent',
+              'background-color': 'transparent'
+            });
+            $el.attr('data-bg-transparent', 'true');
+          }
+        });
+      }
+    }
+    
+    // Asegurar que los enlaces de imágenes funcionen correctamente
+    function ensureImageLinks() {
+      if (typeof jQuery !== 'undefined') {
+        // Asegurar que todos los enlaces .engoj_find_img funcionen
+        jQuery('.engoj_find_img').each(function() {
+          var $link = jQuery(this);
+          var href = $link.attr('href');
+          
+          // Si no tiene href, intentar obtenerlo del producto
+          if (!href || href === '#' || href === 'javascript:void(0)') {
+            var $product = $link.closest('.product, .engoj_grid_parent, .product-item-v1, .product-item-v2, .product-item-v3, .product-item-v4, .product-item-v5, .product-item-v6, .product-item-v7, .product-item-v8, .product-item-v9');
+            var $titleLink = $product.find('.title-product a');
+            if ($titleLink.length > 0) {
+              href = $titleLink.attr('href');
+              if (href) {
+                $link.attr('href', href);
+              }
+            }
+          }
+          
+          // Asegurar estilos CSS para que sea clickeable
+          $link.css({
+            'display': 'block',
+            'position': 'relative',
+            'z-index': '2',
+            'cursor': 'pointer'
+          });
+          
+          // Asegurar que los elementos superpuestos no bloqueen
+          $link.closest('.img-product').find('.label-sale, .label-new, .countdown-timer, .sold-out').css({
+            'pointer-events': 'none'
+          });
+          
+          // Asegurar que el click funcione - redirección manual como fallback
+          $link.off('click.force-link').on('click.force-link', function(e) {
+            // Obtener href actualizado
+            href = $link.attr('href');
+            
+            // Si no hay href válido, intentar obtenerlo del título
+            if (!href || href === '#' || href === 'javascript:void(0)') {
+              var $product = $link.closest('.product, .engoj_grid_parent');
+              var $titleLink = $product.find('.title-product a');
+              if ($titleLink.length > 0) {
+                href = $titleLink.attr('href');
+              }
+            }
+            
+            // Si hay href válido, redirigir manualmente para asegurar que funcione
+            if (href && href !== '#' && href !== 'javascript:void(0)') {
+              e.preventDefault();
+              e.stopPropagation();
+              window.location.href = href;
+              return false;
+            } else {
+              e.preventDefault();
+              return false;
+            }
+          });
+          
+          // También agregar click directo en la imagen como fallback
+          $link.find('img').off('click.force-link-img').on('click.force-link-img', function(e) {
+            e.stopPropagation();
+            href = $link.attr('href');
+            if (!href || href === '#' || href === 'javascript:void(0)') {
+              var $product = $link.closest('.product, .engoj_grid_parent');
+              var $titleLink = $product.find('.title-product a');
+              if ($titleLink.length > 0) {
+                href = $titleLink.attr('href');
+              }
+            }
+            if (href && href !== '#' && href !== 'javascript:void(0)') {
+              e.preventDefault();
+              window.location.href = href;
+            }
+          });
+        });
+      }
+    }
+    
+    // Ejecutar inmediatamente si jQuery ya está disponible
+    if (typeof jQuery !== 'undefined') {
+      forceGlobalTypography();
+      ensureImageLinks();
+      jQuery(document).ready(function() {
+        forceGlobalTypography();
+        ensureImageLinks();
+        // Ejecutar continuamente cada 200ms para asegurar que se aplique
+        setInterval(function() {
+          forceGlobalTypography();
+          ensureImageLinks();
+        }, 200);
+      });
+    } else {
+      window.addEventListener('load', function() {
+        if (typeof jQuery !== 'undefined') {
+          forceGlobalTypography();
+          ensureImageLinks();
+          setInterval(function() {
+            forceGlobalTypography();
+            ensureImageLinks();
+          }, 200);
+        }
+      });
+    }
+    
+    // Ejecutar también después de cargas dinámicas
+    if (typeof jQuery !== 'undefined') {
+      jQuery(document).on('DOMNodeInserted DOMSubtreeModified', function() {
+        forceGlobalTypography();
+        ensureImageLinks();
+      });
+      
+      // Observer para cambios en el DOM
+      if (typeof MutationObserver !== 'undefined') {
+        var observer = new MutationObserver(function(mutations) {
+          forceGlobalTypography();
+          ensureImageLinks();
+        });
+        observer.observe(document.body, {
+          childList: true,
+          subtree: true
+        });
+      }
+    }
+  })();
+  </script>
+
+</body>
+</html>

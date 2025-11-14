@@ -1,0 +1,144 @@
+<div data-section-id="{{ section.id }}" data-section-type="section-service-v1" style="{% if section.settings.margin_top != blank %}margin-top: {{section.settings.margin_top}}px;{%endif%} {% if section.settings.margin_bottom != blank %}margin-bottom: {{section.settings.margin_bottom}}px;{% endif %} {% if section.settings.sections_layout == "dark" %}background: {{section.settings.sections_bg_color}};{% endif %}">
+  <div class="section-service-v1" style="background-color: {{section.settings.bg_section}}">
+    <div class="container container-v1">
+      <div class="row justify-content-center">
+        {% if section.blocks.size > 0 %}
+        {% for block in section.blocks %}
+        {% if block.type == "service" %}
+        <div class="itemtservice col-lg-3 col-md-6">
+          <div class="box-service">
+            <div class="service-wrap">
+              <div class="box-icon">
+                <div class="icon">
+                  {% if block.settings.icon_svg != blank %}
+                  {{block.settings.icon_svg}}
+                  {% else  %}
+                  <img data-src="{% if block.settings.img_icon != blank %}{{block.settings.img_icon |img_url : 'master'}} {% else %}//via.placeholder.com/55x55{% endif %}" class="lazyload" alt="_img">
+                  {% endif %}
+                </div>
+              </div>
+              <div class="info">
+                {% if block.settings.block_title != blank %}
+                <h4 class="title">{{block.settings.block_title}}</h4>
+                {% endif %}
+                {% if block.settings.block_content != blank %}          	
+                <p class="content">{{block.settings.block_content}}</p>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% schema %}
+{
+  "name": "SERVICE V1",
+  "class": "index-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section Space"
+    },
+    {
+      "type": "text",
+      "id": "margin_top",
+      "label": "Margin Top",
+      "info": "Defined in pixels. Do not add the 'px' unit."
+    },
+    {
+      "type": "text",
+      "id": "margin_bottom",
+      "label": "Margin Bottom",
+      "info": "Defined in pixels. Do not add the 'px' unit."
+    },
+    {
+      "type": "header",
+      "content": "Background Section"
+    },
+    {
+      "type": "color",
+      "id": "bg_section",
+      "label": "Background Section",
+      "default": "#FCF7F4"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "service",
+      "name": "Service",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "img_icon",
+          "label": "Image Icon"
+        },
+		{
+          "type": "textarea",
+          "id": "icon_svg",
+          "label": "Icon Svg"
+        },
+        {
+          "type": "text",
+          "id": "block_title",
+          "label": "Title",
+          "default": "Fast Delivery"
+        },
+        {
+          "type": "text",
+          "id": "block_content",
+          "label": "Content",
+          "default": "Special financing and earn rewwards."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "SERVICE V1",
+      "category": "HOME",
+      "blocks": [
+        {
+          "type": "service",
+          "settings": {
+            "block_title": "Fast Delivery",
+            "block_content": "All orders of $120 or more of eligible"
+          }
+        },
+        {
+          "type": "service",
+          "settings": {
+            "block_title": "Order Tracking",
+            "block_content": "Using order number or tracking number."
+          }
+        },
+        {
+          "type": "service",
+          "settings": {
+            "block_title": "Secure Payment",
+            "block_content": "Secure and manage your payments."
+          }
+        },
+		{
+          "type": "service",
+          "settings": {
+            "block_title": "Easy Return",
+            "block_content": "30 - days free return policy."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
+
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

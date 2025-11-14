@@ -1,0 +1,404 @@
+<!-- /sections/faq-template.liquid -->
+<style>
+  /* === Fuentes desde assets === */
+  @font-face {
+    font-family: 'Galgo';
+    src: url('{{ "Galgo.woff2" | asset_url }}') format('woff2'),
+         url('{{ "Galgo.woff" | asset_url }}') format('woff'),
+         url('{{ "Galgo.otf" | asset_url }}') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'Chivo-Medium';
+    src: url('{{ "Chivo-Medium.woff2" | asset_url }}') format('woff2'),
+         url('{{ "Chivo-Medium.woff" | asset_url }}') format('woff'),
+         url('{{ "Chivo-Medium.ttf" | asset_url }}') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'D-DIN';
+    src: url('{{ "D-DIN.woff2" | asset_url }}') format('woff2'),
+         url('{{ "D-DIN.woff" | asset_url }}') format('woff'),
+         url('{{ "D-DIN.otf" | asset_url }}') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  /* === Estilos del acordeón === */
+  .faq-accordion-item {
+    border-bottom: 1px solid #000;
+    padding: 20px 0;
+  }
+
+  .faq-question {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    padding: 0;
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+    font-family: 'Chivo-Medium', sans-serif;
+    font-size: 24px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #000;
+    transition: opacity 0.3s ease;
+    line-height: 1.4;
+    margin-bottom: 15px;
+  }
+  
+  .faq-question span:first-child {
+    flex: 1;
+  }
+
+  .faq-question:hover {
+    opacity: 0.7;
+  }
+
+  .faq-icon-wrapper {
+    flex-shrink: 0;
+    margin-left: 20px;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .faq-icon {
+    width: 20px;
+    height: 20px;
+    transition: transform 0.3s ease;
+  }
+
+  .faq-icon-plus,
+  .faq-icon-minus {
+    display: none;
+  }
+
+  .faq-question[aria-expanded="false"] .faq-icon-plus {
+    display: block;
+  }
+
+  .faq-question[aria-expanded="true"] .faq-icon-minus {
+    display: block;
+  }
+
+  .faq-answer {
+    font-family: 'D-DIN', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #333;
+    padding-top: 15px;
+    padding-left: 0;
+  }
+
+  .faq-answer ul {
+    margin: 10px 0;
+    padding-left: 20px;
+  }
+
+  .faq-answer li {
+    margin-bottom: 8px;
+  }
+</style>
+
+<section class="page-faq">
+  <div class="container">
+    <div class="pt-65 pb-30">
+      <div class="wrap-bread-crumb">
+        {% comment %} Breadcrumb eliminado {% endcomment %}
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="faq-content" style="max-width: 800px; margin: 0 auto; padding: 50px 0;">
+      
+      <!-- Título Principal - Galgo -->
+      <h1 class="faq-title text-center" style="font-family: 'Galgo', sans-serif; font-size: 72px; font-weight: 400; text-transform: uppercase; margin-bottom: 20px; letter-spacing: 2px; color: #000;">
+        PREGUNTAS FRECUENTES
+      </h1>
+      
+      <!-- Línea separadora -->
+      <hr style="border: none; border-top: 1px solid #000; margin: 30px 0; width: 100%;">
+      
+      <!-- Acordeón de preguntas -->
+      <div class="faq-accordion">
+        
+        <!-- Pregunta 1 -->
+        <div class="faq-accordion-item">
+          <button class="faq-question" type="button" data-toggle="collapse" data-target="#faq1" aria-expanded="false" aria-controls="faq1" data-parent=".faq-accordion">
+            <span>¿ACEPTAN DEVOLUCIONES?</span>
+            <span class="faq-icon-wrapper">
+              <svg class="faq-icon faq-icon-plus" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                <polygon points="276,236 276,0 236,0 236,236 0,236 0,276 236,276 236,512 276,512 276,276 512,276 512,236"/>
+              </svg>
+              <svg class="faq-icon faq-icon-minus" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                <rect y="236" width="512" height="40"/>
+              </svg>
+            </span>
+          </button>
+          <div id="faq1" class="collapse">
+            <div class="faq-answer">
+              Solo aceptamos devoluciones en piezas que presenten algún defecto reportado inmediatamente al momento de la entrega. Debido a que cada prenda es única, no realizamos cambios por talla o estilo.
+            </div>
+          </div>
+        </div>
+
+        <!-- Pregunta 2 -->
+        <div class="faq-accordion-item">
+          <button class="faq-question" type="button" data-toggle="collapse" data-target="#faq2" aria-expanded="false" aria-controls="faq2" data-parent=".faq-accordion">
+            <span>¿LA ROPA ESTÁ LAVADA Y DESINFECTADA?</span>
+            <span class="faq-icon-wrapper">
+              <svg class="faq-icon faq-icon-plus" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                <polygon points="276,236 276,0 236,0 236,236 0,236 0,276 236,276 236,512 276,512 276,276 512,276 512,236"/>
+              </svg>
+              <svg class="faq-icon faq-icon-minus" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                <rect y="236" width="512" height="40"/>
+              </svg>
+            </span>
+          </button>
+          <div id="faq2" class="collapse">
+            <div class="faq-answer">
+              ¡Sí! Todas nuestras piezas pasan por un proceso de lavado profundo y desinfección profesional antes de ser puestas a la venta, para garantizar que recibas una prenda lista para usar.
+            </div>
+          </div>
+        </div>
+
+        <!-- Pregunta 3 -->
+        <div class="faq-accordion-item">
+          <button class="faq-question" type="button" data-toggle="collapse" data-target="#faq3" aria-expanded="false" aria-controls="faq3" data-parent=".faq-accordion">
+            <span>¿CÓMO FUNCIONAN LAS TALLAS EN ROPA VINTAGE?</span>
+            <span class="faq-icon-wrapper">
+              <svg class="faq-icon faq-icon-plus" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                <polygon points="276,236 276,0 236,0 236,236 0,236 0,276 236,276 236,512 276,512 276,276 512,276 512,236"/>
+              </svg>
+              <svg class="faq-icon faq-icon-minus" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                <rect y="236" width="512" height="40"/>
+              </svg>
+            </span>
+          </button>
+          <div id="faq3" class="collapse">
+            <div class="faq-answer">
+              Todas nuestras piezas tienen la talla indicada en la prenda, pero recuerda que las tallas en la ropa vintage pueden variar dependiendo de la marca y la época. Si no estás segura, recomendamos venir a probarte la pieza en nuestro showroom.
+            </div>
+          </div>
+        </div>
+
+        <!-- Pregunta 4 -->
+        <div class="faq-accordion-item">
+          <button class="faq-question" type="button" data-toggle="collapse" data-target="#faq4" aria-expanded="false" aria-controls="faq4" data-parent=".faq-accordion">
+            <span>¿PUEDO PROBARME LAS PIEZAS ANTES DE COMPRAR?</span>
+            <span class="faq-icon-wrapper">
+              <svg class="faq-icon faq-icon-plus" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                <polygon points="276,236 276,0 236,0 236,236 0,236 0,276 236,276 236,512 276,512 276,276 512,276 512,236"/>
+              </svg>
+              <svg class="faq-icon faq-icon-minus" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                <rect y="236" width="512" height="40"/>
+              </svg>
+            </span>
+          </button>
+          <div id="faq4" class="collapse">
+            <div class="faq-answer">
+              Sí, tienes dos opciones:<br><br>
+              <strong>1. Showroom en Alto Hatillo:</strong><br>
+              Puedes agendar una cita y probarte todas las piezas que desees.<br><br>
+              <strong>2. Prueba a domicilio:</strong><br>
+              Si no puedes venir, puedes solicitar un delivery para probarte la prenda en tu casa. En ese caso, puedes devolverla inmediatamente si no te queda bien o si no es lo que buscabas. (Este servicio tiene un costo adicional por el envío).
+            </div>
+          </div>
+        </div>
+
+        <!-- Pregunta 5 -->
+        <div class="faq-accordion-item">
+          <button class="faq-question" type="button" data-toggle="collapse" data-target="#faq5" aria-expanded="false" aria-controls="faq5" data-parent=".faq-accordion">
+            <span>¿REALIZAN ENVÍOS?</span>
+            <span class="faq-icon-wrapper">
+              <svg class="faq-icon faq-icon-plus" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                <polygon points="276,236 276,0 236,0 236,236 0,236 0,276 236,276 236,512 276,512 276,276 512,276 512,236"/>
+              </svg>
+              <svg class="faq-icon faq-icon-minus" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                <rect y="236" width="512" height="40"/>
+              </svg>
+            </span>
+          </button>
+          <div id="faq5" class="collapse">
+            <div class="faq-answer">
+              Sí, hacemos envíos a todo el país y también internacionales. Encuentra más información en el apartado de "envíos".
+            </div>
+          </div>
+        </div>
+
+        <!-- Pregunta 6 -->
+        <div class="faq-accordion-item">
+          <button class="faq-question" type="button" data-toggle="collapse" data-target="#faq6" aria-expanded="false" aria-controls="faq6" data-parent=".faq-accordion">
+            <span>¿CÓMO PUEDO COMUNICARME SI TENGO ALGÚN INCONVENIENTE?</span>
+            <span class="faq-icon-wrapper">
+              <svg class="faq-icon faq-icon-plus" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                <polygon points="276,236 276,0 236,0 236,236 0,236 0,276 236,276 236,512 276,512 276,276 512,276 512,236"/>
+              </svg>
+              <svg class="faq-icon faq-icon-minus" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                <rect y="236" width="512" height="40"/>
+              </svg>
+            </span>
+          </button>
+          <div id="faq6" class="collapse">
+            <div class="faq-answer">
+              Puedes escribirnos por WhatsApp o a nuestro correo descontinuadovintage@gmail.com para cualquier duda, problema o información adicional.
+            </div>
+          </div>
+        </div>
+
+      </div>
+      
+    </div>
+  </div>
+</section>
+
+<script>
+  (function() {
+    function initFAQAccordion() {
+      if (typeof jQuery === 'undefined') {
+        setTimeout(initFAQAccordion, 100);
+        return;
+      }
+      
+      jQuery(document).ready(function($) {
+        var $faqAccordion = $('.faq-accordion');
+        if ($faqAccordion.length === 0) return;
+        
+        var $allCollapseElements = $faqAccordion.find('.collapse');
+        var $allQuestions = $faqAccordion.find('.faq-question');
+        
+        // Función para actualizar todos los botones basándose en el estado actual
+        function updateAllButtons() {
+          $allQuestions.each(function() {
+            var $question = $(this);
+            var targetId = $question.attr('data-target');
+            var $target = $(targetId);
+            
+            if ($target.length) {
+              var isExpanded = $target.hasClass('show');
+              $question.attr('aria-expanded', isExpanded);
+            }
+          });
+        }
+        
+        // Función para cerrar todas las secciones excepto la especificada
+        function closeAllExcept($exceptElement) {
+          $allCollapseElements.not($exceptElement).each(function() {
+            var $otherElement = $(this);
+            if ($otherElement.hasClass('show')) {
+              // Usar el método de Bootstrap para cerrar
+              if (typeof $otherElement.collapse === 'function') {
+                $otherElement.collapse('hide');
+              } else {
+                // Fallback si Bootstrap no está disponible
+                $otherElement.removeClass('show');
+                var $question = $allQuestions.filter('[data-target="#' + $otherElement.attr('id') + '"]');
+                if ($question.length) {
+                  $question.attr('aria-expanded', 'false');
+                }
+              }
+            }
+          });
+        }
+        
+        // Escuchar eventos de Bootstrap collapse
+        $allCollapseElements.on('show.bs.collapse', function(e) {
+          // Cuando se va a abrir una sección, cerrar todas las demás
+          var $currentTarget = $(e.target);
+          closeAllExcept($currentTarget);
+        });
+        
+        $allCollapseElements.on('shown.bs.collapse', function(e) {
+          // Después de que se abrió completamente, actualizar todos los botones
+          setTimeout(updateAllButtons, 50);
+        });
+        
+        $allCollapseElements.on('hide.bs.collapse', function(e) {
+          // Cuando se va a cerrar, actualizar el botón correspondiente inmediatamente
+          var targetId = '#' + $(e.target).attr('id');
+          var $question = $allQuestions.filter('[data-target="' + targetId + '"]');
+          if ($question.length) {
+            $question.attr('aria-expanded', 'false');
+          }
+        });
+        
+        $allCollapseElements.on('hidden.bs.collapse', function(e) {
+          // Después de que se cerró completamente, actualizar todos los botones
+          setTimeout(updateAllButtons, 50);
+        });
+        
+        // Manejar clicks en los botones para asegurar que solo uno esté abierto
+        $allQuestions.on('click', function(e) {
+          var $question = $(this);
+          var targetId = $question.attr('data-target');
+          var $target = $(targetId);
+          var isCurrentlyExpanded = $target.hasClass('show');
+          
+          // Si se está abriendo una nueva sección, cerrar todas las demás primero
+          if (!isCurrentlyExpanded) {
+            closeAllExcept($target);
+          }
+          
+          // Actualizar todos los botones después de un delay
+          setTimeout(function() {
+            updateAllButtons();
+          }, 400);
+        });
+        
+        // Inicializar: asegurar que todos los botones tengan el estado correcto al cargar
+        updateAllButtons();
+        
+        // Observar cambios en las clases usando MutationObserver como respaldo
+        if (window.MutationObserver) {
+          var observer = new MutationObserver(function(mutations) {
+            var shouldUpdate = false;
+            mutations.forEach(function(mutation) {
+              if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                shouldUpdate = true;
+              }
+            });
+            if (shouldUpdate) {
+              setTimeout(updateAllButtons, 50);
+            }
+          });
+          
+          $allCollapseElements.each(function() {
+            observer.observe(this, {
+              attributes: true,
+              attributeFilter: ['class']
+            });
+          });
+        }
+      });
+    }
+    
+    // Iniciar cuando el DOM esté listo
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initFAQAccordion);
+    } else {
+      initFAQAccordion();
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "FAQ Template",
+  "settings": []
+}
+{% endschema %}

@@ -1,0 +1,10 @@
+{
+  "sections": {
+    "returns_template": {
+      "type": "returns-template-descontinuado",
+      "settings": {}
+    }
+  },
+  "order": ["returns_template"]
+}
+

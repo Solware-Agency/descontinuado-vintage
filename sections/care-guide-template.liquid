@@ -1,0 +1,98 @@
+<!-- /sections/care-guide-template.liquid -->
+<style>
+  /* === Fuentes desde assets === */
+  @font-face {
+    font-family: 'Galgo';
+    src: url('{{ "Galgo.woff2" | asset_url }}') format('woff2'),
+         url('{{ "Galgo.woff" | asset_url }}') format('woff'),
+         url('{{ "Galgo.otf" | asset_url }}') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'Chivo-Medium';
+    src: url('{{ "Chivo-Medium.woff2" | asset_url }}') format('woff2'),
+         url('{{ "Chivo-Medium.woff" | asset_url }}') format('woff'),
+         url('{{ "Chivo-Medium.ttf" | asset_url }}') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'D-DIN';
+    src: url('{{ "D-DIN.woff2" | asset_url }}') format('woff2'),
+         url('{{ "D-DIN.woff" | asset_url }}') format('woff'),
+         url('{{ "D-DIN.otf" | asset_url }}') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+</style>
+
+<section class="page-care-guide">
+  <div class="container">
+    <div class="pt-65 pb-30">
+      <div class="wrap-bread-crumb">
+        {% comment %} Breadcrumb eliminado {% endcomment %}
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="care-guide-content text-center" style="max-width: 800px; margin: 0 auto; padding: 50px 0;">
+      
+      <!-- Título Principal - Galgo -->
+      <h1 class="care-guide-title" style="font-family: 'Galgo', sans-serif; font-size: 72px; font-weight: 400; text-transform: uppercase; margin-bottom: 20px; letter-spacing: 2px; color: #000;">
+        GUÍA DE CUIDADO
+      </h1>
+      
+      <!-- Línea separadora -->
+      <hr style="border: none; border-top: 1px solid #000; margin: 30px 0; width: 100%;">
+      
+      <!-- Sección 1: CUIDA TUS PIEZAS -->
+      <div class="care-section" style="margin-bottom: 50px;">
+        <h2 class="section-title" style="font-family: 'Chivo-Medium', sans-serif; font-size: 24px; font-weight: 500; text-transform: uppercase; margin-bottom: 15px; letter-spacing: 1px; color: #000;">
+          CUIDA TUS PIEZAS
+        </h2>
+        <p class="section-content" style="font-family: 'D-DIN', sans-serif; font-size: 16px; line-height: 1.6; color: #333;">
+          Recuerda seguir siempre las indicaciones de la etiqueta para mantener la prenda en su mejor estado.
+        </p>
+      </div>
+      
+      <!-- Sección 2: REVISA EL MATERIAL -->
+      <div class="care-section" style="margin-bottom: 50px;">
+        <h2 class="section-title" style="font-family: 'Chivo-Medium', sans-serif; font-size: 24px; font-weight: 500; text-transform: uppercase; margin-bottom: 15px; letter-spacing: 1px; color: #000;">
+          REVISA EL MATERIAL
+        </h2>
+        <p class="section-content" style="font-family: 'D-DIN', sans-serif; font-size: 16px; line-height: 1.6; color: #333;">
+          Cada tela requiere de un cuidado diferente. Asegúrate de verificar si la pieza necesita lavado delicado, limpieza en seco o secado al aire.
+        </p>
+      </div>
+      
+      <!-- Sección 3: MANÉJALAS CON ATENCIÓN -->
+      <div class="care-section" style="margin-bottom: 50px;">
+        <h2 class="section-title" style="font-family: 'Chivo-Medium', sans-serif; font-size: 24px; font-weight: 500; text-transform: uppercase; margin-bottom: 15px; letter-spacing: 1px; color: #000;">
+          MANÉJALAS CON ATENCIÓN
+        </h2>
+        <p class="section-content" style="font-family: 'D-DIN', sans-serif; font-size: 16px; line-height: 1.6; color: #333;">
+          Al ser prendas únicas, un buen cuidado ayuda a preservar su calidad y duración.
+        </p>
+      </div>
+      
+      <!-- Línea separadora final -->
+      <hr style="border: none; border-top: 1px solid #000; margin: 30px 0; width: 100%;">
+      
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Care Guide Template",
+  "settings": []
+}
+{% endschema %}
+

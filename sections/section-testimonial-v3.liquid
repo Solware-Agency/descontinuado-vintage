@@ -1,0 +1,171 @@
+<div data-section-id="{{ section.id }}" data-section-type="section-testimonial-v3" style="{% if section.settings.margin_top != blank %}margin-top: {{section.settings.margin_top}}px;{%endif%} {% if section.settings.margin_bottom != blank %}margin-bottom: {{section.settings.margin_bottom}}px;{% endif %}">
+  <div class="section-testimonial-v3" {% if section.settings.background_color != blank %}style="background:{{section.settings.background_color}}"{% endif %}>
+    <div class="container container-v1">
+      <div class="row">
+        <div class="col-lg-4">
+          <div class="title_block">            
+            {% if section.settings.sub_title != blank %}
+            <p class="sub_title">{{section.settings.sub_title}}</p>
+            {% endif %}
+            {% if section.settings.section_title != blank %}
+            <h3>{{section.settings.section_title}}</h3>      
+            {% endif %}
+            {% if section.settings.desc_content != blank %}
+            <p class="desc">{{section.settings.desc_content}}</p>
+            {% endif %}
+          </div>
+        </div>
+        <div class="col-lg-8">
+          <div class="js-testimonial-v3">
+            {% if section.blocks.size > 0 %}
+            {% for block in section.blocks %}
+            {% if block.type == "testimonial" %}
+            <div class="">
+              <div class="testimonial-inner">
+                <div class="testimonial-info">
+                  <div class="avatar ">
+                    {% if block.settings.block_img != blank %}
+                    <img width="64" height="64" data-src="{{block.settings.block_img|img_url:'master'}}" class="lazyload img-responsive" alt="testimonial">
+                    {% else %}
+                    {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+                    {% endif %}
+                  </div>
+                  <span class="engoc-star star-5"></span>
+                  <p class="content mar-bottom-15" >{{block.settings.block_content}}</p> 
+                  <div class="author-info">
+                    <h3 class="mb-1" >
+                      <svg width="27" height="1" viewBox="0 0 27 1" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <line y1="0.5" x2="27" y2="0.5" stroke="#6D7178" stroke-opacity="0.75"/>
+                      </svg>
+					{{block.settings.block_name}}</h3>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+
+{% schema %}
+{
+  "name": "TESTIMONIAL V3",
+  "class": "index-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Testimonial"
+    },
+	{
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#F4F8F1"
+    },
+    {
+      "type": "text",
+      "id": "sub_title",
+      "label": "Sub Title",
+      "default": "SHOP organic"
+    },
+    {
+      "type": "text",
+      "id": "section_title",
+      "label": "Title section",
+      "default": "Testimonials"
+    },
+	{
+      "type": "text",
+      "id": "desc_content",
+      "label": "Description",
+      "default": "Treat yourself to some of our best-selling superstars."
+    },    
+    {
+      "type": "header",
+      "content": "Section Space"
+    },
+    {
+      "type": "text",
+      "id": "margin_top",
+      "label": "Margin Top",
+      "info": "Defined in pixels. Do not add the 'px' unit."
+    },
+    {
+      "type": "text",
+      "id": "margin_bottom",
+      "label": "Margin Bottom",
+      "info": "Defined in pixels. Do not add the 'px' unit."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "testimonial",
+      "name": "Testimonial",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "block_img",
+          "label": "Avata"
+        },
+        {
+          "type": "text",
+          "id": "block_name",
+          "label": "Name",
+          "default": "Karen"
+        },
+        {
+          "type": "textarea",
+          "id": "block_content",
+          "label": "Content",
+          "default": "“I came to Dr Thiara with lumpy asymmetrical lips which I had done from elsewhere. He was excellent in discussing my options and was able to fix my lips using 2 sessions of lip fillers. I was wowed by the results and cannot recommend him highly enough!“"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "TESTIMONIAL V3",
+      "category": "HOME",
+      "blocks": [
+        {
+          "type": "testimonial",
+          "settings": {
+            
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

@@ -1,0 +1,645 @@
+{% if section.settings.select_hds == "header_v1" %}
+{% if template contains 'index' %}
+<header id="header" class="homepage header-v1-h1 is-transparent js_height_hd jsheader_sticky d-none d-xl-block {% if section.settings.hd_home_enable_transparents %}header-absolute {% endif %}">
+  <div class="header-wrapper">
+    <div class="container container-v5">
+      <div class="row align-items-center">
+        <div class="col-lg-2">
+          <div class="logo">
+            <div class="center logo delay05">           
+              {% if section.settings.hd_home_logo_svg !=blank %}
+              <div class="logosvg" style="max-width:{{section.settings.hd_home_logo_maxwidth}}px;">
+                <a class="logourl" href="{{shop.url}}">{{section.settings.hd_home_logo_svg}}</a>
+              </div>
+              {% else %}            
+              <a href="{{shop.url}}">
+                {% if section.settings.hd_home_logo != blank %}
+                <img src="{{section.settings.hd_home_logo|img_url:'master'}}" width="{{section.settings.hd_home_logo_maxwidth}}" alt="{{shop.name}}">
+                {% else %}
+                <img src="//via.placeholder.com/160x46" width="{{section.settings.hd_home_logo_maxwidth}}" alt="{{shop.name}}">
+                {% endif %}
+              </a>
+              {% endif %}          
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-8 d-flex justify-content-end">
+          <div class="menu right">
+            {% include 'eveland-menu' %}
+          </div>
+        </div>
+        <div class="col-lg-2 currencies-login">        
+          <div class="cart-login-search align-items-center"> 
+            <ul class="list-inline list-unstyled mb-0">
+              <li class="list-inline-item mr-0">
+                <a href="javascript:void(0)" class="search js-search-destop">
+                  {% if section.settings.hd_icon_search_svg != blank %}
+                  {{section.settings.hd_icon_search_svg}}
+                  {% else %}
+                  <i class="{{section.settings.hd_icon_search}}"></i>
+                  {% endif %}
+                </a>
+              </li>
+              <li class="list-inline-item mr-0">
+                <a href="{% if customer %}/account {% else %}javascript:void(0){% endif %}" class="login {% if customer %}{% else %}js-call-popup-login{% endif %}">
+                  {% if section.settings.hd_icon_login_svg != blank %}
+                  {{section.settings.hd_icon_login_svg}}
+                  {% else %}
+                  <i class="{{section.settings.hd_icon_login}}"></i>
+                  {% endif %}
+
+                </a>
+              </li>
+              <li class="list-inline-item mr-0">
+                <a href="{{section.settings.url_wishlist}}" class="">
+                  {% if section.settings.hd_icon_wishlist_svg != blank %}
+                  {{section.settings.hd_icon_wishlist_svg}}
+                  {% else %}
+                  <i class="{{section.settings.hd_icon_wishlist}}"></i>
+                  {% endif %}
+
+                </a>
+              </li>
+              <li class="list-inline-item mr-0">
+                <a href="javascript:void(0)" class="cart js-call-minicart">
+                  {% if section.settings.hd_icon_cart_svg != blank %}
+                  {{section.settings.hd_icon_cart_svg}}
+                  {% else %}
+                  <i class="{{section.settings.hd_icon_cart}}"></i>
+                  {% endif %}
+                  <span class="count_pr_incart js-number-cart number-cart">{% if cart.item_count > 0 %} {{cart.item_count}} {% else %} 0 {% endif %}</span>
+                </a>
+              </li>
+            </ul>
+
+          </div>
+
+          <div class="clearfix"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<script>
+  jQuery(document).ready(function($) {
+    
+    function hexToRgb(hex) {
+      var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+      return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+      } : null;
+    }
+    var r = (hexToRgb("{{section.settings.hd_home_bg_header_normal}}").r);
+    var g = (hexToRgb("{{section.settings.hd_home_bg_header_normal}}").g);
+    var b = (hexToRgb("{{section.settings.hd_home_bg_header_normal}}").b)
+    {% if section.settings.hd_home_enable_transparents %}
+    {% else %}                  
+    $('.header-v1-h1').css({'background':'rgba(' + r + ' ,' + g + ',' + b + ',{{section.settings.hd_bg_header_opacity}})'});
+    {% endif %}
+    
+    {% if section.settings.enable_sticky_hd_home  %}
+    function menudestopscroll1() {
+      var $nav = $(".jsheader_sticky");
+      $nav.removeClass('menu_scroll_v1');
+    
+      $(document).scroll(function() {
+
+        $nav.toggleClass('menu_scroll_v1', $(this).scrollTop() > $nav.height());
+        // Cambiar fondo a negro cuando se hace scroll
+        $('.header-v1-h1.menu_scroll_v1').css({'background':'#000'});
+        {% if section.settings.hd_home_enable_transparents %}                    
+        if($(this).scrollTop() < $nav.height()){
+          $('.header-v1-h1').css({'background':'none'}); 
+            $nav.removeClass('menu_scroll_v1')
+        }
+        {% endif %}                
+      });
+    } 
+    menudestopscroll1();
+    {% endif %}
+    
+    // Detectar apertura de mega-menu para HOME
+    var $header = $('#header.homepage');
+    var $megaMenus = $('.nav-item.dropdown, .list-woman, .list-home');
+    
+    $megaMenus.on('mouseenter', function() {
+      $header.addClass('menu-open');
+    });
+    
+    $megaMenus.on('mouseleave', function() {
+      setTimeout(function() {
+        if (!$('.dropdown-menu.show:hover').length && !$('.nav-item.dropdown:hover').length) {
+          $header.removeClass('menu-open');
+        }
+      }, 100);
+    });
+    
+    // También detectar cuando el dropdown-menu está visible
+    $(document).on('mouseenter', '.dropdown-menu.show', function() {
+      $header.addClass('menu-open');
+    });
+    
+    $(document).on('mouseleave', '.dropdown-menu.show', function() {
+      setTimeout(function() {
+        if (!$('.dropdown-menu.show:hover').length && !$('.nav-item.dropdown:hover').length) {
+          $header.removeClass('menu-open');
+        }
+      }, 100);
+    });
+  });
+</script>
+
+<style>
+  /* Colores iniciales - BLANCOS cuando header es transparente */
+  {% if section.settings.hd_home_enable_transparents %}
+  #header.homepage .menu ul .nav-item .nav-link{
+    color: #fff !important;
+  }
+  #header.homepage .menu ul .nav-item .nav-link:hover,
+  #header.homepage .menu ul .nav-item .nav-link:focus,
+  #header.homepage .menu ul .nav-item .nav-link.active {
+    color: #fff !important;
+  }
+  #header.homepage .currencies-login .cart-login-search ul li a{
+    color: #fff !important;
+  }
+  #header.homepage .currencies-login .cart-login-search ul li a i{
+    color: #fff !important;
+  }
+  /* SVG - solo stroke blanco para mantener outline */
+  #header.homepage .currencies-login .cart-login-search ul li a svg{
+    stroke: #fff !important;
+    color: #fff !important;
+  }
+  #header.homepage .currencies-login .cart-login-search ul li a svg *{
+    stroke: #fff !important;
+  }
+  #header.homepage .currencies-login .cart-login-search ul li a svg path{
+    stroke: #fff !important;
+  }
+  #header.homepage .currencies-login .cart-login-search ul li a svg circle,
+  #header.homepage .currencies-login .cart-login-search ul li a svg line,
+  #header.homepage .currencies-login .cart-login-search ul li a svg polyline {
+    stroke: #fff !important;
+  }
+  /* Logo blanco cuando es transparente */
+  #header.homepage .logo img {
+    filter: brightness(0) invert(1) !important;
+  }
+  #header.homepage .logosvg svg {
+    filter: brightness(0) invert(1) !important;
+  }
+  
+  /* Cuando mega-menu está abierto: fondo negro, logo negro, textos blancos */
+  #header.homepage.is-transparent.menu-open {
+    background: #000 !important;
+  }
+  #header.homepage.is-transparent.menu-open .logo img {
+    filter: none !important;
+  }
+  #header.homepage.is-transparent.menu-open .logosvg svg {
+    filter: none !important;
+  }
+  #header.homepage.is-transparent.menu-open .menu ul .nav-item .nav-link {
+    color: #fff !important;
+  }
+  #header.homepage.is-transparent.menu-open .currencies-login .cart-login-search ul li a {
+    color: #fff !important;
+  }
+  #header.homepage.is-transparent.menu-open .currencies-login .cart-login-search ul li a i {
+    color: #fff !important;
+  }
+  #header.homepage.is-transparent.menu-open .currencies-login .cart-login-search ul li a svg {
+    stroke: #fff !important;
+  }
+  #header.homepage.is-transparent.menu-open .currencies-login .cart-login-search ul li a svg * {
+    stroke: #fff !important;
+  }
+  
+  {% else %}
+  #header .menu ul .nav-item .nav-link{
+    color: {{section.settings.hd_home_color_text}};
+  }
+  #header .currencies-login .cart-login-search ul li a i{
+    color : {{section.settings.hd_home_color_text}};
+  }
+  {% endif %}
+  
+  /* Colores blancos cuando se hace scroll */
+  #header.homepage.header-v1-h1.menu_scroll_v1 .menu ul .nav-item .nav-link,
+  #header.homepage.menu_scroll_v1 .menu ul .nav-item .nav-link {
+    color: #fff !important;
+  }
+  #header.homepage.header-v1-h1.menu_scroll_v1 .menu ul .nav-item .nav-link:hover,
+  #header.homepage.header-v1-h1.menu_scroll_v1 .menu ul .nav-item .nav-link:focus,
+  #header.homepage.header-v1-h1.menu_scroll_v1 .menu ul .nav-item .nav-link.active,
+  #header.homepage.menu_scroll_v1 .menu ul .nav-item .nav-link:hover,
+  #header.homepage.menu_scroll_v1 .menu ul .nav-item .nav-link:focus,
+  #header.homepage.menu_scroll_v1 .menu ul .nav-item .nav-link.active {
+    color: #fff !important;
+  }
+  
+  /* Iconos - solo cambiar stroke para mantener estilo outline, no fill */
+  #header.homepage.header-v1-h1.menu_scroll_v1 .currencies-login .cart-login-search ul li a,
+  #header.homepage.menu_scroll_v1 .currencies-login .cart-login-search ul li a {
+    color: #fff !important;
+  }
+  #header.homepage.header-v1-h1.menu_scroll_v1 .currencies-login .cart-login-search ul li a i,
+  #header.homepage.menu_scroll_v1 .currencies-login .cart-login-search ul li a i {
+    color: #fff !important;
+  }
+  /* SVG - solo cambiar stroke para mantener estilo outline, mantener fill transparente */
+  #header.homepage.header-v1-h1.menu_scroll_v1 .currencies-login .cart-login-search ul li a svg,
+  #header.homepage.menu_scroll_v1 .currencies-login .cart-login-search ul li a svg {
+    stroke: #fff !important;
+    color: #fff !important;
+  }
+  /* Cambiar stroke de todos los elementos SVG pero mantener fill como está (transparente para outline) */
+  #header.homepage.header-v1-h1.menu_scroll_v1 .currencies-login .cart-login-search ul li a svg *,
+  #header.homepage.menu_scroll_v1 .currencies-login .cart-login-search ul li a svg * {
+    stroke: #fff !important;
+  }
+  /* Paths - solo cambiar stroke, mantener fill original (probablemente none para outline) */
+  #header.homepage.header-v1-h1.menu_scroll_v1 .currencies-login .cart-login-search ul li a svg path,
+  #header.homepage.menu_scroll_v1 .currencies-login .cart-login-search ul li a svg path {
+    stroke: #fff !important;
+  }
+  /* Circles, lines, etc - cambiar stroke a blanco */
+  #header.homepage.header-v1-h1.menu_scroll_v1 .currencies-login .cart-login-search ul li a svg circle,
+  #header.homepage.header-v1-h1.menu_scroll_v1 .currencies-login .cart-login-search ul li a svg line,
+  #header.homepage.header-v1-h1.menu_scroll_v1 .currencies-login .cart-login-search ul li a svg polyline,
+  #header.homepage.menu_scroll_v1 .currencies-login .cart-login-search ul li a svg circle,
+  #header.homepage.menu_scroll_v1 .currencies-login .cart-login-search ul li a svg line,
+  #header.homepage.menu_scroll_v1 .currencies-login .cart-login-search ul li a svg polyline {
+    stroke: #fff !important;
+  }
+  /* Logo - invertir a blanco */
+  #header.homepage.header-v1-h1.menu_scroll_v1 .logo img,
+  #header.homepage.menu_scroll_v1 .logo img {
+    filter: brightness(0) invert(1) !important;
+  }
+  #header.homepage.header-v1-h1.menu_scroll_v1 .logosvg svg,
+  #header.homepage.menu_scroll_v1 .logosvg svg {
+    filter: brightness(0) invert(1) !important;
+  }
+  
+  #header .topbar-v1 .list-icon a{
+    color : {{settings.color_topbar_v1}};
+  }
+  #header .menu-language-wrap .title, #header .menu-currency-wrap .title{
+    color : {{settings.color_topbar_v1}};
+  }
+</style>
+
+{% endif %}
+
+{% endif %}
+
+{% if section.settings.select_hds_all == "header_ver1" %}
+{% unless template contains 'index' %}
+<header id="header" class="otherpage header-v1-h1 is-black js_height_hd jsheader_sticky d-none d-xl-block">
+  <div class="header-wrapper">
+    <div class="container container-v5">
+      <div class="row align-items-center">
+        <div class="col-lg-2">
+          <div class="logo">
+            <div class="center logo delay05">           
+              {% if section.settings.hd_other_logo_svg !=blank %}
+              <div class="logosvg" style="max-width:{{section.settings.hd_other_logo_maxwidth}}px;">
+                <a class="logourl" href="{{shop.url}}">{{section.settings.hd_other_logo_svg}}</a>
+              </div>
+              {% else %}            
+              <a href="{{shop.url}}">
+                {% if section.settings.hd_other_logo != blank %}
+                <img src="{{section.settings.hd_other_logo|img_url:'master'}}" width="{{section.settings.hd_other_logo_maxwidth}}" alt="{{shop.name}}">
+                {% else %}
+                <img src="//via.placeholder.com/160x46" width="{{section.settings.hd_other_logo_maxwidth}}" alt="{{shop.name}}">
+                {% endif %}
+              </a>
+              {% endif %}          
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-8 d-flex justify-content-end">
+          <div class="menu right">
+            {% include 'eveland-menu' %}
+          </div>
+        </div>
+        <div class="col-lg-2 currencies-login">        
+          <div class="cart-login-search align-items-center"> 
+            <ul class="list-inline list-unstyled mb-0">
+              <li class="list-inline-item mr-0">
+                <a href="javascript:void(0)" class="search js-search-destop">
+                  {% if section.settings.hd_icon_search_svg != blank %}
+                  {{section.settings.hd_icon_search_svg}}
+                  {% else %}
+                  <i class="{{section.settings.hd_icon_search}}"></i>
+                  {% endif %}
+                </a>
+              </li>
+              <li class="list-inline-item mr-0">
+                <a href="{% if customer %}/account {% else %}javascript:void(0){% endif %}" class="login {% if customer %}{% else %}js-call-popup-login{% endif %}">
+                  {% if section.settings.hd_icon_login_svg != blank %}
+                  {{section.settings.hd_icon_login_svg}}
+                  {% else %}
+                  <i class="{{section.settings.hd_icon_login}}"></i>
+                  {% endif %}
+
+                </a>
+              </li>
+              <li class="list-inline-item mr-0">
+                <a href="{{section.settings.url_wishlist}}" class="">
+                  {% if section.settings.hd_icon_wishlist_svg != blank %}
+                  {{section.settings.hd_icon_wishlist_svg}}
+                  {% else %}
+                  <i class="{{section.settings.hd_icon_wishlist}}"></i>
+                  {% endif %}
+
+                </a>
+              </li>
+              <li class="list-inline-item mr-0">
+                <a href="javascript:void(0)" class="cart js-call-minicart">
+                  {% if section.settings.hd_icon_cart_svg != blank %}
+                  {{section.settings.hd_icon_cart_svg}}
+                  {% else %}
+                  <i class="{{section.settings.hd_icon_cart}}"></i>
+                  {% endif %}
+                  <span class="count_pr_incart js-number-cart number-cart">{% if cart.item_count > 0 %} {{cart.item_count}} {% else %} 0 {% endif %}</span>
+                </a>
+              </li>
+            </ul>
+
+          </div>
+
+          <div class="clearfix"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+
+<script>
+  jQuery(document).ready(function($) {
+    
+    function hexToRgb(hex) {
+      var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+      return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+      } : null;
+    }
+    // Forzar fondo negro en todas las páginas que no sean HOME
+    $('.header-v1-h1.otherpage').css({'background':'#000'});
+    
+    {% if section.settings.enable_sticky_hd_other  %}
+    function menudestopscroll1() {
+      var $nav = $(".jsheader_sticky");
+      $nav.removeClass('menu_scroll_v1');
+
+      $(document).scroll(function() {
+
+        $nav.toggleClass('menu_scroll_v1', $(this).scrollTop() > $nav.height());
+        // Cambiar fondo a negro cuando se hace scroll
+        $('.header-v1-h1.menu_scroll_v1').css({'background':'#000'});
+        {% if section.settings.hd_other_enable_transparents %}                    
+        if($(this).scrollTop() < $nav.height()){
+          $('.header-v1-h1').css({'background':'none'}); 
+            $nav.removeClass('menu_scroll_v1')
+        }
+        {% endif %}                 
+      });
+    } 
+    menudestopscroll1();
+    {% endif %}
+    
+    
+    // Detectar apertura de mega-menu para HOME
+    var $header = $('#header.homepage');
+    var $megaMenus = $('.nav-item.dropdown, .list-woman, .list-home');
+    
+    $megaMenus.on('mouseenter', function() {
+      $header.addClass('menu-open');
+    });
+    
+    $megaMenus.on('mouseleave', function() {
+      $header.removeClass('menu-open');
+    });
+    
+    // También detectar cuando el dropdown-menu está visible
+    $(document).on('mouseenter', '.dropdown-menu.show', function() {
+      $header.addClass('menu-open');
+    });
+    
+    $(document).on('mouseleave', '.dropdown-menu.show', function() {
+      setTimeout(function() {
+        if (!$('.dropdown-menu.show:hover').length && !$('.nav-item.dropdown:hover').length) {
+          $header.removeClass('menu-open');
+        }
+      }, 100);
+    });
+  });
+</script>
+
+<style>
+  /* FORZAR ESTILOS NEGROS EN TODAS LAS PÁGINAS QUE NO SEAN HOME */
+  #header.otherpage.is-black {
+    background: #000 !important;
+  }
+  #header.otherpage.is-black .menu ul .nav-item .nav-link {
+    color: #fff !important;
+  }
+  #header.otherpage.is-black .menu ul .nav-item .nav-link:hover,
+  #header.otherpage.is-black .menu ul .nav-item .nav-link:focus,
+  #header.otherpage.is-black .menu ul .nav-item .nav-link.active {
+    color: #fff !important;
+  }
+  #header.otherpage.is-black .currencies-login .cart-login-search ul li a {
+    color: #fff !important;
+  }
+  #header.otherpage.is-black .currencies-login .cart-login-search ul li a i {
+    color: #fff !important;
+  }
+  #header.otherpage.is-black .currencies-login .cart-login-search ul li a svg {
+    stroke: #fff !important;
+    color: #fff !important;
+  }
+  #header.otherpage.is-black .currencies-login .cart-login-search ul li a svg * {
+    stroke: #fff !important;
+  }
+  #header.otherpage.is-black .currencies-login .cart-login-search ul li a svg path {
+    stroke: #fff !important;
+  }
+  #header.otherpage.is-black .currencies-login .cart-login-search ul li a svg circle,
+  #header.otherpage.is-black .currencies-login .cart-login-search ul li a svg line,
+  #header.otherpage.is-black .currencies-login .cart-login-search ul li a svg polyline {
+    stroke: #fff !important;
+  }
+  #header.otherpage.is-black .logo img {
+    filter: brightness(0) invert(1) !important;
+  }
+  #header.otherpage.is-black .logosvg svg {
+    filter: brightness(0) invert(1) !important;
+  }
+  
+  /* Colores iniciales - BLANCOS cuando header es transparente */
+  {% if section.settings.hd_other_enable_transparents %}
+  #header.otherpage .menu ul .nav-item .nav-link{
+    color: #fff !important;
+  }
+  #header.otherpage .menu ul .nav-item .nav-link:hover,
+  #header.otherpage .menu ul .nav-item .nav-link:focus,
+  #header.otherpage .menu ul .nav-item .nav-link.active {
+    color: #fff !important;
+  }
+  #header.otherpage .currencies-login .cart-login-search ul li a{
+    color: #fff !important;
+  }
+  #header.otherpage .currencies-login .cart-login-search ul li a i{
+    color: #fff !important;
+  }
+  /* SVG - solo stroke blanco para mantener outline */
+  #header.otherpage .currencies-login .cart-login-search ul li a svg{
+    stroke: #fff !important;
+    color: #fff !important;
+  }
+  #header.otherpage .currencies-login .cart-login-search ul li a svg *{
+    stroke: #fff !important;
+  }
+  #header.otherpage .currencies-login .cart-login-search ul li a svg path{
+    stroke: #fff !important;
+  }
+  #header.otherpage .currencies-login .cart-login-search ul li a svg circle,
+  #header.otherpage .currencies-login .cart-login-search ul li a svg line,
+  #header.otherpage .currencies-login .cart-login-search ul li a svg polyline {
+    stroke: #fff !important;
+  }
+  /* Logo blanco cuando es transparente */
+  #header.otherpage .logo img {
+    filter: brightness(0) invert(1) !important;
+  }
+  #header.otherpage .logosvg svg {
+    filter: brightness(0) invert(1) !important;
+  }
+  {% else %}
+  #header .menu ul li .nav-link{
+    color: {{section.settings.hd_other_color_text}};
+  }
+  #header .currencies-login .cart-login-search ul li a i{
+    color : {{section.settings.hd_other_color_text}};
+  }
+  {% endif %}
+  
+  /* Colores blancos cuando se hace scroll */
+  #header.otherpage.header-v1-h1.menu_scroll_v1 .menu ul .nav-item .nav-link,
+  #header.otherpage.menu_scroll_v1 .menu ul .nav-item .nav-link {
+    color: #fff !important;
+  }
+  #header.otherpage.header-v1-h1.menu_scroll_v1 .menu ul .nav-item .nav-link:hover,
+  #header.otherpage.header-v1-h1.menu_scroll_v1 .menu ul .nav-item .nav-link:focus,
+  #header.otherpage.header-v1-h1.menu_scroll_v1 .menu ul .nav-item .nav-link.active,
+  #header.otherpage.menu_scroll_v1 .menu ul .nav-item .nav-link:hover,
+  #header.otherpage.menu_scroll_v1 .menu ul .nav-item .nav-link:focus,
+  #header.otherpage.menu_scroll_v1 .menu ul .nav-item .nav-link.active {
+    color: #fff !important;
+  }
+  
+  /* Iconos - solo cambiar stroke para mantener estilo outline, no fill */
+  #header.otherpage.header-v1-h1.menu_scroll_v1 .currencies-login .cart-login-search ul li a,
+  #header.otherpage.menu_scroll_v1 .currencies-login .cart-login-search ul li a {
+    color: #fff !important;
+  }
+  #header.otherpage.header-v1-h1.menu_scroll_v1 .currencies-login .cart-login-search ul li a i,
+  #header.otherpage.menu_scroll_v1 .currencies-login .cart-login-search ul li a i {
+    color: #fff !important;
+  }
+  /* SVG - solo cambiar stroke para mantener estilo outline, mantener fill transparente */
+  #header.otherpage.header-v1-h1.menu_scroll_v1 .currencies-login .cart-login-search ul li a svg,
+  #header.otherpage.menu_scroll_v1 .currencies-login .cart-login-search ul li a svg {
+    stroke: #fff !important;
+    color: #fff !important;
+  }
+  /* Cambiar stroke de todos los elementos SVG pero mantener fill como está (transparente para outline) */
+  #header.otherpage.header-v1-h1.menu_scroll_v1 .currencies-login .cart-login-search ul li a svg *,
+  #header.otherpage.menu_scroll_v1 .currencies-login .cart-login-search ul li a svg * {
+    stroke: #fff !important;
+  }
+  /* Paths - solo cambiar stroke, mantener fill original (probablemente none para outline) */
+  #header.otherpage.header-v1-h1.menu_scroll_v1 .currencies-login .cart-login-search ul li a svg path,
+  #header.otherpage.menu_scroll_v1 .currencies-login .cart-login-search ul li a svg path {
+    stroke: #fff !important;
+  }
+  /* Circles, lines, etc - cambiar stroke a blanco */
+  #header.otherpage.header-v1-h1.menu_scroll_v1 .currencies-login .cart-login-search ul li a svg circle,
+  #header.otherpage.header-v1-h1.menu_scroll_v1 .currencies-login .cart-login-search ul li a svg line,
+  #header.otherpage.header-v1-h1.menu_scroll_v1 .currencies-login .cart-login-search ul li a svg polyline,
+  #header.otherpage.menu_scroll_v1 .currencies-login .cart-login-search ul li a svg circle,
+  #header.otherpage.menu_scroll_v1 .currencies-login .cart-login-search ul li a svg line,
+  #header.otherpage.menu_scroll_v1 .currencies-login .cart-login-search ul li a svg polyline {
+    stroke: #fff !important;
+  }
+  /* Logo - invertir a blanco */
+  #header.otherpage.header-v1-h1.menu_scroll_v1 .logo img,
+  #header.otherpage.menu_scroll_v1 .logo img {
+    filter: brightness(0) invert(1) !important;
+  }
+  #header.otherpage.header-v1-h1.menu_scroll_v1 .logosvg svg,
+  #header.otherpage.menu_scroll_v1 .logosvg svg {
+    filter: brightness(0) invert(1) !important;
+  }
+  
+  #header .topbar-v1 .list-icon a{
+    color : {{settings.color_topbar_v1}};
+  }
+  #header .menu-language-wrap .title, #header .menu-currency-wrap .title{
+    color : {{settings.color_topbar_v1}};
+  }
+  
+  /* Asegurar que el header absolute no tape el contenido - el contenido debe estar debajo */
+  {% if section.settings.hd_other_enable_transparents %}
+  #header.header-absolute {
+    position: absolute !important;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 99;
+  }
+  /* El contenido debe estar en el flujo normal del documento, debajo del header */
+  .contentbody {
+    position: relative;
+    z-index: auto;
+  }
+  /* Asegurar que el contenido no tenga padding-top que lo separe del header */
+  .contentbody > section:first-child,
+  .contentbody > div:first-child {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+  {% endif %}
+  
+  /* Estilos para subcategorías - igual que el header */
+  #header .menu ul .nav-item .list-woman .list-clothing ul li a,
+  #header .menu ul .nav-item .list-home .list-clothing ul li a {
+    font-size: 14px !important;
+    font-family: D-DIN !important;
+    font-weight: 500 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    transition: all .3s ease !important;
+  }
+  #header .menu ul .nav-item .list-woman .list-clothing ul li a:hover,
+  #header .menu ul .nav-item .list-woman .list-clothing ul li a:focus,
+  #header .menu ul .nav-item .list-woman .list-clothing ul li a:active,
+  #header .menu ul .nav-item .list-home .list-clothing ul li a:hover,
+  #header .menu ul .nav-item .list-home .list-clothing ul li a:focus,
+  #header .menu ul .nav-item .list-home .list-clothing ul li a:active {
+    color: #fff !important;
+  }
+</style>
+
+{% endunless %}
+{% endif %}

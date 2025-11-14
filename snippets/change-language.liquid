@@ -1,0 +1,15 @@
+<div class="content-wrapper">
+  <a href="#language" data-toggle="collapse" class="language d-inline-block">
+    <span>{{settings.default-change-language}}</span>
+  </a>
+  <ul class="collapse list-unstyled" id="language">
+    {% for link in linklists[settings.hd_multi_lang_menu].links %}
+    <li class="menu-item"> 
+      <a href="{{link.url}}"> 
+        {{link.title}}
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+

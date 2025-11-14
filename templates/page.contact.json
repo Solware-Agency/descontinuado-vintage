@@ -1,0 +1,19 @@
+{
+  "sections": {
+    "contact_template_descontinuado": {
+      "type": "contact-template-descontinuado",
+      "settings": {
+        "contact_email": "descontinuadovintage@gmail.com",
+        "contact_whatsapp": "+584122150171",
+        "intro_text_1": "Si quieres agendar una cita o tienes alguna duda, por favor rellena el formulario. Te responderemos lo más rápido que podamos.",
+        "intro_text_2": "También puedes contactarnos directamente por:",
+        "appointment_title": "AGENDA UNA CITA",
+        "appointment_text": "Rellena el formulario o contáctanos vía WhatsApp",
+        "showroom_title": "SHOWROOM",
+        "showroom_text": "Estamos ubicados en Alto Hatillo Caracas, Venezuela."
+      }
+    }
+  },
+  "order": ["contact_template_descontinuado"]
+}
+

@@ -1,0 +1,186 @@
+<div data-section-id="{{ section.id }}" data-section-type="section-product-v6" style="{% if section.settings.margin_top != blank %}margin-top: {{section.settings.margin_top}}px;{%endif%} {% if section.settings.margin_bottom != blank %}margin-bottom: {{section.settings.margin_bottom}}px;{% endif %}">
+  <div class="section-product-v6">
+    <div class="container container-v1">
+      <div class="title_flex">
+        {% if section.settings.title_heading != blank %}
+        <h3>{{section.settings.title_heading}}</h3>
+        {% endif %}
+        <div class="filter-category">
+          <ul class="nav nav-tabs title-tab justify-content-center">
+            {% if section.blocks.size > 0 %}
+            {%- assign i = 1 -%}
+            {% for block in section.blocks %}
+            <li>
+              <a href="#c{{i}}" data-toggle="tab" class="{% if forloop.first %}active{% endif %} ds-prod-1">{{block.settings.tab_title}}</a>
+            </li>
+            {%- assign i = i | plus : 1 -%}
+
+            {% endfor %}
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+      
+      <div class="row align-items-center info-prv6 justify-content-around">
+        <div class="col-lg-6 banner-left">
+          <div class="box-info">
+            <div class="box-img-prod">
+              {% if section.settings.img_banner1 != blank %}
+              <img data-src="{{section.settings.img_banner1 | img_url:'master'}}" class="lazyload img-fluid w-100" alt>
+              {% else %}
+              <img data-src="//via.placeholder.com/696x906" class="lazyload img-fluid w-100" alt="">
+              {% endif %}
+            </div>
+            <div class="info-bottom"> 
+              {%- assign collection = collections[section.settings.collection] -%}
+              <a href="{{ collection.url }}" class="title-collection">{{collection.title}}</a>
+              <div class="total_item"> {{ collection.all_products_count }} {{ collection.all_products_count | pluralize: 'item', 'items' }} </div>
+            </div> 
+          </div>
+        </div>
+        <div class="col-lg-6 product-right">
+          <div class="tab-content">
+            {% if section.blocks.size > 0 %}
+            {%- assign i = 1 -%}
+            {% for block in section.blocks %}
+            {% assign products_limit = block.settings.tab_limit %}
+            {% assign col = block.settings.tab_collection %}
+
+            <div id="c{{i}}" class="tab-pane fade {% if forloop.first %}show active{% endif %}">
+              <div class="row">
+                {% for product in collections[col].products limit: products_limit %}
+                <div class="col-lg-6 col-md-6 col-6 product-tab-pd ">
+                  {% include 'product-item-v1' %}
+                </div>
+                {% else %}
+                {% for i in (1..products_limit) %}
+                <div class="col-lg-6 col-md-6 col-6 product-tab-pd">
+                  {% include 'empty-product-item' %}
+                </div>
+                {% endfor %}
+                {% endfor %}
+              </div>
+            </div>
+            {%- assign i = i | plus : 1 -%}
+            {% endfor %}
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .button-all-site:hover {
+    color:{{section.settings.color_btn_hover}} !important;
+    background: {{section.settings.bg_btn_hover}} !important;
+  }
+  .section-product-v6-{{ section.id }} .button-all-site:before {
+    border: 1px solid {{section.settings.color_btn_hover}} !important;
+  }
+</style>
+{% schema %}
+{
+  "name": "PRODUCT V6",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Product 6"
+    },
+    {
+      "type": "text",
+      "id": "title_heading",
+      "label": "Title Section",
+      "default": "Shop Physician Favorites"
+    },
+    {
+      "type": "image_picker",
+      "id": "img_banner1",
+      "label": "Banne Image",
+      "info": "696 x 906px recommended"
+    },
+	{
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "header",
+      "content": "Section Space"
+    },
+    {
+      "type": "text",
+      "id": "margin_top",
+      "label": "Margin Top",
+      "info": "Defined in pixels. Do not add the 'px' unit."
+    },
+    {
+      "type": "text",
+      "id": "margin_bottom",
+      "label": "Margin Bottom",
+      "info": "Defined in pixels. Do not add the 'px' unit."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "tab",
+      "name": "Tab",
+      "settings": [
+        {
+          "type": "text",
+          "id": "tab_title",
+          "label": "Title Tab",
+          "default": "Acne Prone"
+        },
+        {
+          "type": "collection",
+          "id": "tab_collection",
+          "label": "Chose Collection"
+        },
+        {
+          "type": "range",
+          "id": "tab_limit",
+          "min": 2,
+          "max": 20,
+          "step": 1,
+          "label": "Limit Products",
+          "default": 4
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "PRODUCT V6",
+      "category": "HOME",
+	  "blocks": [
+        {
+          "type": "tab",
+          "settings": {
+            "tab_title": "ALL"
+          }
+        },
+        {
+          "type": "tab",
+          "settings": {
+            "tab_title": "Acne Prone"
+          }
+        },
+        {
+          "type": "tab",
+          "settings": {
+            "tab_title": "HypersensitiveSkin"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}
