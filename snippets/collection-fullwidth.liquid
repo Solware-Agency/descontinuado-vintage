@@ -86,10 +86,15 @@
 <style>
   /* Estilos para paginación corregida */
   .pagi-nav {
-    margin: 40px 0;
+    margin: 40px auto;
     padding: 0;
     width: 100%;
-    overflow: hidden;
+    max-width: 100%;
+    overflow: visible;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
   
   .pagi-nav .pagination {
@@ -99,27 +104,35 @@
     flex-wrap: wrap;
     list-style: none;
     padding: 0;
-    margin: 0;
-    gap: 5px;
+    margin: 0 auto;
+    gap: 8px;
+    width: auto;
+    max-width: 100%;
   }
   
   .pagi-nav .pagination li {
     margin: 0;
     padding: 0;
+    display: inline-block;
+    vertical-align: middle;
   }
   
   .pagi-nav .pagination a,
   .pagi-nav .pagination span {
     display: inline-block;
-    padding: 8px 12px;
+    padding: 10px 14px;
     margin: 0;
     border: 1px solid #ddd;
     background: #fff;
     color: #000;
     text-decoration: none;
-    min-width: 40px;
+    min-width: 44px;
+    height: 44px;
+    line-height: 24px;
     text-align: center;
+    box-sizing: border-box;
     transition: all 0.3s ease;
+    vertical-align: middle;
   }
   
   .pagi-nav .pagination a:hover {
@@ -136,13 +149,48 @@
   
   .pagi-nav .pagination .prev,
   .pagi-nav .pagination .next {
-    background: transparent;
-    border: none;
+    background: #fff;
+    border: 1px solid #ddd;
+    padding: 10px 14px;
+    min-width: 44px;
+    height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
   
   .pagi-nav .pagination .prev:hover,
   .pagi-nav .pagination .next:hover {
-    background: transparent;
-    color: #000;
+    background: #000;
+    color: #fff;
+    border-color: #000;
+  }
+  
+  .pagi-nav .pagination .prev i,
+  .pagi-nav .pagination .next i {
+    font-size: 16px;
+    line-height: 1;
+  }
+  
+  /* Responsive */
+  @media (max-width: 575px) {
+    .pagi-nav .pagination {
+      gap: 5px;
+    }
+    
+    .pagi-nav .pagination a,
+    .pagi-nav .pagination span {
+      padding: 8px 10px;
+      min-width: 38px;
+      height: 38px;
+      font-size: 14px;
+    }
+    
+    .pagi-nav .pagination .prev,
+    .pagi-nav .pagination .next {
+      padding: 8px 10px;
+      min-width: 38px;
+      height: 38px;
+    }
   }
 </style>

@@ -13,7 +13,7 @@ For more information on collection tags:
 {%- assign per_page = settings.nb_per_page -%}
 {% endif %}
 
-{% paginate collection.products by {{section.settings.prod_per_page}} %}
+{% paginate collection.products by section.settings.prod_per_page %}
 
 {% comment %}
 Use .grid--rev so that the collection tags appear below the products on mobile
@@ -33,17 +33,25 @@ Use .grid--rev so that the collection tags appear below the products on mobile
 </div>
 
 <style>
-  .collection-banner-simple .title-page h2 {
+  .collection-banner-simple .title-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .collection-banner-simple .title-page h2.collection-title-dynamic {
     color: {{section.settings.color_breadcrumb}} !important;
     font-size: 48px;
     font-weight: bold;
     margin: 0;
     padding: 100px 20px;
-    text-align: right;
+    text-align: center;
+    width: 100%;
   }
   
   @media (max-width: 991px) {
-    .collection-banner-simple .title-page h2 {
+    .collection-banner-simple .title-page h2.collection-title-dynamic {
       font-size: 36px;
       padding: 60px 20px;
       text-align: center;
@@ -51,9 +59,10 @@ Use .grid--rev so that the collection tags appear below the products on mobile
   }
   
   @media (max-width: 575px) {
-    .collection-banner-simple .title-page h2 {
+    .collection-banner-simple .title-page h2.collection-title-dynamic {
       font-size: 28px;
       padding: 40px 15px;
+      text-align: center;
     }
   }
 </style>

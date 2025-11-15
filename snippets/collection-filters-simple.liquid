@@ -35,18 +35,89 @@
             </select>
           </div>
 
-          {% comment %} Filtro de Color {% endcomment %}
+          {% comment %} Filtro de Color - Dinámico desde productos reales {% endcomment %}
           <div class="filter-dropdown-wrapper">
             <select class="filter-dropdown" id="filter-color" data-filter="color">
               <option value="">COLOR</option>
-              {% assign tags = settings.shop_by_color_list_tags | split: ',' %}
-              {% for t in tags %}
-                {% assign tag = t | strip %}
-                {% assign tag_value = tag | handleize %}
-                <option value="{{ tag_value | split: '|' | first }}" {% if current_tags contains tag %}selected{% endif %}>
-                  {{ tag }}
-                </option>
+              {% comment %} Recopilar colores únicos de los productos de la colección {% endcomment %}
+              {% assign unique_colors = '' | split: ',' %}
+              {% assign color_map = '' | split: ',' %}
+              
+              {% for product in collection.products %}
+                {% comment %} Buscar la opción "Color" o "Colour" en las opciones del producto {% endcomment %}
+                {% assign color_option_index = -1 %}
+                {% for option in product.options %}
+                  {% assign option_lower = option | downcase %}
+                  {% if option_lower == 'color' or option_lower == 'colour' %}
+                    {% assign color_option_index = forloop.index0 %}
+                    {% break %}
+                  {% endif %}
+                {% endfor %}
+                
+                {% comment %} Si se encontró la opción de color, extraer valores de variantes {% endcomment %}
+                {% if color_option_index >= 0 %}
+                  {% for variant in product.variants %}
+                    {% if color_option_index == 0 and variant.option1 != blank %}
+                      {% assign color_name = variant.option1 | strip %}
+                      {% assign color_handle = color_name | handleize %}
+                      {% unless unique_colors contains color_handle %}
+                        {% assign unique_colors = unique_colors | push: color_handle %}
+                        {% assign color_map = color_map | push: color_name %}
+                      {% endunless %}
+                    {% elsif color_option_index == 1 and variant.option2 != blank %}
+                      {% assign color_name = variant.option2 | strip %}
+                      {% assign color_handle = color_name | handleize %}
+                      {% unless unique_colors contains color_handle %}
+                        {% assign unique_colors = unique_colors | push: color_handle %}
+                        {% assign color_map = color_map | push: color_name %}
+                      {% endunless %}
+                    {% elsif color_option_index == 2 and variant.option3 != blank %}
+                      {% assign color_name = variant.option3 | strip %}
+                      {% assign color_handle = color_name | handleize %}
+                      {% unless unique_colors contains color_handle %}
+                        {% assign unique_colors = unique_colors | push: color_handle %}
+                        {% assign color_map = color_map | push: color_name %}
+                      {% endunless %}
+                    {% endif %}
+                  {% endfor %}
+                {% endif %}
+                
+                {% comment %} También buscar en tags del producto como fallback {% endcomment %}
+                {% for tag in product.tags %}
+                  {% assign tag_lower = tag | downcase %}
+                  {% if tag_lower contains 'color' or tag_lower contains 'colour' %}
+                    {% assign color_name = tag | strip %}
+                    {% assign color_handle = color_name | handleize %}
+                    {% unless unique_colors contains color_handle %}
+                      {% assign unique_colors = unique_colors | push: color_handle %}
+                      {% assign color_map = color_map | push: color_name %}
+                    {% endunless %}
+                  {% endif %}
+                {% endfor %}
               {% endfor %}
+              
+              {% comment %} Si no se encontraron colores dinámicos, usar tags de configuración como fallback {% endcomment %}
+              {% if unique_colors.size == 0 %}
+                {% assign tags = settings.shop_by_color_list_tags | split: ',' %}
+                {% for t in tags %}
+                  {% assign tag = t | strip %}
+                  {% if tag != blank %}
+                    {% assign tag_value = tag | handleize %}
+                    <option value="{{ tag_value | split: '|' | first }}" {% if current_tags contains tag %}selected{% endif %}>
+                      {{ tag }}
+                    </option>
+                  {% endif %}
+                {% endfor %}
+              {% else %}
+                {% comment %} Mostrar colores encontrados dinámicamente {% endcomment %}
+                {% for color_handle in unique_colors %}
+                  {% assign color_index = forloop.index0 %}
+                  {% assign color_name = color_map[color_index] %}
+                  <option value="{{ color_handle }}" {% if current_tags contains color_handle %}selected{% endif %}>
+                    {{ color_name }}
+                  </option>
+                {% endfor %}
+              {% endif %}
             </select>
           </div>
 
@@ -54,49 +125,67 @@
           <div class="filter-dropdown-wrapper">
             <select class="filter-dropdown" id="filter-size" data-filter="size">
               <option value="">TALLA</option>
-              {% comment %} Usar tags como fuente principal, pero el filtro buscará en metafields {% endcomment %}
-              {% assign tags = settings.shop_by_size_list_tags | split: ',' %}
-              {% if tags.size > 0 %}
-                {% for t in tags %}
-                  {% assign tag = t | strip %}
-                  {% assign tag_value = tag | handleize %}
-                  <option value="{{ tag_value | split: '|' | first }}" {% if current_tags contains tag %}selected{% endif %}>
-                    {{ tag }}
-                  </option>
-                {% endfor %}
-              {% else %}
-                {% comment %} Fallback: intentar obtener de metafields si no hay tags configurados {% endcomment %}
-                {% assign unique_sizes = '' | split: ',' %}
-                {% for product in collection.products limit: 50 %}
-                  {% for variant in product.variants %}
-                    {% if variant.metafields.custom.talla_estandar != blank %}
-                      {% assign size_value = variant.metafields.custom.talla_estandar | strip %}
+              {% comment %} Extraer tallas desde metafield custom.talla_estandar de los productos reales {% endcomment %}
+              {% assign unique_sizes = '' | split: ',' %}
+              {% assign size_map = '' | split: ',' %}
+              
+              {% for product in collection.products %}
+                {% for variant in product.variants %}
+                  {% if variant.metafields.custom.talla_estandar != blank %}
+                    {% assign size_value = variant.metafields.custom.talla_estandar | strip %}
+                    {% if size_value != blank %}
                       {% assign size_handle = size_value | handleize %}
                       {% unless unique_sizes contains size_handle %}
                         {% assign unique_sizes = unique_sizes | push: size_handle %}
-                        <option value="{{ size_handle }}" {% if current_tags contains size_handle %}selected{% endif %}>
-                          {{ size_value }}
-                        </option>
+                        {% assign size_map = size_map | push: size_value %}
                       {% endunless %}
                     {% endif %}
-                  {% endfor %}
+                  {% endif %}
+                {% endfor %}
+              {% endfor %}
+              
+              {% comment %} Si no hay metafields, usar tags como fallback {% endcomment %}
+              {% if unique_sizes.size == 0 %}
+                {% assign tags = settings.shop_by_size_list_tags | split: ',' %}
+                {% for t in tags %}
+                  {% assign tag = t | strip %}
+                  {% if tag != blank %}
+                    {% assign tag_value = tag | handleize %}
+                    <option value="{{ tag_value | split: '|' | first }}" {% if current_tags contains tag %}selected{% endif %}>
+                      {{ tag }}
+                    </option>
+                  {% endif %}
+                {% endfor %}
+              {% else %}
+                {% comment %} Ordenar tallas numéricamente si es posible {% endcomment %}
+                {% assign sorted_sizes = '' | split: ',' %}
+                {% assign sorted_map = '' | split: ',' %}
+                {% for size_handle in unique_sizes %}
+                  {% assign size_index = forloop.index0 %}
+                  {% assign size_name = size_map[size_index] %}
+                  {% assign sorted_sizes = sorted_sizes | push: size_handle %}
+                  {% assign sorted_map = sorted_map | push: size_name %}
+                {% endfor %}
+                
+                {% comment %} Mostrar tallas encontradas {% endcomment %}
+                {% for size_handle in sorted_sizes %}
+                  {% assign size_index = forloop.index0 %}
+                  {% assign size_name = sorted_map[size_index] %}
+                  <option value="{{ size_handle }}" {% if current_tags contains size_handle %}selected{% endif %}>
+                    {{ size_name }}
+                  </option>
                 {% endfor %}
               {% endif %}
             </select>
           </div>
 
-          {% comment %} Filtro de Precio {% endcomment %}
+          {% comment %} Filtro de Precio - Rangos fijos: 0-50, 50-150, 150+ {% endcomment %}
           <div class="filter-dropdown-wrapper">
             <select class="filter-dropdown" id="filter-price" data-filter="price">
               <option value="">PRECIO</option>
-              {% assign tags = settings.shop_by_price_list_tags | split: ',' %}
-              {% for t in tags %}
-                {% assign tag = t | strip %}
-                {% assign tag_value = tag | handleize %}
-                <option value="{{ tag_value | split: '|' | first }}" {% if current_tags contains tag %}selected{% endif %}>
-                  {{ tag }}
-                </option>
-              {% endfor %}
+              <option value="0-50" {% if current_tags contains 'price-0-50' or current_tags contains '0-50' %}selected{% endif %}>0 - 50</option>
+              <option value="50-150" {% if current_tags contains 'price-50-150' or current_tags contains '50-150' %}selected{% endif %}>50 - 150</option>
+              <option value="150+" {% if current_tags contains 'price-150+' or current_tags contains '150+' %}selected{% endif %}>150+</option>
             </select>
           </div>
 
@@ -152,16 +241,40 @@
   
   /* Responsive */
   @media (max-width: 991px) {
+    .filters-row {
+      gap: 10px;
+    }
+    
     .filter-dropdown-wrapper {
-      flex: 0 0 calc(50% - 7.5px);
-      min-width: calc(50% - 7.5px);
+      flex: 0 0 calc(50% - 5px);
+      min-width: calc(50% - 5px);
+      max-width: calc(50% - 5px);
+    }
+    
+    .filter-dropdown {
+      font-size: 13px;
+      padding: 10px 35px 10px 12px;
     }
   }
   
   @media (max-width: 575px) {
+    .collection-filters-simple {
+      margin: 15px 0;
+    }
+    
+    .filters-row {
+      gap: 10px;
+    }
+    
     .filter-dropdown-wrapper {
       flex: 0 0 100%;
       min-width: 100%;
+      max-width: 100%;
+    }
+    
+    .filter-dropdown {
+      font-size: 13px;
+      padding: 10px 35px 10px 12px;
     }
   }
 </style>
@@ -183,6 +296,40 @@
           applyFilters();
         });
       });
+      
+      // Restaurar valores desde URL si existen
+      restoreFiltersFromURL();
+    }
+    
+    function restoreFiltersFromURL() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const constraint = urlParams.get('constraint');
+      
+      if (constraint) {
+        const tags = constraint.split('+');
+        const colorFilter = document.getElementById('filter-color');
+        const sizeFilter = document.getElementById('filter-size');
+        const priceFilter = document.getElementById('filter-price');
+        
+        tags.forEach(function(tag) {
+          const decodedTag = decodeURIComponent(tag);
+          
+          // Manejar rangos de precio
+          if (decodedTag === 'price-0-50' && priceFilter) {
+            priceFilter.value = '0-50';
+          } else if (decodedTag === 'price-50-150' && priceFilter) {
+            priceFilter.value = '50-150';
+          } else if (decodedTag === 'price-150+' && priceFilter) {
+            priceFilter.value = '150+';
+          }
+          // Intentar asignar a filtros de color y talla
+          else if (colorFilter && colorFilter.querySelector('option[value="' + decodedTag + '"]')) {
+            colorFilter.value = decodedTag;
+          } else if (sizeFilter && sizeFilter.querySelector('option[value="' + decodedTag + '"]')) {
+            sizeFilter.value = decodedTag;
+          }
+        });
+      }
     }
     
     function applyFilters() {
@@ -209,22 +356,38 @@
         tags.push(sizeFilter.value);
       }
       
+      // Manejar filtro de precio con rangos
       if (priceFilter && priceFilter.value) {
-        tags.push(priceFilter.value);
+        // Convertir rango de precio a tag para filtrado
+        const priceValue = priceFilter.value;
+        if (priceValue === '0-50') {
+          tags.push('price-0-50');
+        } else if (priceValue === '50-150') {
+          tags.push('price-50-150');
+        } else if (priceValue === '150+') {
+          tags.push('price-150+');
+        } else {
+          tags.push(priceValue);
+        }
       }
       
       // Construir URL
       let newUrl = window.location.pathname;
+      const urlParams = new URLSearchParams();
       
       if (tags.length > 0) {
-        const constraint = tags.join('+');
-        newUrl += '?constraint=' + encodeURIComponent(constraint);
+        urlParams.set('constraint', tags.join('+'));
       }
       
-      // Si hay parámetros de ordenamiento, mantenerlos
-      const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get('sort_by')) {
-        newUrl += (tags.length > 0 ? '&' : '?') + 'sort_by=' + urlParams.get('sort_by');
+      // Mantener parámetros de ordenamiento
+      const currentParams = new URLSearchParams(window.location.search);
+      if (currentParams.get('sort_by')) {
+        urlParams.set('sort_by', currentParams.get('sort_by'));
+      }
+      
+      const queryString = urlParams.toString();
+      if (queryString) {
+        newUrl += '?' + queryString;
       }
       
       // Usar el sistema AJAX existente si está disponible
@@ -246,11 +409,30 @@
           delete Shopify.queryParams.constraint;
         }
         
+        // Mantener sort_by si existe
+        if (currentParams.get('sort_by')) {
+          Shopify.queryParams.sort_by = currentParams.get('sort_by');
+        }
+        
         collection.filterAjaxClick();
       } else {
         window.location.href = newUrl;
       }
     }
+    
+    // Función para resetear filtros
+    function resetFilters() {
+      const filterDropdowns = document.querySelectorAll('.filter-dropdown');
+      filterDropdowns.forEach(function(dropdown) {
+        if (dropdown.id !== 'filter-category') {
+          dropdown.value = '';
+        }
+      });
+      applyFilters();
+    }
+    
+    // Exponer función de reset globalmente si es necesario
+    window.resetCollectionFilters = resetFilters;
   })();
 </script>
 
