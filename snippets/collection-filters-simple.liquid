@@ -1,0 +1,256 @@
+{% comment %}
+  Filtros simplificados: 4 dropdowns horizontales
+  - Categorías
+  - Color
+  - Talla (usando metafield custom.talla_estandar)
+  - Precio
+{% endcomment %}
+
+<div class="collection-filters-simple">
+  <div class="container container-v1">
+    <div class="row">
+      <div class="col-12">
+        <div class="filters-row d-flex flex-wrap">
+          
+          {% comment %} Filtro de Categorías {% endcomment %}
+          <div class="filter-dropdown-wrapper">
+            <select class="filter-dropdown" id="filter-category" data-filter="category">
+              <option value="">CATEGORÍAS</option>
+              {% if settings.widget_cate_menu != blank %}
+                {% for link in linklists[settings.widget_cate_menu].links %}
+                  <option value="{{ link.url }}" {% if collection.url == link.url %}selected{% endif %}>
+                    {{ link.title | split: '[' | first }}
+                  </option>
+                {% endfor %}
+              {% else %}
+                {% comment %} Fallback: usar todas las colecciones principales {% endcomment %}
+                {% for collection_item in collections %}
+                  {% unless collection_item.handle == 'all' or collection_item.handle == 'frontpage' %}
+                    <option value="{{ collection_item.url }}" {% if collection.url == collection_item.url %}selected{% endif %}>
+                      {{ collection_item.title }}
+                    </option>
+                  {% endunless %}
+                {% endfor %}
+              {% endif %}
+            </select>
+          </div>
+
+          {% comment %} Filtro de Color {% endcomment %}
+          <div class="filter-dropdown-wrapper">
+            <select class="filter-dropdown" id="filter-color" data-filter="color">
+              <option value="">COLOR</option>
+              {% assign tags = settings.shop_by_color_list_tags | split: ',' %}
+              {% for t in tags %}
+                {% assign tag = t | strip %}
+                {% assign tag_value = tag | handleize %}
+                <option value="{{ tag_value | split: '|' | first }}" {% if current_tags contains tag %}selected{% endif %}>
+                  {{ tag }}
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+
+          {% comment %} Filtro de Talla (usando metafield custom.talla_estandar) {% endcomment %}
+          <div class="filter-dropdown-wrapper">
+            <select class="filter-dropdown" id="filter-size" data-filter="size">
+              <option value="">TALLA</option>
+              {% comment %} Usar tags como fuente principal, pero el filtro buscará en metafields {% endcomment %}
+              {% assign tags = settings.shop_by_size_list_tags | split: ',' %}
+              {% if tags.size > 0 %}
+                {% for t in tags %}
+                  {% assign tag = t | strip %}
+                  {% assign tag_value = tag | handleize %}
+                  <option value="{{ tag_value | split: '|' | first }}" {% if current_tags contains tag %}selected{% endif %}>
+                    {{ tag }}
+                  </option>
+                {% endfor %}
+              {% else %}
+                {% comment %} Fallback: intentar obtener de metafields si no hay tags configurados {% endcomment %}
+                {% assign unique_sizes = '' | split: ',' %}
+                {% for product in collection.products limit: 50 %}
+                  {% for variant in product.variants %}
+                    {% if variant.metafields.custom.talla_estandar != blank %}
+                      {% assign size_value = variant.metafields.custom.talla_estandar | strip %}
+                      {% assign size_handle = size_value | handleize %}
+                      {% unless unique_sizes contains size_handle %}
+                        {% assign unique_sizes = unique_sizes | push: size_handle %}
+                        <option value="{{ size_handle }}" {% if current_tags contains size_handle %}selected{% endif %}>
+                          {{ size_value }}
+                        </option>
+                      {% endunless %}
+                    {% endif %}
+                  {% endfor %}
+                {% endfor %}
+              {% endif %}
+            </select>
+          </div>
+
+          {% comment %} Filtro de Precio {% endcomment %}
+          <div class="filter-dropdown-wrapper">
+            <select class="filter-dropdown" id="filter-price" data-filter="price">
+              <option value="">PRECIO</option>
+              {% assign tags = settings.shop_by_price_list_tags | split: ',' %}
+              {% for t in tags %}
+                {% assign tag = t | strip %}
+                {% assign tag_value = tag | handleize %}
+                <option value="{{ tag_value | split: '|' | first }}" {% if current_tags contains tag %}selected{% endif %}>
+                  {{ tag }}
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .collection-filters-simple {
+    margin: 20px 0;
+  padding: 0;
+  }
+  
+  .filters-row {
+    gap: 15px;
+    margin-bottom: 0;
+  }
+  
+  .filter-dropdown-wrapper {
+    flex: 1;
+    min-width: 150px;
+  }
+  
+  .filter-dropdown {
+    width: 100%;
+    padding: 12px 40px 12px 15px;
+    border: 1px solid #000;
+    background: #fff;
+    font-size: 14px;
+    font-weight: 400;
+    color: #000;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23000' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    background-size: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .filter-dropdown:hover {
+    border-color: #333;
+  }
+  
+  .filter-dropdown:focus {
+    outline: none;
+    border-color: #000;
+  }
+  
+  /* Responsive */
+  @media (max-width: 991px) {
+    .filter-dropdown-wrapper {
+      flex: 0 0 calc(50% - 7.5px);
+      min-width: calc(50% - 7.5px);
+    }
+  }
+  
+  @media (max-width: 575px) {
+    .filter-dropdown-wrapper {
+      flex: 0 0 100%;
+      min-width: 100%;
+    }
+  }
+</style>
+
+<script>
+  (function() {
+    // Inicializar filtros cuando el DOM esté listo
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initFilters);
+    } else {
+      initFilters();
+    }
+    
+    function initFilters() {
+      const filterDropdowns = document.querySelectorAll('.filter-dropdown');
+      
+      filterDropdowns.forEach(function(dropdown) {
+        dropdown.addEventListener('change', function() {
+          applyFilters();
+        });
+      });
+    }
+    
+    function applyFilters() {
+      // Obtener valores de los filtros
+      const categoryFilter = document.getElementById('filter-category');
+      const colorFilter = document.getElementById('filter-color');
+      const sizeFilter = document.getElementById('filter-size');
+      const priceFilter = document.getElementById('filter-price');
+      
+      // Si se selecciona una categoría, redirigir directamente
+      if (categoryFilter && categoryFilter.value) {
+        window.location.href = categoryFilter.value;
+        return;
+      }
+      
+      // Construir array de tags para otros filtros
+      const tags = [];
+      
+      if (colorFilter && colorFilter.value) {
+        tags.push(colorFilter.value);
+      }
+      
+      if (sizeFilter && sizeFilter.value) {
+        tags.push(sizeFilter.value);
+      }
+      
+      if (priceFilter && priceFilter.value) {
+        tags.push(priceFilter.value);
+      }
+      
+      // Construir URL
+      let newUrl = window.location.pathname;
+      
+      if (tags.length > 0) {
+        const constraint = tags.join('+');
+        newUrl += '?constraint=' + encodeURIComponent(constraint);
+      }
+      
+      // Si hay parámetros de ordenamiento, mantenerlos
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('sort_by')) {
+        newUrl += (tags.length > 0 ? '&' : '?') + 'sort_by=' + urlParams.get('sort_by');
+      }
+      
+      // Usar el sistema AJAX existente si está disponible
+      if (typeof collection !== 'undefined' && collection.filterAjaxClick) {
+        // Inicializar Shopify.queryParams si no existe
+        if (typeof Shopify === 'undefined') {
+          window.Shopify = {};
+        }
+        if (typeof Shopify.queryParams === 'undefined') {
+          Shopify.queryParams = {};
+        }
+        
+        // Limpiar parámetros anteriores
+        delete Shopify.queryParams.page;
+        
+        if (tags.length > 0) {
+          Shopify.queryParams.constraint = tags.join('+');
+        } else {
+          delete Shopify.queryParams.constraint;
+        }
+        
+        collection.filterAjaxClick();
+      } else {
+        window.location.href = newUrl;
+      }
+    }
+  })();
+</script>
+
