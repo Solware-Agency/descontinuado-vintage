@@ -205,7 +205,7 @@ var ajaxCart = (function(module, $) {
   updateCountPrice = function (cart) {
     if ($cartCountSelector) {
       $cartCountSelector.html(cart.item_count).removeClass('hidden-count');
-      $('.product-popup').find('.product-item-count').html(cart.item_count);  
+      // Eliminado: actualización de .product-item-count del popup viejo
       if (cart.item_count === 0) {
         $cartCountSelector.addClass('hidden-count');
         $('.js-number-cart').removeClass('active');
@@ -236,15 +236,14 @@ var ajaxCart = (function(module, $) {
     $addToCart_btn.removeClass('is-adding').addClass('is-added');
     $addToCart_btn.find('.enj-loader-add-to-cart').html('<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" height="400" width="400" xml:space="preserve" id="svg2" version="1.1"><metadata id="metadata8"><rdf:RDF><cc:Work rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/></cc:Work></rdf:RDF></metadata><defs id="defs6"/><g transform="matrix(1.3333333,0,0,-1.3333333,0,400)" id="g10"><g transform="scale(0.1)" id="g12"><path id="path14" style="/* fill:#231f20; */fill-opacity:1;fill-rule:nonzero;stroke:none;" d="M 2539.18,1385.02 C 2479.15,849.23 2004.9,434.289 1446.39,470.129 931.406,503.16 516.711,917.871 483.672,1432.85 c -38.359,597.88 439.844,1099.19 1029.878,1099.19 78.39,0 149.09,-7.24 218.27,-21.98 42.37,-9.03 86.4,4.1 116.99,34.78 v 0 c 71.82,72.04 34.9,194.92 -64.67,215.74 -88.86,18.58 -179.73,29.87 -270.59,29.87 -709.417,0 -1290.445,-581.02 -1290.445,-1290.45 0,-709.418 581.028,-1290.449 1290.445,-1290.449 661.24,0 1210.92,504.781 1282.54,1147.799 8.47,76.02 -50.73,142.65 -127.21,142.65 h -2.45 c -65.64,0 -119.94,-49.75 -127.25,-114.98 z M 894.004,1654.48 v 0 c -49.668,-49.89 -49.578,-130.58 0.207,-180.36 L 1384.35,983.98 2584.51,2184.15 c 49.87,49.87 49.87,130.71 0,180.57 l -0.23,0.23 c -49.88,49.87 -130.74,49.85 -180.6,-0.03 L 1384.35,1344.99 1074.79,1654.67 c -49.94,49.95 -130.95,49.87 -180.786,-0.19"/></g></g></svg>');
 
-    $('.product-popup').find('.product-name').html(product.title);  
-    $('.product-popup').find('.product-price').html(Shopify.formatMoney(product.price, settings.moneyFormat)); 
-    $('.product-popup').find('.product-qty').html(product.quantity,); 
-                                                  $('.product-popup').find('.product-total').html(Shopify.formatMoney(product.line_price, settings.moneyFormat)); 
-
-
-    $('.product-popup').find('.product-image img').attr('src', product.image);
-
-    showPopup('.product-popup');
+    // Eliminado: código que llenaba elementos del popup viejo
+    // Ahora usamos el componente React
+    if (typeof showAddToCartReactPopup === 'function') {
+      showAddToCartReactPopup();
+    } else {
+      // Fallback si React no está cargado
+      showPopup('.product-popup');
+    }
 
     ShopifyAPI.getCart(cartUpdateCallback);
   };
@@ -327,7 +326,7 @@ var ajaxCart = (function(module, $) {
       note: cart.note,
       totalPrice: Shopify.formatMoney(cart.total_price, settings.moneyFormat)
     }
-    $('.product-popup').find('.product-total-cart').html(Shopify.formatMoney(cart.total_price, settings.moneyFormat));
+    // Eliminado: actualización de .product-total-cart del popup viejo
 
     $cartContainer.append(template(data));
 

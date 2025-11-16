@@ -47,8 +47,8 @@
                 {% comment %} Buscar la opción "Color" o "Colour" en las opciones del producto {% endcomment %}
                 {% assign color_option_index = -1 %}
                 {% for option in product.options %}
-                  {% assign option_lower = option | downcase %}
-                  {% if option_lower == 'color' or option_lower == 'colour' %}
+                  {% assign option_lower = option | downcase | strip %}
+                  {% if option_lower == 'color' or option_lower == 'colour' or option_lower contains 'color' %}
                     {% assign color_option_index = forloop.index0 %}
                     {% break %}
                   {% endif %}
@@ -59,25 +59,31 @@
                   {% for variant in product.variants %}
                     {% if color_option_index == 0 and variant.option1 != blank %}
                       {% assign color_name = variant.option1 | strip %}
-                      {% assign color_handle = color_name | handleize %}
-                      {% unless unique_colors contains color_handle %}
-                        {% assign unique_colors = unique_colors | push: color_handle %}
-                        {% assign color_map = color_map | push: color_name %}
-                      {% endunless %}
+                      {% if color_name != blank %}
+                        {% assign color_handle = color_name | handleize %}
+                        {% unless unique_colors contains color_handle %}
+                          {% assign unique_colors = unique_colors | push: color_handle %}
+                          {% assign color_map = color_map | push: color_name %}
+                        {% endunless %}
+                      {% endif %}
                     {% elsif color_option_index == 1 and variant.option2 != blank %}
                       {% assign color_name = variant.option2 | strip %}
-                      {% assign color_handle = color_name | handleize %}
-                      {% unless unique_colors contains color_handle %}
-                        {% assign unique_colors = unique_colors | push: color_handle %}
-                        {% assign color_map = color_map | push: color_name %}
-                      {% endunless %}
+                      {% if color_name != blank %}
+                        {% assign color_handle = color_name | handleize %}
+                        {% unless unique_colors contains color_handle %}
+                          {% assign unique_colors = unique_colors | push: color_handle %}
+                          {% assign color_map = color_map | push: color_name %}
+                        {% endunless %}
+                      {% endif %}
                     {% elsif color_option_index == 2 and variant.option3 != blank %}
                       {% assign color_name = variant.option3 | strip %}
-                      {% assign color_handle = color_name | handleize %}
-                      {% unless unique_colors contains color_handle %}
-                        {% assign unique_colors = unique_colors | push: color_handle %}
-                        {% assign color_map = color_map | push: color_name %}
-                      {% endunless %}
+                      {% if color_name != blank %}
+                        {% assign color_handle = color_name | handleize %}
+                        {% unless unique_colors contains color_handle %}
+                          {% assign unique_colors = unique_colors | push: color_handle %}
+                          {% assign color_map = color_map | push: color_name %}
+                        {% endunless %}
+                      {% endif %}
                     {% endif %}
                   {% endfor %}
                 {% endif %}
@@ -103,17 +109,19 @@
               {% assign size_map = '' | split: ',' %}
               
               {% for product in collection.products %}
-                {% comment %} Leer metafield desde producto, no variante {% endcomment %}
-                {% if product.metafields.custom.talla_estandar != blank %}
-                  {% assign size_value = product.metafields.custom.talla_estandar | strip %}
-                  {% if size_value != blank %}
-                    {% assign size_handle = size_value | handleize %}
-                    {% unless unique_sizes contains size_handle %}
-                      {% assign unique_sizes = unique_sizes | push: size_handle %}
-                      {% assign size_map = size_map | push: size_value %}
-                    {% endunless %}
+                {% comment %} Leer metafield desde variantes {% endcomment %}
+                {% for variant in product.variants %}
+                  {% if variant.metafields.custom.talla_estandar != blank %}
+                    {% assign size_value = variant.metafields.custom.talla_estandar | strip %}
+                    {% if size_value != blank %}
+                      {% assign size_handle = size_value | handleize %}
+                      {% unless unique_sizes contains size_handle %}
+                        {% assign unique_sizes = unique_sizes | push: size_handle %}
+                        {% assign size_map = size_map | push: size_value %}
+                      {% endunless %}
+                    {% endif %}
                   {% endif %}
-                {% endif %}
+                {% endfor %}
               {% endfor %}
               
               {% comment %} Mostrar solo tallas encontradas desde metafields de productos {% endcomment %}
@@ -404,7 +412,9 @@
         // Filtro por precio
         if (showProduct && selectedPrice) {
           const productPriceAttr = wrapper.getAttribute('data-product-price');
-          const productPrice = parseFloat(productPriceAttr) || 0;
+          // Limpiar el valor de posibles caracteres no numéricos y convertir a número
+          const priceStr = (productPriceAttr || '0').toString().replace(/[^\d.]/g, '');
+          const productPrice = parseFloat(priceStr) || 0;
           let priceMatch = false;
           
           if (selectedPrice === '0-50') {

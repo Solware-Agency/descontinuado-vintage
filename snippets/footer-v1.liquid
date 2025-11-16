@@ -13,38 +13,43 @@
 </div>
 
 
-    <!-- Centro: Quick links en doble columna -->
+    <!-- Centro: Quick Links -->
     <div class="footer-col footer-links">
-      <div class="links-grid">
-        <ul class="links-column">
-          <li><a href="/collections/all">Shop All</a></li>
-          <li><a href="/collections/best-sellers">Best Sellers</a></li>
-          <li><a href="/pages/about-us">About Us</a></li>
-          <li><a href="/pages/showroom">Showroom</a></li>
-          <li><a href="/pages/contact">Contact Us</a></li>
-        </ul>
-        <ul class="links-column">
-          <li><a href="/pages/shipping">Shipping</a></li>
-          <li><a href="/pages/privacy-policy">Privacy Policy</a></li>
-          <li><a href="/pages/care-guide">Care Guide</a></li>
-          <li><a href="/pages/terms-and-conditions">Terms & Conditions</a></li>
-          <li><a href="/pages/returns">Returns & Exchanges</a></li>
-          <li><a href="/pages/faq">FAQ</a></li>
-        </ul>
-      </div>
+      <ul class="links-column">
+        <li><a href="/collections/all">Shop All</a></li>
+        <li><a href="/collections/best-sellers">Best Sellers</a></li>
+        <li><a href="/pages/contact">Contact Us</a></li>
+        <li><a href="/pages/faq">FAQ</a></li>
+        <li><a href="/pages/care-guide">Care Guide</a></li>
+      </ul>
+    </div>
+
+    <!-- Derecha: Policies -->
+    <div class="footer-col footer-policies">
+      <ul class="links-column">
+        <li><a href="/pages/shipping">Shipping</a></li>
+        <li><a href="/pages/privacy-policy">Privacy Policy</a></li>
+        <li><a href="/pages/terms-and-conditions">Terms & Conditions</a></li>
+        <li><a href="/pages/returns">Returns & Exchanges</a></li>
+      </ul>
     </div>
 
     <!-- Derecha: Newsletter -->
     <div class="footer-col footer-newsletter">
       <h3>SUBSCRIBE AND GET 10% OFF YOUR FIRST ORDER</h3>
-      <form method="post" action="{{ routes.root_url }}contact#contact_form" class="footer-form">
+      {% form 'contact' %}
+        {% if form.posted_successfully? %}
+          <p class="form-success">Thank you for subscribing!</p>
+        {% endif %}
+        {{ form.errors | default_errors }}
         <input type="email" name="contact[email]" placeholder="email address" required>
+        <input type="hidden" name="contact[tags]" value="newsletter">
         <label class="checkbox-container">
           <input type="checkbox" name="agree" required>
           <span>I agree to receive emails from Descontinuado.</span>
         </label>
         <button type="submit" class="footer-button">SUBSCRIBE</button>
-      </form>
+      {% endform %}
     </div>
 
   </div>
@@ -82,11 +87,15 @@
 
   .footer-container {
     display: grid;
-    grid-template-columns: 35% 1fr 1fr; /* Logo ocupa ~35% */
+    grid-template-columns: 35% 1fr 1fr; /* Logo, Quick Links, Policies */
     gap: 50px;
     max-width: 1300px;
     margin: 0 auto 50px;
     align-items: start;
+  }
+  .footer-newsletter {
+    grid-column: 1 / -1; /* Ocupa todo el ancho debajo de las 3 columnas */
+    margin-top: 20px;
   }
 
   /* Logo */
@@ -98,11 +107,11 @@
     max-width: none;
   }
 
-  /* Ajuste de links en doble columna */
-  .footer-links .links-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 30px;
+  /* Links en columna única */
+  .footer-links,
+  .footer-policies {
+    display: flex;
+    flex-direction: column;
   }
   .links-column {
     list-style: none;
@@ -133,7 +142,19 @@
     color: #fff;
     margin-bottom: 15px;
   }
-  .footer-newsletter .footer-form input[type="email"] {
+  .footer-newsletter .form-success {
+    color: #fff;
+    font-size: 12px;
+    margin-bottom: 10px;
+    font-family: 'D-DIN', sans-serif;
+  }
+  .footer-newsletter .errors {
+    color: #ff6b6b;
+    font-size: 12px;
+    margin-bottom: 10px;
+    font-family: 'D-DIN', sans-serif;
+  }
+  .footer-newsletter form input[type="email"] {
     width: 100%;
     background: transparent;
     border: 1px solid #fff;
@@ -196,27 +217,54 @@
   }
 
   /* Responsive */
-  @media (max-width: 992px) {
+  @media (max-width: 991px) {
+    .footer-v1 {
+      padding: 50px 4% 20px;
+    }
     .footer-container {
-      grid-template-columns: 1fr 1fr;
+      display: flex;
+      flex-direction: column;
       gap: 40px;
     }
     .footer-newsletter {
-      grid-column: span 2;
+      order: 1;
+      grid-column: auto;
+      margin-top: 0;
     }
-  }
-  @media (max-width: 600px) {
-    .footer-container {
-      grid-template-columns: 1fr;
-      text-align: center;
+    .footer-links {
+      order: 2;
+    }
+    .footer-policies {
+      order: 3;
     }
     .footer-logo {
+      order: 4;
       display: flex;
       justify-content: center;
     }
-    .footer-links .links-grid {
-      grid-template-columns: 1fr;
-      gap: 20px;
+    .footer-links,
+    .footer-policies {
+      text-align: center;
+    }
+  }
+  @media (max-width: 600px) {
+    .footer-v1 {
+      padding: 40px 3% 20px;
+    }
+    .footer-container {
+      gap: 30px;
+    }
+    .footer-newsletter form input[type="email"] {
+      font-size: 12px;
+      padding: 12px;
+    }
+    .footer-button {
+      padding: 12px 0;
+      font-size: 12px;
+      width: 100%;
+    }
+    .footer-newsletter .checkbox-container {
+      font-size: 11px;
     }
     .footer-bottom p {
       font-size: 11px;

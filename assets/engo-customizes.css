@@ -682,6 +682,65 @@
     transition: all .3s ease-in-out
 }
 
+/* Estilos para popup React minimalista */
+.product-popup .content {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: auto;
+    padding: 0;
+    background: transparent;
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow: visible;
+    z-index: 9999;
+}
+
+.product-popup.active .content {
+    max-height: 90vh;
+    overflow: visible;
+}
+
+/* Botón X optimizado para mobile */
+.product-popup .close-window {
+    position: fixed;
+    right: 20px;
+    top: 20px;
+    z-index: 10000;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    padding: 0;
+}
+
+.product-popup .close-window svg {
+    width: 20px;
+    height: 20px;
+    fill: #fff;
+}
+
+@media (max-width: 767px) {
+    .product-popup .content {
+        max-width: 85vw;
+        max-height: 85vh;
+    }
+    
+    .product-popup .close-window {
+        right: 15px;
+        top: 15px;
+        width: 40px;
+        height: 40px;
+    }
+}
+
 @media (max-width: 1500px) {
     .engo-popup .content {
         max-width:700px
@@ -782,11 +841,7 @@
     margin-right: 10px
 }
 
-@media (max-width: 767px) {
-    .engoc_hide_mobile {
-        display:none!important
-    }
-}
+/* Eliminado: .engoc_hide_mobile para permitir popup en mobile */
 
 .crossed-out {
     position: absolute;

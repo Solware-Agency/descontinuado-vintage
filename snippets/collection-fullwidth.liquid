@@ -57,9 +57,9 @@
                     {% endif %}
                   {% endif %}
                   
-                  {% comment %} Recopilar tallas desde metafield del producto {% endcomment %}
-                  {% if product.metafields.custom.talla_estandar != blank %}
-                    {% assign size_value = product.metafields.custom.talla_estandar | strip %}
+                  {% comment %} Recopilar tallas desde metafield de variantes {% endcomment %}
+                  {% if variant.metafields.custom.talla_estandar != blank %}
+                    {% assign size_value = variant.metafields.custom.talla_estandar | strip %}
                     {% assign size_handle = size_value | handleize %}
                     {% unless product_sizes contains size_handle %}
                       {% assign product_sizes = product_sizes | push: size_handle %}
@@ -68,7 +68,7 @@
                 {% endfor %}
                 
                 {% comment %} Obtener precio mínimo del producto (en centavos, convertir a unidades) {% endcomment %}
-                {% assign product_min_price = product.price_min | divided_by: 100.0 %}
+                {% assign product_min_price = product.price_min | divided_by: 100.0 | times: 1 %}
                 
                 <div class="col-lg-3 col-md-6 col-6 pb-4 trans-product product-item-wrapper" 
                      data-product-colors="{{ product_colors | join: ',' }}"
