@@ -107,217 +107,434 @@
             <div class="col-lg-5 col-md-5 col-sm-12 col-12 sticky_content js_sticky  ">
 
               <div class="detail-info">
-                <div class="relative">
-                  <h2 class="product-title ">{{product.title}}</h2>
-                  <div class="product-price ">                      
-                    {% capture price %}{{ product.price | money }}{% endcapture %}
-                    {% if on_sale %}<del class="enj-product-price-compare">{{ product.compare_at_price | money }}</del> {% endif %}
-                    <ins class="enj-product-price engoj_price_main">{{ price }}</ins>
+                <style>
+                  /* === Fuente D-DIN === */
+                  @font-face {
+                    font-family: 'D-DIN';
+                    src: url('{{ "D-DIN.woff2" | asset_url }}') format('woff2'),
+                         url('{{ "D-DIN.woff" | asset_url }}') format('woff'),
+                         url('{{ "D-DIN.otf" | asset_url }}') format('opentype');
+                    font-weight: 400;
+                    font-style: normal;
+                    font-display: swap;
+                  }
 
-                  </div>
-                  {% if section.settings.show_rating %}
-                  <div class="wrap-rating">
-                    <span class="shopify-product-reviews-badge" data-id="{{ product.id }}"></span>
-                  </div>
-                  {% endif %}
+                  /* === Estilos del detalle del producto === */
+                  .product-detail-new {
+                    font-family: 'D-DIN', sans-serif;
+                  }
 
+                  .product-detail-new .product-title-new {
+                    font-family: 'D-DIN', sans-serif;
+                    font-size: 32px;
+                    font-weight: 400;
+                    text-transform: uppercase;
+                    letter-spacing: 2px;
+                    color: #000;
+                    margin-bottom: 20px;
+                    line-height: 1.2;
+                  }
 
+                  .product-detail-new .product-title-line {
+                    border: none;
+                    border-top: 1px solid #000;
+                    width: 100%;
+                    margin: 20px 0;
+                  }
 
-                  {% if section.settings.show_sdes %}
-                  {% if product.metafields.engo_summary.summary_content != blank %}
-                  <div class="pd_summary">
-                    <p class=" mb-0">{{product.metafields.engo_summary.summary_content}}</p>
-                  </div>
-                  {% else %}
-                  <div class="pd_summary">
-                    <p class=" mb-0 ">{{product.description| strip_html | truncatewords: 50}}</p>
-                  </div>
-                  {% endif %}
-                  {% endif %}
+                  .product-detail-new .product-price-new {
+                    font-family: 'D-DIN', sans-serif;
+                    font-size: 20px;
+                    font-weight: 400;
+                    color: #000;
+                    margin-bottom: 20px;
+                  }
 
-                  {% if settings.ena_info_sale %}
-                  <div class="list_ul_engo_full">                
-                    {{settings.content_infosale}}
-                  </div>
-                  {% endif %}
+                  .product-detail-new .product-separator {
+                    border: none;
+                    border-top: 1px solid #000;
+                    width: 100%;
+                    margin: 20px 0;
+                  }
 
+                  .product-detail-new .product-size-section {
+                    margin: 30px 0;
+                  }
 
-                  {% if settings.ena_random_sold_item %}
-                  <p class="random_product" ><span id="random_prod"></span>  {{settings.random_text1}}  <span id="random_hour"></span> {{settings.random_text2}}</p>   
-                  {% endif %}
+                  .product-detail-new .product-size-label {
+                    font-family: 'D-DIN', sans-serif;
+                    font-size: 14px;
+                    font-weight: 400;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                    color: #000;
+                    margin-bottom: 10px;
+                    display: block;
+                  }
 
-                  {% if settings.ena_countdown %}
-                  <div class="count-down">
-                    <p class="text" >{{settings.countdown_text1}} <span id="random_sold_prod"></span> {{settings.countdown_text2}}</p>
-                    <div class="progress">
-                      <div class="progress-bar progress-bar-striped progress-bar-animated"></div>
-                    </div>
-                    {% if product.metafields.engo_countdown_prod.countdown_datetime != blank %}
-                    <div class="countdown-timer">
-                      <ul data-countdown="countdown-v1" data-date="{{product.metafields.engo_countdown_prod.countdown_datetime}}">
-                      </ul>
-                    </div> 
+                  .product-detail-new .product-size-box {
+                    display: inline-block;
+                    padding: 12px 24px;
+                    border: 1px solid #666;
+                    background: #fff;
+                    color: #000;
+                    font-family: 'D-DIN', sans-serif;
+                    font-size: 16px;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                    cursor: default;
+                  }
+
+                  .product-detail-new .product-buttons {
+                    margin: 30px 0;
+                  }
+
+                  .product-detail-new .product-btn {
+                    width: 100%;
+                    padding: 15px 20px;
+                    font-family: 'D-DIN', sans-serif;
+                    font-size: 14px;
+                    font-weight: 400;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                    border: none;
+                    cursor: pointer;
+                    transition: opacity 0.3s ease;
+                    margin-bottom: 15px;
+                    text-align: center;
+                    display: block;
+                  }
+
+                  .product-detail-new .product-btn:hover {
+                    opacity: 0.8;
+                  }
+
+                  .product-detail-new .product-btn-addcart {
+                    background: #fff;
+                    border: 2px solid #000;
+                    color: #000;
+                  }
+
+                  .product-detail-new .product-btn-buynow {
+                    background: #000;
+                    color: #fff;
+                  }
+
+                  .product-detail-new .product-btn:disabled {
+                    opacity: 0.5;
+                    cursor: not-allowed;
+                  }
+
+                  /* Estilos para el botón de pago de Shopify */
+                  .product-detail-new .product-btn-buynow-wrapper {
+                    margin-top: 0;
+                  }
+
+                  .product-detail-new .product-btn-buynow-wrapper .shopify-payment-button {
+                    margin-top: 0;
+                  }
+
+                  .product-detail-new .product-btn-buynow-wrapper .shopify-payment-button__button {
+                    width: 100% !important;
+                    padding: 15px 20px !important;
+                    font-family: 'D-DIN', sans-serif !important;
+                    font-size: 14px !important;
+                    font-weight: 400 !important;
+                    text-transform: uppercase !important;
+                    letter-spacing: 1px !important;
+                    background: #000 !important;
+                    color: #fff !important;
+                    border: none !important;
+                    border-radius: 0 !important;
+                    margin-bottom: 15px !important;
+                    transition: opacity 0.3s ease !important;
+                  }
+
+                  .product-detail-new .product-btn-buynow-wrapper .shopify-payment-button__button:hover {
+                    opacity: 0.8 !important;
+                  }
+
+                  .product-detail-new .product-btn-buynow-wrapper .shopify-payment-button__button--unbranded {
+                    background: #000 !important;
+                    color: #fff !important;
+                  }
+
+                  /* === Estilos de acordeones === */
+                  .product-accordion-item {
+                    border-bottom: 1px solid #000;
+                    padding: 20px 0;
+                  }
+
+                  .product-accordion-question {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    cursor: pointer;
+                    padding: 0;
+                    background: none;
+                    border: none;
+                    width: 100%;
+                    text-align: left;
+                    font-family: 'D-DIN', sans-serif;
+                    font-size: 14px;
+                    font-weight: 400;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                    color: #000;
+                    transition: opacity 0.3s ease;
+                    line-height: 1.4;
+                    margin-bottom: 15px;
+                  }
+
+                  .product-accordion-question span:first-child {
+                    flex: 1;
+                  }
+
+                  .product-accordion-question:hover {
+                    opacity: 0.7;
+                  }
+
+                  .product-accordion-icon-wrapper {
+                    flex-shrink: 0;
+                    margin-left: 20px;
+                    width: 20px;
+                    height: 20px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                  }
+
+                  .product-accordion-icon {
+                    width: 20px;
+                    height: 20px;
+                    transition: transform 0.3s ease;
+                  }
+
+                  .product-accordion-icon-plus,
+                  .product-accordion-icon-minus {
+                    display: none;
+                  }
+
+                  .product-accordion-question[aria-expanded="false"] .product-accordion-icon-plus {
+                    display: block;
+                  }
+
+                  .product-accordion-question[aria-expanded="true"] .product-accordion-icon-minus {
+                    display: block;
+                  }
+
+                  .product-accordion-answer {
+                    font-family: 'D-DIN', sans-serif;
+                    font-size: 14px;
+                    line-height: 1.6;
+                    color: #333;
+                    padding-top: 15px;
+                    padding-left: 0;
+                  }
+
+                  /* === Responsive === */
+                  @media (max-width: 768px) {
+                    .product-detail-new .product-title-new {
+                      font-size: 24px;
+                    }
+
+                    .sticky_content.js_sticky {
+                      position: relative !important;
+                    }
+                  }
+                </style>
+
+                <div class="product-detail-new">
+                  {% comment %} Detectar la opción de talla {% endcomment %}
+                  {% assign size_option_index = 0 %}
+                  {% assign size_found = false %}
+                  {% for option in product.options %}
+                    {% assign option_lower = option | downcase %}
+                    {% if option_lower == 'size' or option_lower == 'talla' %}
+                      {% assign size_option_index = forloop.index0 %}
+                      {% assign size_found = true %}
+                      {% break %}
                     {% endif %}
-                  </div> 
-                  {% endif %}
-
-                  {% comment %}
-                  Setup MetaFields Editor: https://apps.shopify.com/metafields-editor
-
-                  If you’ve added to a product a metafield with the following attributes to store extra description for your products.
-                  Namespace: shopilaunch_function
-                  Key: countdown_time
-                  Value: 12/12/2019
-                  Value_type: string
-
-                  You can output the value of this metafield in product.liquid with this Liquid tag:
-                  product.metafields.Namespace.Key
-
-                  {{product.metafields.engo_summary.summary_content}}
-                  {{product.metafields.engo_external.external_name}}
-                  {{product.metafields.engo_external.external_url}}
-                  {{product.metafields.engo_video.video_link}}
-
-                  {% endcomment %}
-
-
-                  {% if settings.show_sizeguide or settings.show_question or settings.show_delivery_return %}
-                  	{% include 'size-guide' %}
-                  {% endif %}	
+                  {% endfor %}
                   
-                  <form  action="/cart/add" method="post" enctype="multipart/form-data" id="AddToCartForm" class="cart clearfix mt-3">
-                    {% comment %}
-                    Add product variants as a dropdown.
-                    - By default, each variant (or combination of variants) will display as its own <option>
-                    - To separate these into multiple steps, which we suggest, use option_selection.js (see below)
+                  {% if size_found == false %}
+                    {% assign size_option_index = 0 %}
+                  {% endif %}
 
-                    You can leverage jQuery to add a callback on page load and each time the select element changes:
-                    - Include option_selection.js (as seen at the bottom of this file)
-                    - This allows you to use JavaScript anytime the variant dropdown changes
-                    - This also separates out your variant options (ie. size, color, etc.) to separate select elements
+                  {% assign current_variant = product.selected_or_first_available_variant %}
+                  {% if size_option_index == 0 %}
+                    {% assign current_size = current_variant.option1 %}
+                  {% elsif size_option_index == 1 %}
+                    {% assign current_size = current_variant.option2 %}
+                  {% else %}
+                    {% assign current_size = current_variant.option3 %}
+                  {% endif %}
 
-                    For more information on products with multiple options, visit:
-                    - http://docs.shopify.com/support/your-website/themes/can-i-make-my-theme-use-products-with-multiple-options#update-product-liquid
-                    {% endcomment %}
+                  {% comment %} Título del producto {% endcomment %}
+                  <h2 class="product-title-new">{{ product.title | upcase }}</h2>
+                  <hr class="product-title-line">
 
-                    <select name="id" id="productSelect" class="product-single__variants">
-                      {% for variant in product.variants %}
-                      {% if variant.available %}
-                      {% assign sku = variant.sku %}
-                      {% comment %}
-                      Note: if you use option_selection.js, your <select> tag will be overwritten, meaning what you have inside <option> will not reflect what you coded below.
-                      {% endcomment %}
-                      <option {% if variant == product.selected_or_first_available_variant %} selected="selected" {% endif %} data-sku="{{ variant.sku }}" value="{{ variant.id }}">{{ variant.title }} - {{ variant.price | money_with_currency }}</option>
+                  {% comment %} Precio {% endcomment %}
+                  <div class="product-price-new">
+                    {% capture price %}{{ product.price | money }}{% endcapture %}
+                    {% if on_sale %}
+                      <del class="enj-product-price-compare" style="text-decoration: line-through; margin-right: 10px;">{{ product.compare_at_price | money }}</del>
+                    {% endif %}
+                    <span class="enj-product-price engoj_price_main">{{ price }}</span>
+                  </div>
 
+                  {% comment %} Línea separadora {% endcomment %}
+                  <hr class="product-separator">
+
+                  {% comment %} Talla {% endcomment %}
+                  {% if current_size != blank %}
+                  <div class="product-size-section">
+                    <span class="product-size-label">
+                      {% if request.locale.iso_code == 'es' %}
+                        TALLA
                       {% else %}
-                      <option disabled="disabled">
-                        {{ variant.title }} - {{ 'products.product.sold_out' | t }}
-                      </option>
+                        SIZE
                       {% endif %}
-                      {% endfor %}
-                      </select>
-                    </select>
-
-
-
-
-                    {% if product.available and product.variants.size > 1 %}
-                    
-
-                    <!--Swatch Variant -->
-                    {% for option in product.options %}
-                    {% include 'swatch' with option %}
-                    {% endfor %}
-                    {% endif %}
-                    <!--End Swatch Variant -->
-
-                    <!-- Add to cart & quantity -->
-                    {% if settings.enable_catalog_mode == false %}
-                    {% if product.metafields.engo_external.external_name != blank %}
-
-                    <div class=" btn-action">
-                      <a href="{{product.metafields.engo_external.external_url}}" class="shop-button-amazon" >{{product.metafields.engo_external.external_name}}</a>
-                    </div>  
-
-                    {% else %}
-                    {% if sold_out %}
-                    <div class="btn-action">
-                      <div class="shop-button-soldout">
-                        {{ 'products.product.out_of_stock' | t }}
-                      </div>
-                    </div>  
-                    {% else %}
-                    <div class="btn-action detail-attr qty-cart">
-                      {% if section.settings.show_quantity %}
-                      <div class="">
-                        <input type="number" size="4" title="Qty" value="1" min="1" id="Quantity" name="quantity" />
-                      </div>
-                      {% endif %}
-                      <button type="submit" class="shop-button enj-add-to-cart-btn engoj-btn-addtocart">
-                        {{settings.pia_addcart_name}}
-                      </button>
-                    </div>
-                    <!-- End add to cart & quantity -->
-                    {% form 'product', product %}
-                    {{ form | payment_button }}
-                    {% endform %}
-
-                    {% endif %}
-                    {% endif %}
-                    {% endif %}
-
-                  </form>
-
-                  {% if settings.ena_random_visit %}
-                  <p class="visitor">Real time <span id="realtime_visit"></span> Visitor right now</p>
-                  {% endif %}
-                  {% if settings.trust_badge  %}
-                  <div class="trust_bagde">
-                    <img data-src="{{settings.trust_badge|img_url : 'master'}}" class="lazyload" alt>
+                    </span>
+                    <div class="product-size-box">{{ current_size }}</div>
                   </div>
                   {% endif %}
 
+                  {% comment %} Formulario de compra {% endcomment %}
                   {% if settings.enable_catalog_mode == false %}
-                  <div class="btn-addwhlist">
-                    {% include 'add-wishlist' %}
-                    <span class="text_whlist"></span>
-                  </div>
+                    {% if product.metafields.engo_external.external_name != blank %}
+                      <div class="product-buttons">
+                        <a href="{{product.metafields.engo_external.external_url}}" class="product-btn product-btn-addcart">
+                          {{product.metafields.engo_external.external_name}}
+                        </a>
+                      </div>
+                    {% else %}
+                      <form action="/cart/add" method="post" enctype="multipart/form-data" id="AddToCartForm" class="cart">
+                        {% comment %} Select oculto para variantes {% endcomment %}
+                        <select name="id" id="productSelect" class="product-single__variants" style="display: none;">
+                          {% for variant in product.variants %}
+                            {% if variant.available %}
+                              <option {% if variant == current_variant %} selected="selected" {% endif %} data-sku="{{ variant.sku }}" value="{{ variant.id }}">{{ variant.title }} - {{ variant.price | money_with_currency }}</option>
+                            {% else %}
+                              <option disabled="disabled">
+                                {{ variant.title }} - {{ 'products.product.sold_out' | t }}
+                              </option>
+                            {% endif %}
+                          {% endfor %}
+                        </select>
+
+                        {% comment %} Swatches ocultos para mantener funcionalidad {% endcomment %}
+                        {% if product.available and product.variants.size > 1 %}
+                          <div style="display: none;">
+                            {% for option in product.options %}
+                              {% include 'swatch' with option %}
+                            {% endfor %}
+                          </div>
+                        {% endif %}
+
+                        {% comment %} Botones {% endcomment %}
+                        <div class="product-buttons">
+                          {% if sold_out %}
+                            <button type="button" class="product-btn product-btn-addcart" disabled>
+                              {{ 'products.product.out_of_stock' | t | upcase }}
+                            </button>
+                          {% else %}
+                            <button type="submit" class="product-btn product-btn-addcart enj-add-to-cart-btn engoj-btn-addtocart">
+                              {% if request.locale.iso_code == 'es' %}
+                                AÑADIR AL CARRITO
+                              {% else %}
+                                ADD TO CART
+                              {% endif %}
+                            </button>
+                            
+                            {% form 'product', product %}
+                              <div class="product-btn-buynow-wrapper">
+                                {{ form | payment_button }}
+                              </div>
+                            {% endform %}
+                          {% endif %}
+                        </div>
+                      </form>
+                    {% endif %}
                   {% endif %}
 
-                  <ul class="product-meta-info"> 
-                    {% if section.settings.show_sku %}
-                    {% if product.variants.first.sku != blank %}
-                    <li>
-                      <div class="item-product-meta-info product-sku">
-                        <label>{{'products.product.sku' | t}} :</label>
-                        <span class="engoj-variant-sku">{{ current_variant.sku }}</span>
+                  {% comment %} Acordeones {% endcomment %}
+                  <div class="product-accordions">
+                    {% comment %} Acordeón 1: ENVÍOS {% endcomment %}
+                    <div class="product-accordion-item">
+                      <button class="product-accordion-question" type="button" data-toggle="collapse" data-target="#productShipping" aria-expanded="false" aria-controls="productShipping" data-parent=".product-accordions">
+                        <span>
+                          {% if request.locale.iso_code == 'es' %}
+                            ENVÍOS
+                          {% else %}
+                            SHIPPING
+                          {% endif %}
+                        </span>
+                        <span class="product-accordion-icon-wrapper">
+                          <svg class="product-accordion-icon product-accordion-icon-plus" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                            <polygon points="276,236 276,0 236,0 236,236 0,236 0,276 236,276 236,512 276,512 276,276 512,276 512,236"/>
+                          </svg>
+                          <svg class="product-accordion-icon product-accordion-icon-minus" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                            <rect y="236" width="512" height="40"/>
+                          </svg>
+                        </span>
+                      </button>
+                      <div id="productShipping" class="collapse">
+                        <div class="product-accordion-answer">
+                          {% if request.locale.iso_code == 'es' %}
+                            <p>Envios en Caracas – Tarifa plana 5$</p>
+                            <p>Envios nacionales – MRW cobro destino</p>
+                            <p>Worldwide shipping – Contáctanos</p>
+                          {% else %}
+                            <p>Shipping in Caracas – Flat rate $5</p>
+                            <p>National shipping – MRW destination charge</p>
+                            <p>Worldwide shipping – Contact us</p>
+                          {% endif %}
+                        </div>
                       </div>
-                    </li>
-                    {% endif %}
-                    {% endif %} 
+                    </div>
 
-                    {% if section.settings.show_cate %}
-                    <li>
-                      <div class="item-product-meta-info product-category-info">
-                        <label>{{'blogs.sidebar.categories' | t}} :</label>
-                        {% for collection in product.collections %}
-                        <a href="{{collection.url}}">{{ collection.title }}{% unless forloop.last%},{% endunless %} </a>	
-                        {% endfor %}
+                    {% comment %} Acordeón 2: DEVOLUCIONES Y CAMBIOS {% endcomment %}
+                    <div class="product-accordion-item">
+                      <button class="product-accordion-question" type="button" data-toggle="collapse" data-target="#productReturns" aria-expanded="false" aria-controls="productReturns" data-parent=".product-accordions">
+                        <span>
+                          {% if request.locale.iso_code == 'es' %}
+                            DEVOLUCIONES Y CAMBIOS
+                          {% else %}
+                            RETURNS AND EXCHANGES
+                          {% endif %}
+                        </span>
+                        <span class="product-accordion-icon-wrapper">
+                          <svg class="product-accordion-icon product-accordion-icon-plus" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                            <polygon points="276,236 276,0 236,0 236,236 0,236 0,276 236,276 236,512 276,512 276,276 512,276 512,236"/>
+                          </svg>
+                          <svg class="product-accordion-icon product-accordion-icon-minus" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                            <rect y="236" width="512" height="40"/>
+                          </svg>
+                        </span>
+                      </button>
+                      <div id="productReturns" class="collapse">
+                        <div class="product-accordion-answer">
+                          {% if request.locale.iso_code == 'es' %}
+                            <p>Solo se aceptarán cambios o devoluciones por piezas que se encuentren dañadas o por contactar por correo 5 días desde la compra del producto.</p>
+                          {% else %}
+                            <p>Only changes or returns will be accepted for items that are damaged or by contacting by email 5 days from the purchase of the product.</p>
+                          {% endif %}
+                        </div>
                       </div>
-                    </li>
-                    {% endif %}
-
-                  </ul>
-
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
         </div>
+        {% comment %} FASE 2: Featured Icon eliminado
         {% if section.settings.ena_featured_icon %}
         {% include 'featured-icon' %}
         {% endif %}
+        {% endcomment %}
       </div>
       {% if section.settings.ena_sticky_addcart %}
       <div class="sticky_addcart">
@@ -430,12 +647,18 @@
       {% endif %}
     </div>  
   </section>
-  {% include 'tab-product-details' %}
 
+  {% comment %} FASE 2: Tab Product Details eliminado
+  {% include 'tab-product-details' %}
+  {% endcomment %}
+
+  {% comment %} FASE 2: Social Share Product eliminado
   {% if section.settings.show_social_share %}
   {% include 'social_share-product' %}
   {% endif %}
+  {% endcomment %}
 
+  {% comment %} FASE 2: Related Product se mantiene {% endcomment %}
   {% if settings.enable_related_product %}
   {% include 'related-product-new' %}
   {% endif %}
@@ -550,6 +773,77 @@
   jQuery(document).ready(function($) {
     $('.btn-add-stickycart').on( 'click', function() {
       $('.shop-button.enj-add-to-cart-btn.engoj-btn-addtocart').click();
+    });
+
+    // Función para actualizar la talla mostrada
+    function updateProductSize(variant) {
+      if (!variant) return;
+      
+      var sizeOptionIndex = 0;
+      var productOptions = {{ product.options | json }};
+      
+      // Encontrar el índice de la opción "Size" o "Talla"
+      for (var i = 0; i < productOptions.length; i++) {
+        var optionLower = productOptions[i].toLowerCase();
+        if (optionLower === 'size' || optionLower === 'talla') {
+          sizeOptionIndex = i;
+          break;
+        }
+      }
+
+      // Obtener la talla de la variante
+      var currentSize = '';
+      if (sizeOptionIndex === 0 && variant.option1) {
+        currentSize = variant.option1;
+      } else if (sizeOptionIndex === 1 && variant.option2) {
+        currentSize = variant.option2;
+      } else if (sizeOptionIndex === 2 && variant.option3) {
+        currentSize = variant.option3;
+      }
+
+      // Actualizar el recuadro de talla
+      if (currentSize) {
+        $('.product-size-box').text(currentSize);
+      }
+    }
+
+    // Extender el selectCallback si existe
+    if (typeof window.selectCallback !== 'undefined') {
+      var originalSelectCallback = window.selectCallback;
+      window.selectCallback = function(variant, selector) {
+        // Llamar al callback original
+        if (originalSelectCallback) {
+          originalSelectCallback(variant, selector);
+        }
+        // Actualizar la talla
+        updateProductSize(variant);
+      };
+    }
+
+    // También escuchar cambios en el select directamente
+    $(document).on('change', '#productSelect', function() {
+      var variantId = $(this).val();
+      var productData = {{ product | json }};
+      var variant = productData.variants.find(function(v) {
+        return v.id == variantId;
+      });
+      if (variant) {
+        updateProductSize(variant);
+      }
+    });
+
+    // Escuchar cambios en los swatches (si existen)
+    $(document).on('change', '.swatch input[type="radio"]', function() {
+      setTimeout(function() {
+        var variantId = $('#productSelect').val();
+        var productData = {{ product | json }};
+        var variant = productData.variants.find(function(v) {
+          return v.id == variantId;
+        });
+        if (variant) {
+          updateProductSize(variant);
+        }
+      }, 100);
     });
   }); 
 

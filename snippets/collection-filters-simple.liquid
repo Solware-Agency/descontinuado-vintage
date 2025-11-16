@@ -239,6 +239,15 @@
     border-color: #000;
   }
   
+  /* Animaciones para filtrado */
+  .product-item-wrapper {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  
+  #products-container.filtering .product-item-wrapper {
+    transform: scale(0.98);
+  }
+  
   /* Responsive */
   @media (max-width: 991px) {
     .filters-row {
@@ -297,20 +306,47 @@
         });
       });
       
+      // Asegurar que todos los productos sean visibles inicialmente
+      const productWrappers = document.querySelectorAll('.product-item-wrapper');
+      productWrappers.forEach(function(wrapper) {
+        wrapper.style.display = '';
+        wrapper.style.opacity = '1';
+      });
+      
       // Restaurar valores desde URL si existen
       restoreFiltersFromURL();
     }
     
     function restoreFiltersFromURL() {
       const urlParams = new URLSearchParams(window.location.search);
-      const constraint = urlParams.get('constraint');
+      const colorFilter = document.getElementById('filter-color');
+      const sizeFilter = document.getElementById('filter-size');
+      const priceFilter = document.getElementById('filter-price');
       
-      if (constraint) {
+      // Restaurar desde parámetros individuales (nuevo formato)
+      const color = urlParams.get('color');
+      const size = urlParams.get('size');
+      const price = urlParams.get('price');
+      
+      if (color && colorFilter && colorFilter.querySelector('option[value="' + decodeURIComponent(color) + '"]')) {
+        colorFilter.value = decodeURIComponent(color);
+      }
+      
+      if (size && sizeFilter && sizeFilter.querySelector('option[value="' + decodeURIComponent(size) + '"]')) {
+        sizeFilter.value = decodeURIComponent(size);
+      }
+      
+      if (price && priceFilter) {
+        const decodedPrice = decodeURIComponent(price);
+        if (decodedPrice === '0-50' || decodedPrice === '50-150' || decodedPrice === '150+') {
+          priceFilter.value = decodedPrice;
+        }
+      }
+      
+      // También soportar formato antiguo con constraint (para compatibilidad)
+      const constraint = urlParams.get('constraint');
+      if (constraint && (!color && !size && !price)) {
         const tags = constraint.split('+');
-        const colorFilter = document.getElementById('filter-color');
-        const sizeFilter = document.getElementById('filter-size');
-        const priceFilter = document.getElementById('filter-price');
-        
         tags.forEach(function(tag) {
           const decodedTag = decodeURIComponent(tag);
           
@@ -330,6 +366,13 @@
           }
         });
       }
+      
+      // Aplicar filtros después de restaurar
+      if (color || size || price || constraint) {
+        setTimeout(function() {
+          applyFilters();
+        }, 100);
+      }
     }
     
     function applyFilters() {
@@ -345,79 +388,138 @@
         return;
       }
       
-      // Construir array de tags para otros filtros
-      const tags = [];
+      // Obtener valores de filtros
+      const selectedColor = colorFilter ? colorFilter.value : '';
+      const selectedSize = sizeFilter ? sizeFilter.value : '';
+      const selectedPrice = priceFilter ? priceFilter.value : '';
       
-      if (colorFilter && colorFilter.value) {
-        tags.push(colorFilter.value);
+      // Filtrar productos del lado del cliente
+      const productWrappers = document.querySelectorAll('.product-item-wrapper');
+      let visibleCount = 0;
+      
+      // Agregar clase de transición
+      if (productWrappers.length > 0) {
+        productWrappers[0].parentElement.classList.add('filtering');
       }
       
-      if (sizeFilter && sizeFilter.value) {
-        tags.push(sizeFilter.value);
-      }
-      
-      // Manejar filtro de precio con rangos
-      if (priceFilter && priceFilter.value) {
-        // Convertir rango de precio a tag para filtrado
-        const priceValue = priceFilter.value;
-        if (priceValue === '0-50') {
-          tags.push('price-0-50');
-        } else if (priceValue === '50-150') {
-          tags.push('price-50-150');
-        } else if (priceValue === '150+') {
-          tags.push('price-150+');
+      productWrappers.forEach(function(wrapper) {
+        let showProduct = true;
+        
+        // Filtro por color
+        if (selectedColor) {
+          const productColors = wrapper.getAttribute('data-product-colors');
+          if (productColors && productColors.trim() !== '') {
+            const colors = productColors.split(',').map(function(c) { return c.trim().toLowerCase(); });
+            if (colors.indexOf(selectedColor.toLowerCase()) === -1) {
+              showProduct = false;
+            }
+          } else {
+            showProduct = false;
+          }
+        }
+        
+        // Filtro por talla
+        if (showProduct && selectedSize) {
+          const productSizes = wrapper.getAttribute('data-product-sizes');
+          if (productSizes && productSizes.trim() !== '') {
+            const sizes = productSizes.split(',').map(function(s) { return s.trim().toLowerCase(); });
+            if (sizes.indexOf(selectedSize.toLowerCase()) === -1) {
+              showProduct = false;
+            }
+          } else {
+            showProduct = false;
+          }
+        }
+        
+        // Filtro por precio
+        if (showProduct && selectedPrice) {
+          const productPriceAttr = wrapper.getAttribute('data-product-price');
+          const productPrice = parseFloat(productPriceAttr) || 0;
+          let priceMatch = false;
+          
+          if (selectedPrice === '0-50') {
+            priceMatch = productPrice >= 0 && productPrice <= 50;
+          } else if (selectedPrice === '50-150') {
+            priceMatch = productPrice > 50 && productPrice <= 150;
+          } else if (selectedPrice === '150+') {
+            priceMatch = productPrice > 150;
+          }
+          
+          if (!priceMatch) {
+            showProduct = false;
+          }
+        }
+        
+        // Mostrar u ocultar producto con animación
+        if (showProduct) {
+          wrapper.style.display = '';
+          wrapper.style.opacity = '1';
+          visibleCount++;
         } else {
-          tags.push(priceValue);
+          wrapper.style.opacity = '0';
+          setTimeout(function() {
+            wrapper.style.display = 'none';
+          }, 200);
+        }
+      });
+      
+      // Remover clase de transición después de animación
+      setTimeout(function() {
+        const container = document.getElementById('products-container');
+        if (container) {
+          container.classList.remove('filtering');
+        }
+      }, 300);
+      
+      // Mostrar mensaje si no hay productos
+      const productsContainer = document.getElementById('products-container');
+      let noResultsMsg = document.querySelector('.no-results-message');
+      
+      if (visibleCount === 0 && productWrappers.length > 0) {
+        if (!noResultsMsg) {
+          noResultsMsg = document.createElement('div');
+          noResultsMsg.className = 'col-12 text-center no-results-message';
+          noResultsMsg.style.padding = '40px 20px';
+          noResultsMsg.innerHTML = '<p style="font-size: 16px; color: #666;">No se encontraron productos con los filtros seleccionados.</p>';
+          if (productsContainer) {
+            productsContainer.appendChild(noResultsMsg);
+          }
+        }
+        noResultsMsg.style.display = 'block';
+      } else if (noResultsMsg) {
+        noResultsMsg.style.display = 'none';
+      }
+      
+      // Ocultar paginación cuando hay filtros activos
+      const pagination = document.querySelector('.pagi-nav');
+      if (pagination) {
+        if (selectedColor || selectedSize || selectedPrice) {
+          pagination.style.display = 'none';
+        } else {
+          pagination.style.display = 'flex';
         }
       }
       
-      // Construir URL
-      let newUrl = window.location.pathname;
+      // Actualizar URL sin recargar página
+      updateURL(selectedColor, selectedSize, selectedPrice);
+    }
+    
+    function updateURL(color, size, price) {
       const urlParams = new URLSearchParams();
+      const params = [];
       
-      if (tags.length > 0) {
-        urlParams.set('constraint', tags.join('+'));
-      }
+      if (color) params.push('color=' + encodeURIComponent(color));
+      if (size) params.push('size=' + encodeURIComponent(size));
+      if (price) params.push('price=' + encodeURIComponent(price));
       
-      // Mantener parámetros de ordenamiento
+      // Mantener sort_by si existe
       const currentParams = new URLSearchParams(window.location.search);
       if (currentParams.get('sort_by')) {
-        urlParams.set('sort_by', currentParams.get('sort_by'));
+        params.push('sort_by=' + currentParams.get('sort_by'));
       }
       
-      const queryString = urlParams.toString();
-      if (queryString) {
-        newUrl += '?' + queryString;
-      }
-      
-      // Usar el sistema AJAX existente si está disponible
-      if (typeof collection !== 'undefined' && collection.filterAjaxClick) {
-        // Inicializar Shopify.queryParams si no existe
-        if (typeof Shopify === 'undefined') {
-          window.Shopify = {};
-        }
-        if (typeof Shopify.queryParams === 'undefined') {
-          Shopify.queryParams = {};
-        }
-        
-        // Limpiar parámetros anteriores
-        delete Shopify.queryParams.page;
-        
-        if (tags.length > 0) {
-          Shopify.queryParams.constraint = tags.join('+');
-        } else {
-          delete Shopify.queryParams.constraint;
-        }
-        
-        // Mantener sort_by si existe
-        if (currentParams.get('sort_by')) {
-          Shopify.queryParams.sort_by = currentParams.get('sort_by');
-        }
-        
-        collection.filterAjaxClick();
-      } else {
-        window.location.href = newUrl;
-      }
+      const newUrl = window.location.pathname + (params.length > 0 ? '?' + params.join('&') : '');
+      window.history.replaceState({}, '', newUrl);
     }
     
     // Función para resetear filtros

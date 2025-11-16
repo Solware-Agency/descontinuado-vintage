@@ -20,9 +20,61 @@
           <div class="clearfix relative collection_prod">  
             {% if section.settings.prod_layout == 'prod_grid' %}
             <div class="product-grid-view grid-uniform">
-              <div class="row">
+              <div class="row" id="products-container">
                 {% for product in collection.products %}
-                <div class="col-lg-3 col-md-6 col-6 pb-4 trans-product">
+                {% comment %} Extraer información del producto para filtrado {% endcomment %}
+                {% assign product_colors = '' | split: ',' %}
+                {% assign product_sizes = '' | split: ',' %}
+                {% assign color_option_index = -1 %}
+                
+                {% comment %} Buscar opción de color {% endcomment %}
+                {% for option in product.options %}
+                  {% assign option_lower = option | downcase %}
+                  {% if option_lower == 'color' or option_lower == 'colour' %}
+                    {% assign color_option_index = forloop.index0 %}
+                    {% break %}
+                  {% endif %}
+                {% endfor %}
+                
+                {% comment %} Recopilar colores y tallas del producto {% endcomment %}
+                {% for variant in product.variants %}
+                  {% if color_option_index >= 0 %}
+                    {% if color_option_index == 0 and variant.option1 != blank %}
+                      {% assign color_handle = variant.option1 | handleize %}
+                      {% unless product_colors contains color_handle %}
+                        {% assign product_colors = product_colors | push: color_handle %}
+                      {% endunless %}
+                    {% elsif color_option_index == 1 and variant.option2 != blank %}
+                      {% assign color_handle = variant.option2 | handleize %}
+                      {% unless product_colors contains color_handle %}
+                        {% assign product_colors = product_colors | push: color_handle %}
+                      {% endunless %}
+                    {% elsif color_option_index == 2 and variant.option3 != blank %}
+                      {% assign color_handle = variant.option3 | handleize %}
+                      {% unless product_colors contains color_handle %}
+                        {% assign product_colors = product_colors | push: color_handle %}
+                      {% endunless %}
+                    {% endif %}
+                  {% endif %}
+                  
+                  {% comment %} Recopilar tallas desde metafield {% endcomment %}
+                  {% if variant.metafields.custom.talla_estandar != blank %}
+                    {% assign size_value = variant.metafields.custom.talla_estandar | strip %}
+                    {% assign size_handle = size_value | handleize %}
+                    {% unless product_sizes contains size_handle %}
+                      {% assign product_sizes = product_sizes | push: size_handle %}
+                    {% endunless %}
+                  {% endif %}
+                {% endfor %}
+                
+                {% comment %} Obtener precio mínimo del producto (en centavos, convertir a unidades) {% endcomment %}
+                {% assign product_min_price = product.price_min | divided_by: 100.0 %}
+                
+                <div class="col-lg-3 col-md-6 col-6 pb-4 trans-product product-item-wrapper" 
+                     data-product-colors="{{ product_colors | join: ',' }}"
+                     data-product-sizes="{{ product_sizes | join: ',' }}"
+                     data-product-price="{{ product_min_price }}"
+                     data-product-id="{{ product.id }}">
                   {% include 'product-item-v1' %}
                 </div>
                 {% else %}
@@ -147,50 +199,190 @@
     border-color: #000;
   }
   
+  /* Sobrescribir estilos del tema para prev/next */
+  .pagi-nav .pagination span.prev,
+  .pagi-nav .pagination span.next,
   .pagi-nav .pagination .prev,
   .pagi-nav .pagination .next {
-    background: #fff;
-    border: 1px solid #ddd;
-    padding: 10px 14px;
-    min-width: 44px;
-    height: 44px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    background: #fff !important;
+    border: 1px solid #ddd !important;
+    padding: 10px 16px !important;
+    min-width: auto !important;
+    width: auto !important;
+    max-width: none !important;
+    height: 44px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: relative !important;
+    left: auto !important;
+    right: auto !important;
+    top: auto !important;
+    bottom: auto !important;
+    margin: 0 !important;
+    line-height: 44px !important;
+    font-size: 14px !important;
+    z-index: 1 !important;
+    border-left: 1px solid #ddd !important;
+    border-right: 1px solid #ddd !important;
+    float: none !important;
   }
   
+  .pagi-nav .pagination span.prev a,
+  .pagi-nav .pagination span.next a,
+  .pagi-nav .pagination .prev a,
+  .pagi-nav .pagination .next a {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    height: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    color: #000 !important;
+    text-decoration: none !important;
+    white-space: nowrap !important;
+    min-width: auto !important;
+    line-height: 1.5 !important;
+  }
+  
+  .pagi-nav .pagination span.prev:hover,
+  .pagi-nav .pagination span.next:hover,
   .pagi-nav .pagination .prev:hover,
   .pagi-nav .pagination .next:hover {
-    background: #000;
-    color: #fff;
-    border-color: #000;
+    background: #000 !important;
+    border-color: #000 !important;
+  }
+  
+  .pagi-nav .pagination span.prev:hover a,
+  .pagi-nav .pagination span.next:hover a,
+  .pagi-nav .pagination .prev:hover a,
+  .pagi-nav .pagination .next:hover a {
+    color: #fff !important;
   }
   
   .pagi-nav .pagination .prev i,
   .pagi-nav .pagination .next i {
-    font-size: 16px;
-    line-height: 1;
+    font-size: 16px !important;
+    line-height: 1 !important;
+    margin: 0 4px !important;
   }
   
-  /* Responsive */
-  @media (max-width: 575px) {
+  /* Responsive - Tablet */
+  @media (max-width: 991px) and (min-width: 576px) {
     .pagi-nav .pagination {
-      gap: 5px;
+      gap: 6px;
+    }
+    
+    .pagi-nav .pagination a,
+    .pagi-nav .pagination span {
+      padding: 9px 12px;
+      min-width: 40px;
+      height: 40px;
+      font-size: 14px;
+    }
+    
+    .pagi-nav .pagination span.prev,
+    .pagi-nav .pagination span.next,
+    .pagi-nav .pagination .prev,
+    .pagi-nav .pagination .next {
+      padding: 9px 14px !important;
+      min-width: auto !important;
+      width: auto !important;
+      max-width: none !important;
+      height: 40px !important;
+      font-size: 14px !important;
+      position: relative !important;
+      left: auto !important;
+      right: auto !important;
+      top: auto !important;
+      bottom: auto !important;
+      margin: 0 !important;
+      line-height: 40px !important;
+      display: inline-flex !important;
+    }
+    
+    .pagi-nav .pagination span.prev a,
+    .pagi-nav .pagination span.next a,
+    .pagi-nav .pagination .prev a,
+    .pagi-nav .pagination .next a {
+      font-size: 14px !important;
+      white-space: nowrap !important;
+      width: 100% !important;
+      height: 100% !important;
+    }
+  }
+  
+  /* Responsive - Mobile */
+  @media (max-width: 575px) {
+    .pagi-nav {
+      margin: 30px auto;
+      padding: 0 10px;
+    }
+    
+    .pagi-nav .pagination {
+      gap: 4px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    
+    .pagi-nav .pagination li {
+      margin: 2px;
     }
     
     .pagi-nav .pagination a,
     .pagi-nav .pagination span {
       padding: 8px 10px;
-      min-width: 38px;
-      height: 38px;
-      font-size: 14px;
+      min-width: 36px;
+      height: 36px;
+      font-size: 13px;
+      line-height: 20px;
     }
     
+    .pagi-nav .pagination span.prev,
+    .pagi-nav .pagination span.next,
     .pagi-nav .pagination .prev,
     .pagi-nav .pagination .next {
-      padding: 8px 10px;
-      min-width: 38px;
-      height: 38px;
+      padding: 8px 12px !important;
+      min-width: auto !important;
+      width: auto !important;
+      max-width: none !important;
+      height: 36px !important;
+      font-size: 13px !important;
+      position: relative !important;
+      left: auto !important;
+      right: auto !important;
+      top: auto !important;
+      bottom: auto !important;
+      margin: 2px !important;
+      line-height: 36px !important;
+      display: inline-flex !important;
+      z-index: 1 !important;
+      border-left: 1px solid #ddd !important;
+      border-right: 1px solid #ddd !important;
+      float: none !important;
+    }
+    
+    .pagi-nav .pagination span.prev a,
+    .pagi-nav .pagination span.next a,
+    .pagi-nav .pagination .prev a,
+    .pagi-nav .pagination .next a {
+      font-size: 13px !important;
+      white-space: nowrap !important;
+      padding: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      line-height: 1.5 !important;
+    }
+    
+    .pagi-nav .pagination span.prev i,
+    .pagi-nav .pagination span.next i,
+    .pagi-nav .pagination .prev i,
+    .pagi-nav .pagination .next i {
+      font-size: 14px !important;
+      margin: 0 3px !important;
     }
   }
 </style>
