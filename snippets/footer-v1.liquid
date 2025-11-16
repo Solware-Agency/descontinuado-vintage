@@ -117,6 +117,8 @@
     list-style: none;
     padding: 0;
     margin: 0;
+    display: flex;
+    flex-direction: column;
   }
   .links-column li {
     margin-bottom: 6px;
@@ -216,23 +218,34 @@
     text-decoration: underline;
   }
 
-  /* Responsive */
+  /* Responsive Tablet y Mobile */
   @media (max-width: 991px) {
     .footer-v1 {
-      padding: 50px 4% 20px;
+      padding: 50px 0 20px;
     }
     .footer-container {
       display: flex;
       flex-direction: column;
       gap: 40px;
+      padding: 0 4%;
     }
     .footer-newsletter {
       order: 1;
       grid-column: auto;
       margin-top: 0;
+      width: calc(100% + 8%);
+      margin-left: -4%;
+      padding: 0 4%;
+      box-sizing: border-box;
     }
     .footer-links {
       order: 2;
+    }
+    .footer-links .links-column {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      text-align: left;
     }
     .footer-policies {
       order: 3;
@@ -242,17 +255,22 @@
       display: flex;
       justify-content: center;
     }
-    .footer-links,
     .footer-policies {
       text-align: center;
     }
   }
   @media (max-width: 600px) {
     .footer-v1 {
-      padding: 40px 3% 20px;
+      padding: 40px 0 20px;
     }
     .footer-container {
       gap: 30px;
+      padding: 0 3%;
+    }
+    .footer-newsletter {
+      width: calc(100% + 6%);
+      margin-left: -3%;
+      padding: 0 3%;
     }
     .footer-newsletter form input[type="email"] {
       font-size: 12px;
@@ -265,6 +283,9 @@
     }
     .footer-newsletter .checkbox-container {
       font-size: 11px;
+    }
+    .footer-links .links-column {
+      gap: 15px;
     }
     .footer-bottom p {
       font-size: 11px;

@@ -23,14 +23,16 @@
               <div class="row" id="products-container">
                 {% for product in collection.products %}
                 {% comment %} Extraer información del producto para filtrado {% endcomment %}
-                {% assign product_colors = '' | split: ',' %}
-                {% assign product_sizes = '' | split: ',' %}
+                {% assign product_colors_string = '' %}
+                {% assign product_colors_array = '' | split: ',' %}
+                {% assign product_sizes_string = '' %}
+                {% assign product_sizes_array = '' | split: ',' %}
                 {% assign color_option_index = -1 %}
                 
                 {% comment %} Buscar opción de color {% endcomment %}
                 {% for option in product.options %}
-                  {% assign option_lower = option | downcase %}
-                  {% if option_lower == 'color' or option_lower == 'colour' %}
+                  {% assign option_lower = option | downcase | strip %}
+                  {% if option_lower == 'color' or option_lower == 'colour' or option_lower contains 'color' %}
                     {% assign color_option_index = forloop.index0 %}
                     {% break %}
                   {% endif %}
@@ -39,20 +41,21 @@
                 {% comment %} Recopilar colores y tallas del producto {% endcomment %}
                 {% for variant in product.variants %}
                   {% if color_option_index >= 0 %}
+                    {% assign color_name = '' %}
                     {% if color_option_index == 0 and variant.option1 != blank %}
-                      {% assign color_handle = variant.option1 | handleize %}
-                      {% unless product_colors contains color_handle %}
-                        {% assign product_colors = product_colors | push: color_handle %}
-                      {% endunless %}
+                      {% assign color_name = variant.option1 | strip %}
                     {% elsif color_option_index == 1 and variant.option2 != blank %}
-                      {% assign color_handle = variant.option2 | handleize %}
-                      {% unless product_colors contains color_handle %}
-                        {% assign product_colors = product_colors | push: color_handle %}
-                      {% endunless %}
+                      {% assign color_name = variant.option2 | strip %}
                     {% elsif color_option_index == 2 and variant.option3 != blank %}
-                      {% assign color_handle = variant.option3 | handleize %}
-                      {% unless product_colors contains color_handle %}
-                        {% assign product_colors = product_colors | push: color_handle %}
+                      {% assign color_name = variant.option3 | strip %}
+                    {% endif %}
+                    
+                    {% if color_name != blank %}
+                      {% assign color_handle = color_name | handleize %}
+                      {% assign color_check = '|' | append: color_handle | append: '|' %}
+                      {% unless product_colors_string contains color_check %}
+                        {% assign product_colors_string = product_colors_string | append: color_check %}
+                        {% assign product_colors_array = product_colors_array | push: color_handle %}
                       {% endunless %}
                     {% endif %}
                   {% endif %}
@@ -60,19 +63,36 @@
                   {% comment %} Recopilar tallas desde metafield de variantes {% endcomment %}
                   {% if variant.metafields.custom.talla_estandar != blank %}
                     {% assign size_value = variant.metafields.custom.talla_estandar | strip %}
-                    {% assign size_handle = size_value | handleize %}
-                    {% unless product_sizes contains size_handle %}
-                      {% assign product_sizes = product_sizes | push: size_handle %}
-                    {% endunless %}
+                    {% if size_value != blank %}
+                      {% assign size_handle = size_value | handleize %}
+                      {% assign size_check = '|' | append: size_handle | append: '|' %}
+                      {% unless product_sizes_string contains size_check %}
+                        {% assign product_sizes_string = product_sizes_string | append: size_check %}
+                        {% assign product_sizes_array = product_sizes_array | push: size_handle %}
+                      {% endunless %}
+                    {% endif %}
                   {% endif %}
                 {% endfor %}
+                
+                {% comment %} Fallback: leer talla desde producto si no se encontró en variantes {% endcomment %}
+                {% if product_sizes_array.size == 0 and product.metafields.custom.talla_estandar != blank %}
+                  {% assign size_value = product.metafields.custom.talla_estandar | strip %}
+                  {% if size_value != blank %}
+                    {% assign size_handle = size_value | handleize %}
+                    {% assign size_check = '|' | append: size_handle | append: '|' %}
+                    {% unless product_sizes_string contains size_check %}
+                      {% assign product_sizes_string = product_sizes_string | append: size_check %}
+                      {% assign product_sizes_array = product_sizes_array | push: size_handle %}
+                    {% endunless %}
+                  {% endif %}
+                {% endif %}
                 
                 {% comment %} Obtener precio mínimo del producto (en centavos, convertir a unidades) {% endcomment %}
                 {% assign product_min_price = product.price_min | divided_by: 100.0 | times: 1 %}
                 
                 <div class="col-lg-3 col-md-6 col-6 pb-4 trans-product product-item-wrapper" 
-                     data-product-colors="{{ product_colors | join: ',' }}"
-                     data-product-sizes="{{ product_sizes | join: ',' }}"
+                     data-product-colors="{{ product_colors_array | join: ',' }}"
+                     data-product-sizes="{{ product_sizes_array | join: ',' }}"
                      data-product-price="{{ product_min_price }}"
                      data-product-id="{{ product.id }}">
                   {% include 'product-item-v1' %}
@@ -98,7 +118,7 @@
               {% comment %} Paginación centrada y corregida {% endcomment %}
               {% if paginate.pages > 1 %}
               <div class="pagi-nav text-center">
-                {{ paginate | default_pagination | replace: '&laquo; Previous', '<i class="fa fa-angle-left"></i>' | replace: 'Next &raquo;', 'Siguiente' | replace: 'Siguiente »', 'Siguiente' | replace: '»', '' }}
+                {{ paginate | default_pagination | replace: '&laquo; Previous', '<i class="fa fa-angle-left"></i>' | replace: 'Next &raquo;', 'Siguiente' | replace: '&raquo;', '' | replace: 'Siguiente »', 'Siguiente' | replace: '»', '' | replace: '&nbsp;»', '' | replace: '&nbsp;&raquo;', '' }}
               </div>
               {% endif %}
             </div>
@@ -123,7 +143,7 @@
               {% endfor %}
               {% if paginate.pages > 1 %}
               <div class="pagi-nav text-center pt-4">
-                {{ paginate | default_pagination | replace: '&laquo; Previous', '<i class="fa fa-angle-left"></i>' | replace: 'Next &raquo;', 'Siguiente' | replace: 'Siguiente »', 'Siguiente' | replace: '»', '' }}
+                {{ paginate | default_pagination | replace: '&laquo; Previous', '<i class="fa fa-angle-left"></i>' | replace: 'Next &raquo;', 'Siguiente' | replace: '&raquo;', '' | replace: 'Siguiente »', 'Siguiente' | replace: '»', '' | replace: '&nbsp;»', '' | replace: '&nbsp;&raquo;', '' }}
               </div>
               {% endif %}
             </div>
@@ -199,11 +219,15 @@
     border-color: #000;
   }
   
-  /* Sobrescribir estilos del tema para prev/next */
+  /* Sobrescribir estilos del tema para prev/next - Selectores más específicos */
+  .pagi-nav .pagination > span.prev,
+  .pagi-nav .pagination > span.next,
   .pagi-nav .pagination span.prev,
   .pagi-nav .pagination span.next,
   .pagi-nav .pagination .prev,
-  .pagi-nav .pagination .next {
+  .pagi-nav .pagination .next,
+  .pagi-nav .pagination li.prev,
+  .pagi-nav .pagination li.next {
     background: #fff !important;
     border: 1px solid #ddd !important;
     padding: 10px 16px !important;
@@ -231,10 +255,33 @@
     overflow: hidden !important;
   }
   
+  /* Sobrescribir específicamente el selector del tema .pagination>span.next */
+  .pagi-nav .pagination > span.next,
+  .pagi-nav .pagination > span.prev,
+  .pagi-nav .pagination li > span.next,
+  .pagi-nav .pagination li > span.prev {
+    position: relative !important;
+    left: auto !important;
+    right: auto !important;
+    top: auto !important;
+    bottom: auto !important;
+    height: 44px !important;
+    line-height: 1 !important;
+    min-width: 90px !important;
+    padding: 10px 16px !important;
+    display: inline-flex !important;
+    width: auto !important;
+    max-width: none !important;
+  }
+  
+  .pagi-nav .pagination > span.prev a,
+  .pagi-nav .pagination > span.next a,
   .pagi-nav .pagination span.prev a,
   .pagi-nav .pagination span.next a,
   .pagi-nav .pagination .prev a,
-  .pagi-nav .pagination .next a {
+  .pagi-nav .pagination .next a,
+  .pagi-nav .pagination li.prev a,
+  .pagi-nav .pagination li.next a {
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -294,10 +341,14 @@
       font-size: 14px;
     }
     
+    .pagi-nav .pagination > span.prev,
+    .pagi-nav .pagination > span.next,
     .pagi-nav .pagination span.prev,
     .pagi-nav .pagination span.next,
     .pagi-nav .pagination .prev,
-    .pagi-nav .pagination .next {
+    .pagi-nav .pagination .next,
+    .pagi-nav .pagination li.prev,
+    .pagi-nav .pagination li.next {
       padding: 9px 14px !important;
       min-width: 85px !important;
       width: auto !important;
@@ -364,10 +415,14 @@
       line-height: 20px;
     }
     
+    .pagi-nav .pagination > span.prev,
+    .pagi-nav .pagination > span.next,
     .pagi-nav .pagination span.prev,
     .pagi-nav .pagination span.next,
     .pagi-nav .pagination .prev,
-    .pagi-nav .pagination .next {
+    .pagi-nav .pagination .next,
+    .pagi-nav .pagination li.prev,
+    .pagi-nav .pagination li.next {
       padding: 8px 12px !important;
       min-width: 80px !important;
       width: auto !important;

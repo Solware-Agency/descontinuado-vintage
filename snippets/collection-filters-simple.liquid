@@ -40,8 +40,9 @@
             <select class="filter-dropdown" id="filter-color" data-filter="color">
               <option value="">COLOR</option>
               {% comment %} Recopilar colores únicos de los productos de la colección {% endcomment %}
-              {% assign unique_colors = '' | split: ',' %}
-              {% assign color_map = '' | split: ',' %}
+              {% assign unique_colors_string = '' %}
+              {% assign unique_colors_array = '' | split: ',' %}
+              {% assign color_map_array = '' | split: ',' %}
               
               {% for product in collection.products %}
                 {% comment %} Buscar la opción "Color" o "Colour" en las opciones del producto {% endcomment %}
@@ -57,42 +58,32 @@
                 {% comment %} Si se encontró la opción de color, extraer valores de variantes {% endcomment %}
                 {% if color_option_index >= 0 %}
                   {% for variant in product.variants %}
+                    {% assign color_name = '' %}
                     {% if color_option_index == 0 and variant.option1 != blank %}
                       {% assign color_name = variant.option1 | strip %}
-                      {% if color_name != blank %}
-                        {% assign color_handle = color_name | handleize %}
-                        {% unless unique_colors contains color_handle %}
-                          {% assign unique_colors = unique_colors | push: color_handle %}
-                          {% assign color_map = color_map | push: color_name %}
-                        {% endunless %}
-                      {% endif %}
                     {% elsif color_option_index == 1 and variant.option2 != blank %}
                       {% assign color_name = variant.option2 | strip %}
-                      {% if color_name != blank %}
-                        {% assign color_handle = color_name | handleize %}
-                        {% unless unique_colors contains color_handle %}
-                          {% assign unique_colors = unique_colors | push: color_handle %}
-                          {% assign color_map = color_map | push: color_name %}
-                        {% endunless %}
-                      {% endif %}
                     {% elsif color_option_index == 2 and variant.option3 != blank %}
                       {% assign color_name = variant.option3 | strip %}
-                      {% if color_name != blank %}
-                        {% assign color_handle = color_name | handleize %}
-                        {% unless unique_colors contains color_handle %}
-                          {% assign unique_colors = unique_colors | push: color_handle %}
-                          {% assign color_map = color_map | push: color_name %}
-                        {% endunless %}
-                      {% endif %}
+                    {% endif %}
+                    
+                    {% if color_name != blank %}
+                      {% assign color_handle = color_name | handleize %}
+                      {% assign color_check = '|' | append: color_handle | append: '|' %}
+                      {% unless unique_colors_string contains color_check %}
+                        {% assign unique_colors_string = unique_colors_string | append: color_check %}
+                        {% assign unique_colors_array = unique_colors_array | push: color_handle %}
+                        {% assign color_map_array = color_map_array | push: color_name %}
+                      {% endunless %}
                     {% endif %}
                   {% endfor %}
                 {% endif %}
               {% endfor %}
               
               {% comment %} Mostrar solo colores encontrados dinámicamente en los productos {% endcomment %}
-              {% for color_handle in unique_colors %}
+              {% for color_handle in unique_colors_array %}
                 {% assign color_index = forloop.index0 %}
-                {% assign color_name = color_map[color_index] %}
+                {% assign color_name = color_map_array[color_index] %}
                 <option value="{{ color_handle }}" {% if current_tags contains color_handle %}selected{% endif %}>
                   {{ color_name }}
                 </option>
@@ -105,29 +96,50 @@
             <select class="filter-dropdown" id="filter-size" data-filter="size">
               <option value="">TALLA</option>
               {% comment %} Extraer tallas desde metafield custom.talla_estandar de los productos reales {% endcomment %}
-              {% assign unique_sizes = '' | split: ',' %}
-              {% assign size_map = '' | split: ',' %}
+              {% assign unique_sizes_string = '' %}
+              {% assign unique_sizes_array = '' | split: ',' %}
+              {% assign size_map_array = '' | split: ',' %}
               
               {% for product in collection.products %}
-                {% comment %} Leer metafield desde variantes {% endcomment %}
+                {% comment %} Leer metafield desde variantes primero, luego desde producto como fallback {% endcomment %}
+                {% assign size_found = false %}
                 {% for variant in product.variants %}
                   {% if variant.metafields.custom.talla_estandar != blank %}
                     {% assign size_value = variant.metafields.custom.talla_estandar | strip %}
                     {% if size_value != blank %}
                       {% assign size_handle = size_value | handleize %}
-                      {% unless unique_sizes contains size_handle %}
-                        {% assign unique_sizes = unique_sizes | push: size_handle %}
-                        {% assign size_map = size_map | push: size_value %}
+                      {% assign size_check = '|' | append: size_handle | append: '|' %}
+                      {% unless unique_sizes_string contains size_check %}
+                        {% assign unique_sizes_string = unique_sizes_string | append: size_check %}
+                        {% assign unique_sizes_array = unique_sizes_array | push: size_handle %}
+                        {% assign size_map_array = size_map_array | push: size_value %}
                       {% endunless %}
+                      {% assign size_found = true %}
                     {% endif %}
                   {% endif %}
                 {% endfor %}
+                
+                {% comment %} Fallback: leer desde producto si no se encontró en variantes {% endcomment %}
+                {% unless size_found %}
+                  {% if product.metafields.custom.talla_estandar != blank %}
+                    {% assign size_value = product.metafields.custom.talla_estandar | strip %}
+                    {% if size_value != blank %}
+                      {% assign size_handle = size_value | handleize %}
+                      {% assign size_check = '|' | append: size_handle | append: '|' %}
+                      {% unless unique_sizes_string contains size_check %}
+                        {% assign unique_sizes_string = unique_sizes_string | append: size_check %}
+                        {% assign unique_sizes_array = unique_sizes_array | push: size_handle %}
+                        {% assign size_map_array = size_map_array | push: size_value %}
+                      {% endunless %}
+                    {% endif %}
+                  {% endif %}
+                {% endunless %}
               {% endfor %}
               
-              {% comment %} Mostrar solo tallas encontradas desde metafields de productos {% endcomment %}
-              {% for size_handle in unique_sizes %}
+              {% comment %} Mostrar solo tallas encontradas desde metafields {% endcomment %}
+              {% for size_handle in unique_sizes_array %}
                 {% assign size_index = forloop.index0 %}
-                {% assign size_name = size_map[size_index] %}
+                {% assign size_name = size_map_array[size_index] %}
                 <option value="{{ size_handle }}" {% if current_tags contains size_handle %}selected{% endif %}>
                   {{ size_name }}
                 </option>
@@ -382,12 +394,21 @@
         let showProduct = true;
         
         // Filtro por color
-        if (selectedColor) {
+        if (selectedColor && selectedColor.trim() !== '') {
           const productColors = wrapper.getAttribute('data-product-colors');
           if (productColors && productColors.trim() !== '') {
-            const colors = productColors.split(',').map(function(c) { return handleize(c.trim()); });
-            const selectedColorHandle = handleize(selectedColor);
-            if (colors.indexOf(selectedColorHandle) === -1) {
+            const colors = productColors.split(',').map(function(c) { 
+              return handleize(c.trim()); 
+            }).filter(function(c) { return c !== ''; });
+            const selectedColorHandle = handleize(selectedColor.trim());
+            let colorMatch = false;
+            for (let i = 0; i < colors.length; i++) {
+              if (colors[i] === selectedColorHandle) {
+                colorMatch = true;
+                break;
+              }
+            }
+            if (!colorMatch) {
               showProduct = false;
             }
           } else {
@@ -396,12 +417,21 @@
         }
         
         // Filtro por talla
-        if (showProduct && selectedSize) {
+        if (showProduct && selectedSize && selectedSize.trim() !== '') {
           const productSizes = wrapper.getAttribute('data-product-sizes');
           if (productSizes && productSizes.trim() !== '') {
-            const sizes = productSizes.split(',').map(function(s) { return handleize(s.trim()); });
-            const selectedSizeHandle = handleize(selectedSize);
-            if (sizes.indexOf(selectedSizeHandle) === -1) {
+            const sizes = productSizes.split(',').map(function(s) { 
+              return handleize(s.trim()); 
+            }).filter(function(s) { return s !== ''; });
+            const selectedSizeHandle = handleize(selectedSize.trim());
+            let sizeMatch = false;
+            for (let i = 0; i < sizes.length; i++) {
+              if (sizes[i] === selectedSizeHandle) {
+                sizeMatch = true;
+                break;
+              }
+            }
+            if (!sizeMatch) {
               showProduct = false;
             }
           } else {
@@ -410,23 +440,34 @@
         }
         
         // Filtro por precio
-        if (showProduct && selectedPrice) {
+        if (showProduct && selectedPrice && selectedPrice.trim() !== '') {
           const productPriceAttr = wrapper.getAttribute('data-product-price');
           // Limpiar el valor de posibles caracteres no numéricos y convertir a número
-          const priceStr = (productPriceAttr || '0').toString().replace(/[^\d.]/g, '');
-          const productPrice = parseFloat(priceStr) || 0;
-          let priceMatch = false;
+          let priceStr = (productPriceAttr || '0').toString();
+          // Reemplazar comas por puntos para formato decimal
+          priceStr = priceStr.replace(/,/g, '.');
+          // Eliminar todo excepto números y punto decimal
+          priceStr = priceStr.replace(/[^\d.]/g, '');
+          const productPrice = parseFloat(priceStr);
           
-          if (selectedPrice === '0-50') {
-            priceMatch = productPrice >= 0 && productPrice < 50;
-          } else if (selectedPrice === '50-150') {
-            priceMatch = productPrice >= 50 && productPrice <= 150;
-          } else if (selectedPrice === '150+') {
-            priceMatch = productPrice >= 150;
-          }
-          
-          if (!priceMatch) {
+          // Verificar que el precio sea un número válido
+          if (isNaN(productPrice)) {
             showProduct = false;
+          } else {
+            let priceMatch = false;
+            const priceValue = productPrice;
+            
+            if (selectedPrice === '0-50') {
+              priceMatch = priceValue >= 0 && priceValue < 50;
+            } else if (selectedPrice === '50-150') {
+              priceMatch = priceValue >= 50 && priceValue <= 150;
+            } else if (selectedPrice === '150+') {
+              priceMatch = priceValue >= 150;
+            }
+            
+            if (!priceMatch) {
+              showProduct = false;
+            }
           }
         }
         
