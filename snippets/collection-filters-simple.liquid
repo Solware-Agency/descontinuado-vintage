@@ -81,43 +81,16 @@
                     {% endif %}
                   {% endfor %}
                 {% endif %}
-                
-                {% comment %} También buscar en tags del producto como fallback {% endcomment %}
-                {% for tag in product.tags %}
-                  {% assign tag_lower = tag | downcase %}
-                  {% if tag_lower contains 'color' or tag_lower contains 'colour' %}
-                    {% assign color_name = tag | strip %}
-                    {% assign color_handle = color_name | handleize %}
-                    {% unless unique_colors contains color_handle %}
-                      {% assign unique_colors = unique_colors | push: color_handle %}
-                      {% assign color_map = color_map | push: color_name %}
-                    {% endunless %}
-                  {% endif %}
-                {% endfor %}
               {% endfor %}
               
-              {% comment %} Si no se encontraron colores dinámicos, usar tags de configuración como fallback {% endcomment %}
-              {% if unique_colors.size == 0 %}
-                {% assign tags = settings.shop_by_color_list_tags | split: ',' %}
-                {% for t in tags %}
-                  {% assign tag = t | strip %}
-                  {% if tag != blank %}
-                    {% assign tag_value = tag | handleize %}
-                    <option value="{{ tag_value | split: '|' | first }}" {% if current_tags contains tag %}selected{% endif %}>
-                      {{ tag }}
-                    </option>
-                  {% endif %}
-                {% endfor %}
-              {% else %}
-                {% comment %} Mostrar colores encontrados dinámicamente {% endcomment %}
-                {% for color_handle in unique_colors %}
-                  {% assign color_index = forloop.index0 %}
-                  {% assign color_name = color_map[color_index] %}
-                  <option value="{{ color_handle }}" {% if current_tags contains color_handle %}selected{% endif %}>
-                    {{ color_name }}
-                  </option>
-                {% endfor %}
-              {% endif %}
+              {% comment %} Mostrar solo colores encontrados dinámicamente en los productos {% endcomment %}
+              {% for color_handle in unique_colors %}
+                {% assign color_index = forloop.index0 %}
+                {% assign color_name = color_map[color_index] %}
+                <option value="{{ color_handle }}" {% if current_tags contains color_handle %}selected{% endif %}>
+                  {{ color_name }}
+                </option>
+              {% endfor %}
             </select>
           </div>
 
@@ -130,52 +103,27 @@
               {% assign size_map = '' | split: ',' %}
               
               {% for product in collection.products %}
-                {% for variant in product.variants %}
-                  {% if variant.metafields.custom.talla_estandar != blank %}
-                    {% assign size_value = variant.metafields.custom.talla_estandar | strip %}
-                    {% if size_value != blank %}
-                      {% assign size_handle = size_value | handleize %}
-                      {% unless unique_sizes contains size_handle %}
-                        {% assign unique_sizes = unique_sizes | push: size_handle %}
-                        {% assign size_map = size_map | push: size_value %}
-                      {% endunless %}
-                    {% endif %}
+                {% comment %} Leer metafield desde producto, no variante {% endcomment %}
+                {% if product.metafields.custom.talla_estandar != blank %}
+                  {% assign size_value = product.metafields.custom.talla_estandar | strip %}
+                  {% if size_value != blank %}
+                    {% assign size_handle = size_value | handleize %}
+                    {% unless unique_sizes contains size_handle %}
+                      {% assign unique_sizes = unique_sizes | push: size_handle %}
+                      {% assign size_map = size_map | push: size_value %}
+                    {% endunless %}
                   {% endif %}
-                {% endfor %}
+                {% endif %}
               {% endfor %}
               
-              {% comment %} Si no hay metafields, usar tags como fallback {% endcomment %}
-              {% if unique_sizes.size == 0 %}
-                {% assign tags = settings.shop_by_size_list_tags | split: ',' %}
-                {% for t in tags %}
-                  {% assign tag = t | strip %}
-                  {% if tag != blank %}
-                    {% assign tag_value = tag | handleize %}
-                    <option value="{{ tag_value | split: '|' | first }}" {% if current_tags contains tag %}selected{% endif %}>
-                      {{ tag }}
-                    </option>
-                  {% endif %}
-                {% endfor %}
-              {% else %}
-                {% comment %} Ordenar tallas numéricamente si es posible {% endcomment %}
-                {% assign sorted_sizes = '' | split: ',' %}
-                {% assign sorted_map = '' | split: ',' %}
-                {% for size_handle in unique_sizes %}
-                  {% assign size_index = forloop.index0 %}
-                  {% assign size_name = size_map[size_index] %}
-                  {% assign sorted_sizes = sorted_sizes | push: size_handle %}
-                  {% assign sorted_map = sorted_map | push: size_name %}
-                {% endfor %}
-                
-                {% comment %} Mostrar tallas encontradas {% endcomment %}
-                {% for size_handle in sorted_sizes %}
-                  {% assign size_index = forloop.index0 %}
-                  {% assign size_name = sorted_map[size_index] %}
-                  <option value="{{ size_handle }}" {% if current_tags contains size_handle %}selected{% endif %}>
-                    {{ size_name }}
-                  </option>
-                {% endfor %}
-              {% endif %}
+              {% comment %} Mostrar solo tallas encontradas desde metafields de productos {% endcomment %}
+              {% for size_handle in unique_sizes %}
+                {% assign size_index = forloop.index0 %}
+                {% assign size_name = size_map[size_index] %}
+                <option value="{{ size_handle }}" {% if current_tags contains size_handle %}selected{% endif %}>
+                  {{ size_name }}
+                </option>
+              {% endfor %}
             </select>
           </div>
 
@@ -290,6 +238,17 @@
 
 <script>
   (function() {
+    // Función helper para simular handleize de Liquid
+    function handleize(str) {
+      if (!str) return '';
+      return str.toString()
+        .toLowerCase()
+        .trim()
+        .replace(/[^\w\s-]/g, '') // Eliminar caracteres especiales
+        .replace(/[\s_-]+/g, '-') // Reemplazar espacios, guiones bajos y guiones con un solo guion
+        .replace(/^-+|-+$/g, ''); // Eliminar guiones al inicio y final
+    }
+    
     // Inicializar filtros cuando el DOM esté listo
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', initFilters);
@@ -382,10 +341,19 @@
       const sizeFilter = document.getElementById('filter-size');
       const priceFilter = document.getElementById('filter-price');
       
-      // Si se selecciona una categoría, redirigir directamente
+      // Si se selecciona una categoría, redirigir limpiando filtros de la URL
       if (categoryFilter && categoryFilter.value) {
-        window.location.href = categoryFilter.value;
+        // Limpiar parámetros de filtros de la URL antes de redirigir
+        const categoryUrl = categoryFilter.value.split('?')[0]; // Obtener URL sin parámetros
+        window.location.href = categoryUrl;
         return;
+      }
+      
+      // Si se vuelve a "CATEGORÍAS" (valor vacío), resetear otros filtros
+      if (categoryFilter && !categoryFilter.value) {
+        if (colorFilter) colorFilter.value = '';
+        if (sizeFilter) sizeFilter.value = '';
+        if (priceFilter) priceFilter.value = '';
       }
       
       // Obtener valores de filtros
@@ -409,8 +377,9 @@
         if (selectedColor) {
           const productColors = wrapper.getAttribute('data-product-colors');
           if (productColors && productColors.trim() !== '') {
-            const colors = productColors.split(',').map(function(c) { return c.trim().toLowerCase(); });
-            if (colors.indexOf(selectedColor.toLowerCase()) === -1) {
+            const colors = productColors.split(',').map(function(c) { return handleize(c.trim()); });
+            const selectedColorHandle = handleize(selectedColor);
+            if (colors.indexOf(selectedColorHandle) === -1) {
               showProduct = false;
             }
           } else {
@@ -422,8 +391,9 @@
         if (showProduct && selectedSize) {
           const productSizes = wrapper.getAttribute('data-product-sizes');
           if (productSizes && productSizes.trim() !== '') {
-            const sizes = productSizes.split(',').map(function(s) { return s.trim().toLowerCase(); });
-            if (sizes.indexOf(selectedSize.toLowerCase()) === -1) {
+            const sizes = productSizes.split(',').map(function(s) { return handleize(s.trim()); });
+            const selectedSizeHandle = handleize(selectedSize);
+            if (sizes.indexOf(selectedSizeHandle) === -1) {
               showProduct = false;
             }
           } else {
@@ -438,11 +408,11 @@
           let priceMatch = false;
           
           if (selectedPrice === '0-50') {
-            priceMatch = productPrice >= 0 && productPrice <= 50;
+            priceMatch = productPrice >= 0 && productPrice < 50;
           } else if (selectedPrice === '50-150') {
-            priceMatch = productPrice > 50 && productPrice <= 150;
+            priceMatch = productPrice >= 50 && productPrice <= 150;
           } else if (selectedPrice === '150+') {
-            priceMatch = productPrice > 150;
+            priceMatch = productPrice >= 150;
           }
           
           if (!priceMatch) {
