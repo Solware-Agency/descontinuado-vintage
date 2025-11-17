@@ -342,6 +342,14 @@
     }
   }
   
+  /* Ocultar botones de ir al inicio y al final (solo dejar prev/next) */
+  .pagi-nav .pagination span:first-child,
+  .pagi-nav .pagination span:last-child,
+  .pagi-nav .pagination li:first-child,
+  .pagi-nav .pagination li:last-child {
+    display: none !important;
+  }
+  
   /* Responsive - Mobile */
   @media (max-width: 575px) {
     .pagi-nav {

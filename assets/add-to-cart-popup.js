@@ -8,7 +8,7 @@
   var isInitialized = false;
 
   // Componentes React (se definen cuando React esté disponible)
-  var CheckCircleIcon, ConfettiExplosion, AddToCartPopup;
+  var CheckCircleIcon, AddToCartPopup;
 
   // Función para limpiar estado previo
   function cleanupPreviousPopup() {
@@ -168,92 +168,9 @@
       );
     };
 
-    // Componente Confetti Explosion (negro, position: fixed, pantalla completa)
-    ConfettiExplosion = function() {
-      var confettiCount = 200; // Más partículas para mejor efecto
-      var confettiElements = [];
-
-      // Crear estilos inline para la animación
-      var styleElement = React.createElement('style', null, 
-        '@keyframes fall {' +
-          '0% { transform: translateY(-10vh) translateX(0) rotate(0deg); opacity: 1; }' +
-          '100% { transform: translateY(110vh) translateX(0) rotate(720deg); opacity: 0; }' +
-        '}'
-      );
-
-      // Generar partículas de confetti distribuidas en toda la pantalla
-      for (var i = 0; i < confettiCount; i++) {
-        var left = Math.random() * 100; // Distribución horizontal completa
-        var top = -30 + Math.random() * 20; // Empezar desde arriba con variación
-        var rotation = Math.random() * 360;
-        var animationDuration = 2 + Math.random() * 3; // Duración más variada
-        var animationDelay = Math.random() * 1.5; // Delay más corto para efecto más rápido
-        var size = 6 + Math.random() * 10; // Tamaños variados
-        var width = size + 'px';
-        var height = (size * 1.5) + 'px';
-        var driftX = (Math.random() * 30 - 15); // Deriva horizontal aleatoria
-
-        confettiElements.push(
-          React.createElement('div', {
-            key: i,
-            className: 'react-confetti-particle',
-            style: {
-              position: 'fixed',
-              left: left + '%',
-              top: top + '%',
-              width: width,
-              height: height,
-              backgroundColor: '#000000',
-              transform: 'rotate(' + rotation + 'deg) translateX(' + driftX + 'vw)',
-              animation: 'fall ' + animationDuration + 's ' + animationDelay + 's linear forwards',
-              zIndex: 9998,
-              pointerEvents: 'none',
-              borderRadius: '2px'
-            }
-          })
-        );
-      }
-
-      return React.createElement(React.Fragment, null,
-        styleElement,
-        React.createElement('div', {
-          className: 'react-confetti-container',
-          style: {
-            position: 'fixed',
-            inset: 0,
-            zIndex: 9998,
-            pointerEvents: 'none'
-          },
-          'aria-hidden': 'true'
-        }, confettiElements)
-      );
-    };
-
     // Componente principal AddToCartPopup
     AddToCartPopup = function() {
-      var _React$useState = React.useState(false);
-      var showConfetti = _React$useState[0];
-      var setShowConfetti = _React$useState[1];
-
-      React.useEffect(function() {
-        // Iniciar confetti después de 100ms
-        var confettiTimer = setTimeout(function() {
-          setShowConfetti(true);
-        }, 100);
-
-        // Ocultar confetti después de 1.6s
-        var confettiHideTimer = setTimeout(function() {
-          setShowConfetti(false);
-        }, 1600);
-
-        return function() {
-          clearTimeout(confettiTimer);
-          clearTimeout(confettiHideTimer);
-        };
-      }, []);
-
       return React.createElement(React.Fragment, null,
-        showConfetti ? React.createElement(ConfettiExplosion) : null,
         React.createElement('div', {
           className: 'react-addtocart-popup-content',
           style: {
