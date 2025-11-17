@@ -87,15 +87,39 @@
 
   .footer-container {
     display: grid;
-    grid-template-columns: 35% 1fr 1fr; /* Logo, Quick Links, Policies */
+    grid-template-columns: 35% 1fr 1fr; /* Logo, Quick Links + Policies, Newsletter */
     gap: 50px;
     max-width: 1300px;
     margin: 0 auto 50px;
     align-items: start;
   }
+  /* En desktop, Quick Links y Policies en la misma columna, lado a lado */
+  .footer-links {
+    grid-column: 2;
+    grid-row: 1;
+    display: inline-block;
+    width: calc(50% - 15px);
+    vertical-align: top;
+  }
+  .footer-policies {
+    grid-column: 2;
+    grid-row: 1;
+    display: inline-block;
+    width: calc(50% - 15px);
+    vertical-align: top;
+    margin-left: 30px;
+  }
   .footer-newsletter {
-    grid-column: 1 / -1; /* Ocupa todo el ancho debajo de las 3 columnas */
-    margin-top: 20px;
+    grid-column: 3;
+    grid-row: 1;
+    margin-top: 0;
+  }
+  /* Restaurar font-size para los elementos */
+  .footer-logo,
+  .footer-links,
+  .footer-policies,
+  .footer-newsletter {
+    font-size: 13px;
   }
 
   /* Logo */
@@ -107,12 +131,7 @@
     max-width: none;
   }
 
-  /* Links en columna única */
-  .footer-links,
-  .footer-policies {
-    display: flex;
-    flex-direction: column;
-  }
+  /* Links en desktop: Quick Links y Policies lado a lado (ya configurado arriba con inline-block) */
   .links-column {
     list-style: none;
     padding: 0;
@@ -224,39 +243,47 @@
       padding: 50px 0 20px;
     }
     .footer-container {
-      display: flex;
-      flex-direction: column;
-      gap: 40px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px 20px;
       padding: 0 4%;
+    }
+    .footer-policies {
+      display: block; /* Mostrar Policies en mobile/tablet */
     }
     .footer-newsletter {
       order: 1;
-      grid-column: auto;
+      grid-column: 1 / -1;
       margin-top: 0;
       width: calc(100% + 8%);
       margin-left: -4%;
       padding: 0 4%;
       box-sizing: border-box;
     }
+    /* Quick Links (izquierda) y Policies (derecha) lado a lado */
     .footer-links {
       order: 2;
+      grid-column: 1;
     }
     .footer-links .links-column {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
+      display: flex;
+      flex-direction: column;
       text-align: left;
     }
     .footer-policies {
-      order: 3;
+      order: 2;
+      grid-column: 2;
+    }
+    .footer-policies .links-column {
+      display: flex;
+      flex-direction: column;
+      text-align: left;
     }
     .footer-logo {
       order: 4;
+      grid-column: 1 / -1;
       display: flex;
       justify-content: center;
-    }
-    .footer-policies {
-      text-align: center;
     }
   }
   @media (max-width: 600px) {
@@ -284,7 +311,8 @@
     .footer-newsletter .checkbox-container {
       font-size: 11px;
     }
-    .footer-links .links-column {
+    .footer-links,
+    .footer-policies {
       gap: 15px;
     }
     .footer-bottom p {

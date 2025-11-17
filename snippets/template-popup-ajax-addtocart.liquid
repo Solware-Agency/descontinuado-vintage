@@ -7,15 +7,12 @@
 <div class="product-popup engo-popup">
   <div class="overlay-addcart"></div>
   <div class="content">
-    <a href="javascript:void(0)" class="close-window set-16-svg fill-white">
-      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 298.667 298.667" style="enable-background:new 0 0 298.667 298.667;" xml:space="preserve"> <g> <g> <polygon points="298.667,30.187 268.48,0 149.333,119.147 30.187,0 0,30.187 119.147,149.333 0,268.48 30.187,298.667     149.333,179.52 268.48,298.667 298.667,268.48 179.52,149.333   "></polygon> </g> </g> </svg>
-    </a>
     <div id="react-addtocart-popup"></div>
   </div>  
 </div>
 <script>
-  // Listener para botón X y overlay del popup React (aislado solo para .product-popup)
-  $(document).on('click', '.product-popup .close-window, .product-popup .overlay-addcart', function(e) {
+  // Listener para overlay del popup React (sin botón X, solo overlay para cerrar si es necesario)
+  $(document).on('click', '.product-popup .overlay-addcart', function(e) {
     e.preventDefault();
     e.stopPropagation();
     if (typeof window.closeAddToCartPopup === 'function') {

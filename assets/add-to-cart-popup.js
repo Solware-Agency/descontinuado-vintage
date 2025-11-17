@@ -133,10 +133,10 @@
         jQuery('.product-popup').addClass('active');
       }
 
-      // Programar autocierre después de 3.5 segundos
+      // Programar autocierre después de 4.5 segundos
       reactPopupTimeout = setTimeout(function() {
         window.closeAddToCartPopup();
-      }, 3500);
+      }, 4500);
 
     } catch (e) {
       console.error('Error al montar componente React:', e);
@@ -168,26 +168,30 @@
       );
     };
 
-    // Componente Confetti Explosion (negro, position: fixed)
+    // Componente Confetti Explosion (negro, position: fixed, pantalla completa)
     ConfettiExplosion = function() {
-      var confettiCount = 100;
+      var confettiCount = 200; // Más partículas para mejor efecto
       var confettiElements = [];
 
       // Crear estilos inline para la animación
       var styleElement = React.createElement('style', null, 
         '@keyframes fall {' +
-          '0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }' +
-          '100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }' +
+          '0% { transform: translateY(-10vh) translateX(0) rotate(0deg); opacity: 1; }' +
+          '100% { transform: translateY(110vh) translateX(0) rotate(720deg); opacity: 0; }' +
         '}'
       );
 
-      // Generar partículas de confetti
+      // Generar partículas de confetti distribuidas en toda la pantalla
       for (var i = 0; i < confettiCount; i++) {
-        var left = Math.random() * 100;
-        var top = -20 + Math.random() * 10;
+        var left = Math.random() * 100; // Distribución horizontal completa
+        var top = -30 + Math.random() * 20; // Empezar desde arriba con variación
         var rotation = Math.random() * 360;
-        var animationDuration = 2.5 + Math.random() * 2.5;
-        var animationDelay = Math.random() * 2;
+        var animationDuration = 2 + Math.random() * 3; // Duración más variada
+        var animationDelay = Math.random() * 1.5; // Delay más corto para efecto más rápido
+        var size = 6 + Math.random() * 10; // Tamaños variados
+        var width = size + 'px';
+        var height = (size * 1.5) + 'px';
+        var driftX = (Math.random() * 30 - 15); // Deriva horizontal aleatoria
 
         confettiElements.push(
           React.createElement('div', {
@@ -197,13 +201,14 @@
               position: 'fixed',
               left: left + '%',
               top: top + '%',
-              width: '8px',
-              height: '16px',
+              width: width,
+              height: height,
               backgroundColor: '#000000',
-              transform: 'rotate(' + rotation + 'deg)',
+              transform: 'rotate(' + rotation + 'deg) translateX(' + driftX + 'vw)',
               animation: 'fall ' + animationDuration + 's ' + animationDelay + 's linear forwards',
               zIndex: 9998,
-              pointerEvents: 'none'
+              pointerEvents: 'none',
+              borderRadius: '2px'
             }
           })
         );
@@ -254,12 +259,12 @@
           style: {
             position: 'relative',
             width: '100%',
-            maxWidth: '400px',
+            maxWidth: '500px',
             background: '#fff',
-            borderRadius: '16px',
-            padding: '48px 32px',
+            borderRadius: '24px',
+            padding: '64px 48px',
             textAlign: 'center',
-            boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
             animation: 'fadeInZoom 0.5s ease-out',
             zIndex: 9999
           }
@@ -280,26 +285,27 @@
                 animation: 'zoomIn 0.5s ease-out 0.5s both'
               }
             },
-              React.createElement(CheckCircleIcon, {
-                style: {
-                  width: '80px',
-                  height: '80px',
-                  color: '#212529'
-                }
-              })
+            React.createElement(CheckCircleIcon, {
+              style: {
+                width: '100px',
+                height: '100px',
+                color: '#212529'
+              }
+            })
             )
           ),
           // Mensaje
           React.createElement('h2', {
             style: {
               fontFamily: 'D-DIN, sans-serif',
-              fontSize: '18px',
+              fontSize: '20px',
               fontWeight: 'bold',
               textTransform: 'uppercase',
               color: '#212529',
               margin: 0,
-              letterSpacing: '0.05em',
-              lineHeight: '1.4'
+              marginTop: '8px',
+              letterSpacing: '0.1em',
+              lineHeight: '1.5'
             }
           }, 'PRODUCTO AGREGADO AL CARRITO')
         )
@@ -325,17 +331,47 @@
       '.react-addtocart-popup-content {' +
         'font-family: D-DIN, sans-serif;' +
       '}' +
-      '@media (max-width: 767px) {' +
+      '@media (max-width: 1024px) {' +
         '.react-addtocart-popup-content {' +
-          'max-width: 80% !important;' +
-          'padding: 32px 24px !important;' +
+          'max-width: 90% !important;' +
+          'padding: 56px 40px !important;' +
         '}' +
         '.react-addtocart-popup-content svg {' +
-          'width: 60px !important;' +
-          'height: 60px !important;' +
+          'width: 90px !important;' +
+          'height: 90px !important;' +
+        '}' +
+        '.react-addtocart-popup-content h2 {' +
+          'font-size: 18px !important;' +
+        '}' +
+      '}' +
+      '@media (max-width: 767px) {' +
+        '.react-addtocart-popup-content {' +
+          'max-width: 85% !important;' +
+          'padding: 48px 32px !important;' +
+          'border-radius: 20px !important;' +
+        '}' +
+        '.react-addtocart-popup-content svg {' +
+          'width: 80px !important;' +
+          'height: 80px !important;' +
+        '}' +
+        '.react-addtocart-popup-content h2 {' +
+          'font-size: 16px !important;' +
+          'letter-spacing: 0.08em !important;' +
+        '}' +
+      '}' +
+      '@media (max-width: 480px) {' +
+        '.react-addtocart-popup-content {' +
+          'max-width: 90% !important;' +
+          'padding: 40px 24px !important;' +
+          'border-radius: 16px !important;' +
+        '}' +
+        '.react-addtocart-popup-content svg {' +
+          'width: 70px !important;' +
+          'height: 70px !important;' +
         '}' +
         '.react-addtocart-popup-content h2 {' +
           'font-size: 14px !important;' +
+          'letter-spacing: 0.05em !important;' +
         '}' +
       '}';
     document.head.appendChild(styleSheet);
