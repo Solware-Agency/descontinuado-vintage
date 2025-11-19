@@ -181,6 +181,7 @@
     }
     
     function initFilters() {
+      console.log('Inicializando filtros...');
       const filterDropdowns = document.querySelectorAll('.filter-dropdown');
       
       filterDropdowns.forEach(function(dropdown) {
@@ -209,10 +210,24 @@
       
       // Asegurar que todos los productos sean visibles inicialmente
       const productWrappers = document.querySelectorAll('.product-item-wrapper');
+      console.log('Productos encontrados para filtrado:', productWrappers.length);
       productWrappers.forEach(function(wrapper) {
         wrapper.style.display = '';
         wrapper.style.opacity = '1';
+        // Debug: verificar data-attributes
+        const colors = wrapper.getAttribute('data-product-colors');
+        const sizes = wrapper.getAttribute('data-product-sizes');
+        const price = wrapper.getAttribute('data-product-price');
+        if (colors) console.log('Producto tiene colores:', colors);
+        if (sizes) console.log('Producto tiene tallas:', sizes);
+        if (price) console.log('Producto tiene precio:', price);
       });
+      
+      // Poblar dropdowns inicialmente después de un pequeño delay para asegurar que el DOM esté listo
+      setTimeout(function() {
+        console.log('Poblando dropdowns inicialmente...');
+        updateFilterDropdowns();
+      }, 200);
       
       // Restaurar valores desde URL si existen
       restoreFiltersFromURL();
@@ -339,6 +354,7 @@
     
     // Función para actualizar dropdowns según productos visibles
     function updateFilterDropdowns() {
+      console.log('Actualizando dropdowns de filtros...');
       const colorFilter = document.getElementById('filter-color');
       const sizeFilter = document.getElementById('filter-size');
       const categoryFilter = document.getElementById('filter-category');
@@ -348,6 +364,7 @@
       // Obtener productos visibles (sin filtros de color/talla aplicados aún)
       // Primero aplicar solo filtros anteriores en la jerarquía
       const tempProductWrappers = document.querySelectorAll('.product-item-wrapper');
+      console.log('Total de productos encontrados:', tempProductWrappers.length);
       
       // Determinar qué productos considerar según jerarquía
       // Si hay color seleccionado, solo considerar productos con ese color
@@ -395,6 +412,8 @@
         }
       });
       
+      console.log('Colores encontrados:', Object.keys(allColorsMap).length, allColorsMap);
+      
       // Para talla: recopilar solo de productos que pasaron el filtro de color (si hay)
       productsToConsider.forEach(function(wrapper) {
         const productSizes = wrapper.getAttribute('data-product-sizes');
@@ -415,12 +434,15 @@
         }
       });
       
+      console.log('Tallas encontradas:', Object.keys(allSizesMap).length, allSizesMap);
+      
       // Actualizar dropdown de color (siempre muestra todos los colores disponibles)
       if (colorFilter) {
         const currentValue = colorFilter.value;
         colorFilter.innerHTML = '<option value="">COLOR</option>';
         
         const sortedColors = Object.keys(allColorsMap).sort();
+        console.log('Agregando', sortedColors.length, 'colores al dropdown');
         sortedColors.forEach(function(colorHandle) {
           const option = document.createElement('option');
           option.value = colorHandle;
@@ -430,6 +452,8 @@
           }
           colorFilter.appendChild(option);
         });
+      } else {
+        console.error('No se encontró el dropdown de color');
       }
       
       // Actualizar dropdown de talla (solo muestra tallas de productos que pasaron filtros anteriores)
@@ -438,6 +462,7 @@
         sizeFilter.innerHTML = '<option value="">TALLA</option>';
         
         const sortedSizes = Object.keys(allSizesMap).sort();
+        console.log('Agregando', sortedSizes.length, 'tallas al dropdown');
         sortedSizes.forEach(function(sizeHandle) {
           const option = document.createElement('option');
           option.value = sizeHandle;
@@ -447,6 +472,8 @@
           }
           sizeFilter.appendChild(option);
         });
+      } else {
+        console.error('No se encontró el dropdown de talla');
       }
     }
     
