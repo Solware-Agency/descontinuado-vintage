@@ -260,32 +260,187 @@
     return message;
   }
 
+  // Función para extraer datos del pedido desde el DOM
+  function extractOrderDataFromDOM() {
+    console.log('[WhatsApp] Intentando extraer datos del pedido desde el DOM...');
+    
+    var orderData = {
+      order_number: null,
+      customer_name: null,
+      total_price: null,
+      line_items: [],
+      shipping_method: null,
+      payment_method: null
+    };
+
+    // Buscar número de pedido
+    var orderNumberSelectors = [
+      '[data-order-number]',
+      '.order-number',
+      '[class*="order-number"]',
+      '[id*="order-number"]',
+      'h1, h2, h3, h4'
+    ];
+    
+    for (var i = 0; i < orderNumberSelectors.length; i++) {
+      var elements = document.querySelectorAll(orderNumberSelectors[i]);
+      for (var j = 0; j < elements.length; j++) {
+        var text = elements[j].textContent || '';
+        // Buscar patrones como "#1234" o "Order #1234"
+        var match = text.match(/#?\s*(\d+)/);
+        if (match && match[1]) {
+          orderData.order_number = match[1];
+          console.log('[WhatsApp] Número de pedido encontrado en DOM:', orderData.order_number);
+          break;
+        }
+      }
+      if (orderData.order_number) break;
+    }
+
+    // Buscar total
+    var totalSelectors = [
+      '[data-total]',
+      '.order-total',
+      '[class*="total"]',
+      '[class*="price"]'
+    ];
+    
+    for (var i = 0; i < totalSelectors.length; i++) {
+      var elements = document.querySelectorAll(totalSelectors[i]);
+      for (var j = 0; j < elements.length; j++) {
+        var text = elements[j].textContent || '';
+        // Buscar patrones de precio como "$123.45" o "123.45 USD"
+        var match = text.match(/[\$]?\s*(\d+[.,]\d{2})/);
+        if (match && match[1]) {
+          orderData.total_price = match[1].replace(',', '.');
+          console.log('[WhatsApp] Total encontrado en DOM:', orderData.total_price);
+          break;
+        }
+      }
+      if (orderData.total_price) break;
+    }
+
+    // Buscar items en tablas
+    var tables = document.querySelectorAll('table');
+    for (var i = 0; i < tables.length; i++) {
+      var rows = tables[i].querySelectorAll('tr');
+      for (var j = 0; j < rows.length; j++) {
+        var cells = rows[j].querySelectorAll('td, th');
+        if (cells.length >= 2) {
+          var itemName = cells[0].textContent.trim();
+          var quantity = cells[cells.length - 2] ? cells[cells.length - 2].textContent.trim() : '1';
+          if (itemName && !itemName.toLowerCase().includes('total') && !itemName.toLowerCase().includes('subtotal')) {
+            orderData.line_items.push({
+              title: itemName,
+              quantity: parseInt(quantity) || 1
+            });
+          }
+        }
+      }
+      if (orderData.line_items.length > 0) {
+        console.log('[WhatsApp] Items encontrados en DOM:', orderData.line_items.length);
+        break;
+      }
+    }
+
+    return orderData;
+  }
+
+  // Función para obtener datos del pedido desde diferentes fuentes
+  function getOrderData() {
+    var orderData = null;
+
+    // Método 1: Shopify.checkout.order (preferido)
+    if (window.Shopify && window.Shopify.checkout && window.Shopify.checkout.order) {
+      console.log('[WhatsApp] Obteniendo datos desde Shopify.checkout.order');
+      orderData = { order: window.Shopify.checkout.order };
+    }
+    // Método 2: Shopify.checkout directamente
+    else if (window.Shopify && window.Shopify.checkout) {
+      console.log('[WhatsApp] Obteniendo datos desde Shopify.checkout');
+      orderData = window.Shopify.checkout;
+    }
+    // Método 3: window.checkout (alternativa)
+    else if (window.checkout && window.checkout.order) {
+      console.log('[WhatsApp] Obteniendo datos desde window.checkout');
+      orderData = window.checkout;
+    }
+    // Método 4: Extraer desde el DOM
+    else {
+      console.log('[WhatsApp] Intentando obtener datos desde el DOM');
+      var domData = extractOrderDataFromDOM();
+      if (domData.order_number) {
+        // Convertir datos del DOM al formato esperado
+        orderData = {
+          order: {
+            order_number: domData.order_number,
+            name: domData.order_number,
+            customer: {
+              first_name: domData.customer_name || '',
+              last_name: ''
+            },
+            line_items: domData.line_items,
+            total_price: domData.total_price ? parseFloat(domData.total_price) * 100 : 0,
+            shipping_line: domData.shipping_method ? { title: domData.shipping_method } : null,
+            transactions: domData.payment_method ? [{ gateway: domData.payment_method }] : []
+          }
+        };
+        console.log('[WhatsApp] Datos extraídos del DOM:', orderData);
+      }
+    }
+
+    return orderData;
+  }
+
   // Función para insertar el bloque de WhatsApp
   function insertWhatsAppBlock() {
+    console.log('[WhatsApp] insertWhatsAppBlock llamado');
+    
     // Verificar si ya existe el bloque
     var existingBox = document.getElementById('whatsapp-confirmation-box');
     if (!existingBox) {
+      console.log('[WhatsApp] ERROR: Contenedor whatsapp-confirmation-box no encontrado');
       return;
     }
+
+    console.log('[WhatsApp] Contenedor encontrado');
 
     // Verificar si ya tiene contenido
     if (existingBox.innerHTML.trim() !== '') {
+      console.log('[WhatsApp] El bloque ya tiene contenido');
       return;
     }
 
-    // Verificar que Shopify.checkout existe
-    if (typeof window.Shopify === 'undefined' || !window.Shopify.checkout || !window.Shopify.checkout.order) {
-      console.log('WhatsApp Confirmation: Shopify.checkout no disponible aún');
+    // Intentar obtener datos del pedido desde diferentes fuentes
+    console.log('[WhatsApp] Verificando fuentes de datos...');
+    console.log('[WhatsApp] window.Shopify existe:', typeof window.Shopify !== 'undefined');
+    
+    var checkout = getOrderData();
+    
+    if (!checkout) {
+      console.log('[WhatsApp] ERROR: No se pudieron obtener datos del pedido desde ninguna fuente');
+      console.log('[WhatsApp] Intentando extraer desde DOM...');
+      // Intentar una vez más después de un pequeño delay
+      setTimeout(function() {
+        checkout = getOrderData();
+        if (checkout) {
+          insertWhatsAppBlock();
+        } else {
+          console.log('[WhatsApp] No se pudieron obtener datos. El bloque no se mostrará.');
+        }
+      }, 2000);
       return;
     }
 
-    var checkout = window.Shopify.checkout;
+    console.log('[WhatsApp] Datos del pedido obtenidos, construyendo mensaje...');
     var message = buildWhatsAppMessage(checkout);
     
     if (!message) {
-      console.log('WhatsApp Confirmation: No se pudo construir el mensaje');
+      console.log('[WhatsApp] ERROR: No se pudo construir el mensaje');
       return;
     }
+    
+    console.log('[WhatsApp] Mensaje construido exitosamente, longitud:', message.length);
 
     // Codificar el mensaje para URL
     var encodedMessage = encodeURIComponent(message);
@@ -314,13 +469,17 @@
 
     // Insertar el HTML
     existingBox.innerHTML = html;
+    console.log('[WhatsApp] ✅ Bloque insertado exitosamente en el DOM');
   }
 
   // Función para buscar el resumen del pedido e insertar el contenedor
   function findOrderSummaryAndInsert() {
+    console.log('[WhatsApp] findOrderSummaryAndInsert llamado');
+    
     // Verificar si el contenedor ya existe
     var existingBox = document.getElementById('whatsapp-confirmation-box');
     if (existingBox && existingBox.innerHTML.trim() !== '') {
+      console.log('[WhatsApp] El contenedor ya existe y tiene contenido');
       return; // Ya está insertado y tiene contenido
     }
 
@@ -387,16 +546,19 @@
 
     // Si el contenedor ya existe pero está vacío, solo intentar insertar contenido
     if (existingBox) {
+      console.log('[WhatsApp] Contenedor existe pero está vacío, intentando insertar contenido');
       insertWhatsAppBlock();
       return;
     }
 
+    console.log('[WhatsApp] Creando nuevo contenedor...');
     // Crear el contenedor
     var box = document.createElement('div');
     box.id = 'whatsapp-confirmation-box';
     
     // Insertar después del elemento objetivo
     if (targetElement && targetElement.parentNode) {
+      console.log('[WhatsApp] Insertando contenedor después del elemento objetivo');
       // Intentar insertar después del elemento
       if (targetElement.nextSibling) {
         targetElement.parentNode.insertBefore(box, targetElement.nextSibling);
@@ -404,57 +566,150 @@
         targetElement.parentNode.appendChild(box);
       }
     } else {
+      console.log('[WhatsApp] Insertando contenedor al final del body (último recurso)');
       // Como último recurso, insertar al final del body
       document.body.appendChild(box);
     }
 
+    console.log('[WhatsApp] Contenedor creado, intentando insertar contenido...');
     // Intentar insertar el contenido
     insertWhatsAppBlock();
   }
 
+  // Función para verificar si estamos en la página de Agradecimiento (Thank You)
+  function isThankYouPage() {
+    var path = window.location.pathname.toLowerCase();
+    var href = window.location.href.toLowerCase();
+    var title = document.title.toLowerCase();
+    
+    // Verificar por URL - páginas de agradecimiento de Shopify
+    var isThankYou = path.includes('/thank_you') || 
+                     path.includes('/thank-you') ||
+                     path.includes('/checkouts/') ||
+                     href.includes('thank_you') ||
+                     href.includes('thank-you') ||
+                     href.includes('order_status') ||
+                     title.includes('thank you') ||
+                     title.includes('agradecimiento') ||
+                     title.includes('order confirmation') ||
+                     document.querySelector('[data-order-status]') ||
+                     document.querySelector('.order-status') ||
+                     document.querySelector('[class*="order-status"]') ||
+                     document.querySelector('[class*="thank-you"]') ||
+                     document.querySelector('[class*="order-confirmation"]') ||
+                     document.querySelector('[class*="checkout"]') ||
+                     // Buscar texto común en páginas de agradecimiento
+                     (document.body && (
+                       document.body.textContent.includes('Thank you') ||
+                       document.body.textContent.includes('Gracias') ||
+                       document.body.textContent.includes('Order confirmation') ||
+                       document.body.textContent.includes('Confirmación de pedido')
+                     ));
+    
+    console.log('[WhatsApp] Verificando página de Agradecimiento - Path:', path, 'Is Thank You Page:', isThankYou);
+    return isThankYou;
+  }
+
   // Esperar a que el DOM esté listo y Shopify.checkout esté disponible
   function initWhatsAppConfirmation() {
-    // Verificar si estamos en la Order Status Page
-    if (typeof window.Shopify === 'undefined' || !window.Shopify.checkout) {
-      // Intentar de nuevo después de un delay
-      setTimeout(initWhatsAppConfirmation, 500);
+    console.log('[WhatsApp] Inicializando...');
+    console.log('[WhatsApp] window.Shopify existe:', typeof window.Shopify !== 'undefined');
+    console.log('[WhatsApp] window.Shopify.checkout existe:', typeof window.Shopify !== 'undefined' && !!window.Shopify.checkout);
+    
+    if (typeof window.Shopify !== 'undefined' && window.Shopify.checkout) {
+      console.log('[WhatsApp] Shopify.checkout:', window.Shopify.checkout);
+      console.log('[WhatsApp] Shopify.checkout.order:', window.Shopify.checkout.order);
+    }
+
+    // Verificar si estamos en la página de Agradecimiento
+    var isThankYou = isThankYouPage();
+    
+    // Si no estamos en la página de Agradecimiento, no hacer nada
+    if (!isThankYou) {
+      console.log('[WhatsApp] No es página de Agradecimiento, saliendo');
       return;
     }
 
+    console.log('[WhatsApp] ✅ Estamos en la página de Agradecimiento!');
+
+    console.log('[WhatsApp] Continuando con la inicialización...');
+
     // Esperar a que el DOM esté listo
     if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', findOrderSummaryAndInsert);
+      document.addEventListener('DOMContentLoaded', function() {
+        console.log('[WhatsApp] DOM cargado');
+        findOrderSummaryAndInsert();
+      });
     } else {
+      console.log('[WhatsApp] DOM ya está listo');
       findOrderSummaryAndInsert();
     }
 
     // También intentar después de un pequeño delay por si el contenido se carga dinámicamente
     setTimeout(function() {
+      console.log('[WhatsApp] Intento después de 1 segundo');
       findOrderSummaryAndInsert();
       insertWhatsAppBlock();
     }, 1000);
 
-    // Intentar cada segundo durante 10 segundos por si el objeto se carga más tarde
+    setTimeout(function() {
+      console.log('[WhatsApp] Intento después de 3 segundos');
+      findOrderSummaryAndInsert();
+      insertWhatsAppBlock();
+    }, 3000);
+
+    setTimeout(function() {
+      console.log('[WhatsApp] Intento después de 5 segundos');
+      findOrderSummaryAndInsert();
+      insertWhatsAppBlock();
+    }, 5000);
+
+    // Intentar cada segundo durante 15 segundos por si el objeto se carga más tarde
     var attempts = 0;
-    var maxAttempts = 10;
+    var maxAttempts = 15;
     var interval = setInterval(function() {
       attempts++;
-      if (typeof window.Shopify !== 'undefined' && window.Shopify.checkout && window.Shopify.checkout.order) {
-        findOrderSummaryAndInsert();
-        insertWhatsAppBlock();
-        clearInterval(interval);
+      console.log('[WhatsApp] Intento periódico #' + attempts);
+      
+      if (typeof window.Shopify !== 'undefined' && window.Shopify.checkout) {
+        console.log('[WhatsApp] Shopify.checkout encontrado en intento #' + attempts);
+        if (window.Shopify.checkout.order) {
+          console.log('[WhatsApp] Shopify.checkout.order encontrado!');
+          findOrderSummaryAndInsert();
+          insertWhatsAppBlock();
+          clearInterval(interval);
+        } else {
+          console.log('[WhatsApp] Shopify.checkout existe pero order no está disponible aún');
+        }
       } else if (attempts >= maxAttempts) {
+        console.log('[WhatsApp] Máximo de intentos alcanzado. Intentando insertar de todas formas...');
         clearInterval(interval);
+        // Intentar insertar de todas formas si estamos en Order Status Page
+        if (isOrderStatusPage()) {
+          findOrderSummaryAndInsert();
+        }
       }
     }, 1000);
   }
 
   // Iniciar cuando el script se carga
+  console.log('[WhatsApp] Script cargado, document.readyState:', document.readyState);
+  
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initWhatsAppConfirmation);
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('[WhatsApp] DOMContentLoaded event fired');
+      initWhatsAppConfirmation();
+    });
   } else {
+    console.log('[WhatsApp] DOM ya está listo, iniciando inmediatamente');
     initWhatsAppConfirmation();
   }
+
+  // También iniciar después de un pequeño delay como backup
+  setTimeout(function() {
+    console.log('[WhatsApp] Backup init después de 100ms');
+    initWhatsAppConfirmation();
+  }, 100);
 })();
 </script>
 
