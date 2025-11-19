@@ -84,13 +84,24 @@
                 {% comment %} Forzar formato numérico sin espacios ni formato de moneda {% endcomment %}
                 {% assign product_min_price = product_min_price | round: 2 %}
                 
+                {% comment %} Debug: verificar qué se está generando {% endcomment %}
+                {% comment %}
+                DEBUG Producto {{ product.id }}:
+                - color_option_index: {{ color_option_index }}
+                - product_colors_array.size: {{ product_colors_array.size }}
+                - product_sizes_array.size: {{ product_sizes_array.size }}
+                - product.metafields.custom.talla_estandar: {{ product.metafields.custom.talla_estandar }}
+                {% endcomment %}
+                
                 <div class="col-lg-3 col-md-6 col-6 pb-4 trans-product product-item-wrapper" 
-                     data-product-colors="{{ product_colors_array | join: ',' }}"
-                     data-product-colors-names="{{ product_colors_names_array | join: '|||' }}"
-                     data-product-sizes="{{ product_sizes_array | join: ',' }}"
-                     data-product-sizes-names="{{ product_sizes_names_array | join: '|||' }}"
+                     data-product-colors="{% if product_colors_array.size > 0 %}{{ product_colors_array | join: ',' }}{% endif %}"
+                     data-product-colors-names="{% if product_colors_names_array.size > 0 %}{{ product_colors_names_array | join: '|||' }}{% endif %}"
+                     data-product-sizes="{% if product_sizes_array.size > 0 %}{{ product_sizes_array | join: ',' }}{% endif %}"
+                     data-product-sizes-names="{% if product_sizes_names_array.size > 0 %}{{ product_sizes_names_array | join: '|||' }}{% endif %}"
                      data-product-price="{{ product_min_price }}"
-                     data-product-id="{{ product.id }}">
+                     data-product-id="{{ product.id }}"
+                     data-debug-color-index="{{ color_option_index }}"
+                     data-debug-has-talla="{% if product.metafields.custom.talla_estandar != blank %}yes{% else %}no{% endif %}">
                   {% include 'product-item-v1' %}
                 </div>
                 {% else %}
