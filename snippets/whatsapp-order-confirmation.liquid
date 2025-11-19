@@ -1,0 +1,460 @@
+{% comment %}
+  WhatsApp Order Confirmation Block
+  Se inserta dinámicamente en la Order Status Page después del resumen del pedido
+{% endcomment %}
+
+<div id="whatsapp-confirmation-box"></div>
+
+<style>
+  #whatsapp-confirmation-box {
+    margin: 30px 0;
+    padding: 0;
+    width: 100%;
+  }
+
+  .whatsapp-confirmation-container {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 25px;
+    margin: 20px auto;
+    max-width: 600px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+
+  .whatsapp-confirmation-title {
+    font-family: "D-DIN", "DIN", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: #000000;
+    text-align: center;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .whatsapp-confirmation-preview {
+    background-color: #f5f5f5;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 15px;
+    margin-bottom: 20px;
+    font-family: "D-DIN", "DIN", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 14px;
+    color: #333333;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+
+  .whatsapp-confirmation-button {
+    display: block;
+    width: 100%;
+    padding: 15px 30px;
+    background-color: #ffffff;
+    color: #000000;
+    border: 2px solid #000000;
+    border-radius: 4px;
+    font-family: "D-DIN", "DIN", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+  }
+
+  .whatsapp-confirmation-button:hover {
+    background-color: #000000;
+    color: #ffffff;
+    text-decoration: none;
+  }
+
+  .whatsapp-confirmation-button:active {
+    transform: scale(0.98);
+  }
+
+  .whatsapp-confirmation-button svg {
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+    margin-right: 8px;
+    display: inline-block;
+  }
+
+  /* Desktop: ancho automático */
+  @media (min-width: 768px) {
+    .whatsapp-confirmation-button {
+      width: auto;
+      min-width: 250px;
+      margin: 0 auto;
+      display: inline-block;
+    }
+
+    .whatsapp-confirmation-container {
+      text-align: center;
+    }
+  }
+
+  /* Mobile: ancho completo */
+  @media (max-width: 767px) {
+    .whatsapp-confirmation-container {
+      padding: 20px 15px;
+      margin: 15px 0;
+    }
+
+    .whatsapp-confirmation-title {
+      font-size: 16px;
+    }
+
+    .whatsapp-confirmation-preview {
+      font-size: 13px;
+      padding: 12px;
+    }
+
+    .whatsapp-confirmation-button {
+      font-size: 13px;
+      padding: 12px 20px;
+    }
+  }
+</style>
+
+<script>
+(function() {
+  'use strict';
+
+  // Función para formatear el precio
+  function formatPrice(price, currency) {
+    if (!price && price !== 0) return 'N/A';
+    
+    // Si el precio viene en centavos (formato común de Shopify)
+    var amount = price;
+    if (typeof price === 'number' && price > 1000) {
+      // Asumir que está en centavos si es un número grande
+      amount = price / 100;
+    }
+    
+    // Formatear con 2 decimales
+    var formatted = parseFloat(amount).toFixed(2);
+    
+    // Agregar símbolo de moneda si está disponible
+    if (currency) {
+      // Formato común: $XX.XX o XX.XX USD
+      return formatted + ' ' + currency;
+    }
+    
+    return formatted;
+  }
+
+  // Función para construir el mensaje de WhatsApp
+  function buildWhatsAppMessage(checkout) {
+    if (!checkout || !checkout.order) {
+      return '';
+    }
+
+    var order = checkout.order;
+    var message = '¡Hola! 👋 Acabo de finalizar una compra.\n\n';
+    
+    // Número de pedido
+    var orderNumber = order.order_number || order.name || 'N/A';
+    message += '* Número de Pedido: ' + orderNumber + '\n';
+    
+    // Nombre del cliente
+    var customerName = 'Cliente';
+    if (order.customer) {
+      var firstName = order.customer.first_name || '';
+      var lastName = order.customer.last_name || '';
+      customerName = (firstName + ' ' + lastName).trim() || 'Cliente';
+    }
+    message += '* Cliente: ' + customerName + '\n';
+    
+    // Total pagado
+    var totalPrice = 'N/A';
+    if (order.total_price_set && order.total_price_set.shop_money) {
+      // Formato preferido de Shopify
+      var amount = parseFloat(order.total_price_set.shop_money.amount);
+      var currency = order.total_price_set.shop_money.currency_code || order.currency || '';
+      totalPrice = amount.toFixed(2) + ' ' + currency;
+    } else if (order.total_price) {
+      // Formato alternativo
+      totalPrice = formatPrice(order.total_price, order.currency);
+    }
+    message += '* Total Pagado: ' + totalPrice + '\n\n';
+    
+    // Detalle de artículos
+    message += 'Detalle de los artículos:\n';
+    if (order.line_items && order.line_items.length > 0) {
+      order.line_items.forEach(function(item, index) {
+        var itemName = item.title || item.name || item.product_title || 'Producto';
+        
+        // Manejar variantes
+        if (item.variant_title && item.variant_title !== 'Default Title') {
+          itemName += ' - ' + item.variant_title;
+        }
+        
+        var quantity = item.quantity || 1;
+        var itemPrice = '';
+        var currency = order.currency || '';
+        
+        // Intentar obtener el precio formateado
+        if (item.price_set && item.price_set.shop_money) {
+          var amount = parseFloat(item.price_set.shop_money.amount);
+          currency = item.price_set.shop_money.currency_code || currency;
+          itemPrice = amount.toFixed(2) + ' ' + currency;
+        } else if (item.price) {
+          itemPrice = formatPrice(item.price, currency);
+        }
+        
+        message += (index + 1) + '. ' + itemName + ' (x' + quantity + ')';
+        if (itemPrice) {
+          message += ' - ' + itemPrice;
+        }
+        message += '\n';
+      });
+    } else {
+      message += 'No hay items disponibles\n';
+    }
+    
+    message += '\n';
+    
+    // Método de envío
+    var shippingMethod = 'No especificado';
+    if (order.shipping_line && order.shipping_line.title) {
+      shippingMethod = order.shipping_line.title;
+    } else if (order.shipping_address) {
+      shippingMethod = 'Envío estándar';
+    }
+    message += '* Método de Envío: ' + shippingMethod + '\n';
+    
+    // Método de pago
+    var paymentMethod = 'No especificado';
+    if (order.transactions && order.transactions.length > 0) {
+      var transaction = order.transactions[0];
+      if (transaction.gateway) {
+        paymentMethod = transaction.gateway;
+        // Limpiar el nombre del gateway (remover guiones bajos y capitalizar)
+        paymentMethod = paymentMethod.replace(/_/g, ' ').replace(/\b\w/g, function(l) {
+          return l.toUpperCase();
+        });
+      } else if (transaction.payment_details && transaction.payment_details.credit_card_company) {
+        // Alternativa: usar la compañía de la tarjeta
+        paymentMethod = transaction.payment_details.credit_card_company;
+      } else if (transaction.kind) {
+        // Alternativa: usar el tipo de transacción
+        paymentMethod = transaction.kind.replace(/_/g, ' ').replace(/\b\w/g, function(l) {
+          return l.toUpperCase();
+        });
+      }
+    } else if (order.payment_gateway_names && order.payment_gateway_names.length > 0) {
+      // Alternativa: usar payment_gateway_names
+      paymentMethod = order.payment_gateway_names[0];
+    }
+    message += '* Método de Pago: ' + paymentMethod + '\n\n';
+    
+    message += 'Ya estoy lista para concretar el envío.';
+    
+    return message;
+  }
+
+  // Función para insertar el bloque de WhatsApp
+  function insertWhatsAppBlock() {
+    // Verificar si ya existe el bloque
+    var existingBox = document.getElementById('whatsapp-confirmation-box');
+    if (!existingBox) {
+      return;
+    }
+
+    // Verificar si ya tiene contenido
+    if (existingBox.innerHTML.trim() !== '') {
+      return;
+    }
+
+    // Verificar que Shopify.checkout existe
+    if (typeof window.Shopify === 'undefined' || !window.Shopify.checkout || !window.Shopify.checkout.order) {
+      console.log('WhatsApp Confirmation: Shopify.checkout no disponible aún');
+      return;
+    }
+
+    var checkout = window.Shopify.checkout;
+    var message = buildWhatsAppMessage(checkout);
+    
+    if (!message) {
+      console.log('WhatsApp Confirmation: No se pudo construir el mensaje');
+      return;
+    }
+
+    // Codificar el mensaje para URL
+    var encodedMessage = encodeURIComponent(message);
+    var whatsappUrl = 'https://wa.me/584122150171?text=' + encodedMessage;
+
+    // Función para escapar HTML
+    function escapeHtml(text) {
+      var div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // Crear el HTML del bloque
+    var html = '<div class="whatsapp-confirmation-container">';
+    html += '<h3 class="whatsapp-confirmation-title">Confirmar Pedido por WhatsApp</h3>';
+    html += '<div class="whatsapp-confirmation-preview">' + escapeHtml(message).replace(/\n/g, '<br>') + '</div>';
+    html += '<a href="' + whatsappUrl + '" target="_blank" rel="noopener noreferrer" class="whatsapp-confirmation-button">';
+    html += '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="currentColor">';
+    html += '<path d="M4.868,43.303l2.694-9.835C5.9,30.59,5.026,27.324,5.027,23.979C5.032,13.514,13.548,5,24.014,5c5.079,0.002,9.845,1.979,13.43,5.566c3.584,3.588,5.558,8.356,5.556,13.428c-0.004,10.465-8.522,18.98-18.986,18.98c-0.001,0,0,0,0,0h-0.008c-3.177-0.001-6.3-0.798-9.073-2.311L4.868,43.303z"></path>';
+    html += '<path fill="#40c351" d="M35.176,12.832c-2.98-2.982-6.941-4.625-11.157-4.626c-8.704,0-15.783,7.076-15.787,15.774c-0.001,2.981,0.833,5.883,2.413,8.396l0.376,0.597l-1.595,5.821l5.973-1.566l0.577,0.342c2.422,1.438,5.2,2.198,8.032,2.199h0.006c8.698,0,15.777-7.077,15.78-15.776C39.795,19.778,38.156,15.814,35.176,12.832z"></path>';
+    html += '<path fill="#fff" fill-rule="evenodd" d="M19.268,16.045c-0.355-0.79-0.729-0.806-1.068-0.82c-0.277-0.012-0.593-0.011-0.909-0.011c-0.316,0-0.83,0.119-1.265,0.594c-0.435,0.475-1.661,1.622-1.661,3.956c0,2.334,1.7,4.59,1.937,4.906c0.237,0.316,3.282,5.259,8.104,7.161c4.007,1.58,4.823,1.266,5.693,1.187c0.87-0.079,2.807-1.147,3.202-2.255c0.395-1.108,0.395-2.057,0.277-2.255c-0.119-0.198-0.435-0.316-0.909-0.554s-2.807-1.385-3.242-1.543c-0.435-0.158-0.751-0.237-1.068,0.238c-0.316,0.474-1.225,1.543-1.502,1.859c-0.277,0.317-0.554,0.357-1.028,0.119c-0.474-0.238-2.002-0.738-3.815-2.354c-1.41-1.257-2.362-2.81-2.639-3.285c-0.277-0.474-0.03-0.731,0.208-0.968c0.213-0.213,0.474-0.554,0.712-0.831c0.237-0.277,0.316-0.475,0.474-0.791c0.158-0.317,0.079-0.594-0.04-0.831C20.612,19.329,19.69,16.983,19.268,16.045z" clip-rule="evenodd"></path>';
+    html += '</svg>';
+    html += 'Enviar por WhatsApp';
+    html += '</a>';
+    html += '</div>';
+
+    // Insertar el HTML
+    existingBox.innerHTML = html;
+  }
+
+  // Función para buscar el resumen del pedido e insertar el contenedor
+  function findOrderSummaryAndInsert() {
+    // Verificar si el contenedor ya existe
+    var existingBox = document.getElementById('whatsapp-confirmation-box');
+    if (existingBox && existingBox.innerHTML.trim() !== '') {
+      return; // Ya está insertado y tiene contenido
+    }
+
+    // Buscar elementos comunes de Shopify Order Status Page
+    var selectors = [
+      '[data-order-status]',
+      '[data-order-summary]',
+      '.order-summary',
+      '.order__summary',
+      '.order-status',
+      '.order-status__summary',
+      '[class*="order-summary"]',
+      '[class*="order-status"]',
+      'main',
+      '.main-content',
+      '.content',
+      '[role="main"]',
+      '.checkout',
+      '.checkout__main'
+    ];
+
+    var targetElement = null;
+    
+    // Primero buscar elementos específicos de Shopify
+    for (var i = 0; i < selectors.length; i++) {
+      var elements = document.querySelectorAll(selectors[i]);
+      if (elements.length > 0) {
+        // Buscar el que tenga contenido relacionado con el pedido
+        for (var j = 0; j < elements.length; j++) {
+          var text = (elements[j].textContent || '').toLowerCase();
+          if (text.includes('order') || text.includes('pedido') || text.includes('total') || 
+              text.includes('thank you') || text.includes('gracias') || 
+              text.includes('order number') || text.includes('número de pedido')) {
+            targetElement = elements[j];
+            break;
+          }
+        }
+        if (targetElement) break;
+      }
+    }
+
+    // Si no encontramos un elemento específico, buscar por estructura común
+    if (!targetElement) {
+      // Buscar elementos que contengan información de pedido
+      var allSections = document.querySelectorAll('section, div[class*="section"], div[class*="container"]');
+      for (var k = 0; k < allSections.length; k++) {
+        var sectionText = (allSections[k].textContent || '').toLowerCase();
+        if ((sectionText.includes('order') || sectionText.includes('pedido')) && 
+            (sectionText.includes('total') || sectionText.includes('items'))) {
+          targetElement = allSections[k];
+          break;
+        }
+      }
+    }
+
+    // Si aún no encontramos, usar contenedores principales
+    if (!targetElement) {
+      targetElement = document.querySelector('main') || 
+                     document.querySelector('.main-content') || 
+                     document.querySelector('.content') ||
+                     document.querySelector('.container') ||
+                     document.body;
+    }
+
+    // Si el contenedor ya existe pero está vacío, solo intentar insertar contenido
+    if (existingBox) {
+      insertWhatsAppBlock();
+      return;
+    }
+
+    // Crear el contenedor
+    var box = document.createElement('div');
+    box.id = 'whatsapp-confirmation-box';
+    
+    // Insertar después del elemento objetivo
+    if (targetElement && targetElement.parentNode) {
+      // Intentar insertar después del elemento
+      if (targetElement.nextSibling) {
+        targetElement.parentNode.insertBefore(box, targetElement.nextSibling);
+      } else {
+        targetElement.parentNode.appendChild(box);
+      }
+    } else {
+      // Como último recurso, insertar al final del body
+      document.body.appendChild(box);
+    }
+
+    // Intentar insertar el contenido
+    insertWhatsAppBlock();
+  }
+
+  // Esperar a que el DOM esté listo y Shopify.checkout esté disponible
+  function initWhatsAppConfirmation() {
+    // Verificar si estamos en la Order Status Page
+    if (typeof window.Shopify === 'undefined' || !window.Shopify.checkout) {
+      // Intentar de nuevo después de un delay
+      setTimeout(initWhatsAppConfirmation, 500);
+      return;
+    }
+
+    // Esperar a que el DOM esté listo
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', findOrderSummaryAndInsert);
+    } else {
+      findOrderSummaryAndInsert();
+    }
+
+    // También intentar después de un pequeño delay por si el contenido se carga dinámicamente
+    setTimeout(function() {
+      findOrderSummaryAndInsert();
+      insertWhatsAppBlock();
+    }, 1000);
+
+    // Intentar cada segundo durante 10 segundos por si el objeto se carga más tarde
+    var attempts = 0;
+    var maxAttempts = 10;
+    var interval = setInterval(function() {
+      attempts++;
+      if (typeof window.Shopify !== 'undefined' && window.Shopify.checkout && window.Shopify.checkout.order) {
+        findOrderSummaryAndInsert();
+        insertWhatsAppBlock();
+        clearInterval(interval);
+      } else if (attempts >= maxAttempts) {
+        clearInterval(interval);
+      }
+    }, 1000);
+  }
+
+  // Iniciar cuando el script se carga
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initWhatsAppConfirmation);
+  } else {
+    initWhatsAppConfirmation();
+  }
+})();
+</script>
+
