@@ -209,54 +209,62 @@
       });
       
       // Asegurar que todos los productos sean visibles inicialmente
-      const productWrappers = document.querySelectorAll('.product-item-wrapper');
-      console.log('Productos encontrados para filtrado:', productWrappers.length);
-      
-      if (productWrappers.length === 0) {
-        console.error('❌ NO se encontraron productos con clase .product-item-wrapper');
-      }
-      
-      productWrappers.forEach(function(wrapper, index) {
-        wrapper.style.display = '';
-        wrapper.style.opacity = '1';
+      try {
+        const productWrappers = document.querySelectorAll('.product-item-wrapper');
+        console.log('Productos encontrados para filtrado:', productWrappers.length);
         
-        // Debug: verificar data-attributes
-        const colors = wrapper.getAttribute('data-product-colors');
-        const colorsNames = wrapper.getAttribute('data-product-colors-names');
-        const sizes = wrapper.getAttribute('data-product-sizes');
-        const sizesNames = wrapper.getAttribute('data-product-sizes-names');
-        const price = wrapper.getAttribute('data-product-price');
-        const productId = wrapper.getAttribute('data-product-id');
-        
-        const debugColorIndex = wrapper.getAttribute('data-debug-color-index');
-        const debugHasTalla = wrapper.getAttribute('data-debug-has-talla');
-        
-        // Verificar HTML completo del elemento para debug
-        const outerHTML = wrapper.outerHTML.substring(0, 500); // Primeros 500 caracteres
-        
-        console.log('=== Producto #' + (index + 1) + ' (ID: ' + productId + ') ===');
-        console.log('  data-product-colors:', colors || '(vacío)');
-        console.log('  data-product-colors-names:', colorsNames || '(vacío)');
-        console.log('  data-product-sizes:', sizes || '(vacío)');
-        console.log('  data-product-sizes-names:', sizesNames || '(vacío)');
-        console.log('  data-product-price:', price || '(vacío)');
-        console.log('  DEBUG - color_option_index:', debugColorIndex);
-        console.log('  DEBUG - tiene metafield talla:', debugHasTalla);
-        console.log('  HTML (primeros 500 chars):', outerHTML);
-        
-        // Verificar si el elemento tiene los atributos en el HTML
-        if (!colors && !sizes) {
-          console.warn('  ⚠️ Este producto NO tiene data-attributes de color ni talla');
-          if (debugColorIndex === '-1' || debugColorIndex === null) {
-            console.warn('    → Razón: No se encontró opción "Color" en las variantes (index: ' + debugColorIndex + ')');
-          }
-          if (debugHasTalla === 'no') {
-            console.warn('    → Razón: No tiene metafield custom.talla_estandar');
-          }
-        } else {
-          console.log('  ✅ Este producto SÍ tiene data-attributes');
+        if (productWrappers.length === 0) {
+          console.error('❌ NO se encontraron productos con clase .product-item-wrapper');
         }
-      });
+        
+        productWrappers.forEach(function(wrapper, index) {
+          try {
+            wrapper.style.display = '';
+            wrapper.style.opacity = '1';
+            
+            // Debug: verificar data-attributes
+            const colors = wrapper.getAttribute('data-product-colors');
+            const colorsNames = wrapper.getAttribute('data-product-colors-names');
+            const sizes = wrapper.getAttribute('data-product-sizes');
+            const sizesNames = wrapper.getAttribute('data-product-sizes-names');
+            const price = wrapper.getAttribute('data-product-price');
+            const productId = wrapper.getAttribute('data-product-id');
+            
+            const debugColorIndex = wrapper.getAttribute('data-debug-color-index');
+            const debugHasTalla = wrapper.getAttribute('data-debug-has-talla');
+            
+            // Verificar HTML completo del elemento para debug
+            const outerHTML = wrapper.outerHTML ? wrapper.outerHTML.substring(0, 500) : '(no disponible)';
+            
+            console.log('=== Producto #' + (index + 1) + ' (ID: ' + (productId || 'sin ID') + ') ===');
+            console.log('  data-product-colors:', colors || '(vacío)');
+            console.log('  data-product-colors-names:', colorsNames || '(vacío)');
+            console.log('  data-product-sizes:', sizes || '(vacío)');
+            console.log('  data-product-sizes-names:', sizesNames || '(vacío)');
+            console.log('  data-product-price:', price || '(vacío)');
+            console.log('  DEBUG - color_option_index:', debugColorIndex || '(no encontrado)');
+            console.log('  DEBUG - tiene metafield talla:', debugHasTalla || '(no encontrado)');
+            console.log('  HTML (primeros 500 chars):', outerHTML);
+            
+            // Verificar si el elemento tiene los atributos en el HTML
+            if (!colors && !sizes) {
+              console.warn('  ⚠️ Este producto NO tiene data-attributes de color ni talla');
+              if (debugColorIndex === '-1' || debugColorIndex === null || debugColorIndex === '') {
+                console.warn('    → Razón: No se encontró opción "Color" en las variantes (index: ' + debugColorIndex + ')');
+              }
+              if (debugHasTalla === 'no' || debugHasTalla === null || debugHasTalla === '') {
+                console.warn('    → Razón: No tiene metafield custom.talla_estandar');
+              }
+            } else {
+              console.log('  ✅ Este producto SÍ tiene data-attributes');
+            }
+          } catch (err) {
+            console.error('Error procesando producto #' + (index + 1) + ':', err);
+          }
+        });
+      } catch (err) {
+        console.error('Error en initFilters al procesar productos:', err);
+      }
       
       // Poblar dropdowns inicialmente después de un pequeño delay para asegurar que el DOM esté listo
       setTimeout(function() {
