@@ -118,7 +118,24 @@
               {% comment %} Paginación simplificada - Solo símbolos {% endcomment %}
               {% if paginate.pages > 1 %}
               <div class="pagi-nav text-center">
-                {{ paginate | default_pagination | replace: '&laquo; Previous', '«' | replace: 'Previous', '«' | replace: 'Anterior', '«' | replace: 'Next &raquo;', '»' | replace: 'Next', '»' | replace: 'Siguiente', '»' | replace: '&raquo;', '»' | replace: '&laquo;', '«' }}
+                {{ paginate | default_pagination
+                  | replace: '&laquo; Previous', '«'
+                  | replace: 'Previous', ''
+                  | replace: 'Anterior', ''
+                  | replace: '&laquo;', '«'
+                  | replace: '&raquo; Next', '»'
+                  | replace: 'Next', ''
+                  | replace: 'Siguiente', ''
+                  | replace: '&raquo;', '»'
+                  | replace: '« ', '«'
+                  | replace: ' «', '«'
+                  | replace: '» ', '»'
+                  | replace: ' »', '»'
+                  | replace: '« «', '«'
+                  | replace: '» »', '»'
+                  | replace: '««', '«'
+                  | replace: '»»', '»'
+                }}
               </div>
               {% endif %}
             </div>
@@ -143,7 +160,24 @@
               {% endfor %}
               {% if paginate.pages > 1 %}
               <div class="pagi-nav text-center pt-4">
-                {{ paginate | default_pagination | replace: '&laquo; Previous', '«' | replace: 'Previous', '«' | replace: 'Anterior', '«' | replace: 'Next &raquo;', '»' | replace: 'Next', '»' | replace: 'Siguiente', '»' | replace: '&raquo;', '»' | replace: '&laquo;', '«' }}
+                {{ paginate | default_pagination
+                  | replace: '&laquo; Previous', '«'
+                  | replace: 'Previous', ''
+                  | replace: 'Anterior', ''
+                  | replace: '&laquo;', '«'
+                  | replace: '&raquo; Next', '»'
+                  | replace: 'Next', ''
+                  | replace: 'Siguiente', ''
+                  | replace: '&raquo;', '»'
+                  | replace: '« ', '«'
+                  | replace: ' «', '«'
+                  | replace: '» ', '»'
+                  | replace: ' »', '»'
+                  | replace: '« «', '«'
+                  | replace: '» »', '»'
+                  | replace: '««', '«'
+                  | replace: '»»', '»'
+                }}
               </div>
               {% endif %}
             </div>

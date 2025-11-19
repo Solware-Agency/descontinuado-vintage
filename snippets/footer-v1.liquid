@@ -1,57 +1,58 @@
 <footer class="footer-v1">
   <div class="footer-container">
+    <div class="footer-columns">
 
-    <!-- Izquierda: Logo grande -->
-<div class="footer-col footer-logo">
-  {% if section.settings.footer_logo_svg != blank %}
-    <div class="footer-logo-svg">{{ section.settings.footer_logo_svg }}</div>
-  {% elsif section.settings.footer_logo != blank %}
-    <img src="{{ section.settings.footer_logo | img_url: 'master' }}" alt="{{ shop.name }}" class="footer-logo-img">
-  {% else %}
-    <img src="{{ 'LOGO-BLANCO.png' | asset_url }}" alt="{{ shop.name }}" class="footer-logo-img">
-  {% endif %}
-</div>
-
-
-    <!-- Centro: Quick Links -->
-    <div class="footer-col footer-links">
-      <ul class="links-column">
-        <li><a href="/collections/all">Shop All</a></li>
-        <li><a href="/collections/best-sellers">Best Sellers</a></li>
-        <li><a href="/pages/contact">Contact Us</a></li>
-        <li><a href="/pages/faq">FAQ</a></li>
-        <li><a href="/pages/care-guide">Care Guide</a></li>
-      </ul>
-    </div>
-
-    <!-- Derecha: Policies -->
-    <div class="footer-col footer-policies">
-      <ul class="links-column">
-        <li><a href="/pages/shipping">Shipping</a></li>
-        <li><a href="/pages/privacy-policy">Privacy Policy</a></li>
-        <li><a href="/pages/terms-and-conditions">Terms & Conditions</a></li>
-        <li><a href="/pages/returns">Returns & Exchanges</a></li>
-      </ul>
-    </div>
-
-    <!-- Derecha: Newsletter -->
-    <div class="footer-col footer-newsletter">
-      <h3>SUBSCRIBE AND GET 10% OFF YOUR FIRST ORDER</h3>
-      {% form 'contact' %}
-        {% if form.posted_successfully? %}
-          <p class="form-success">Thank you for subscribing!</p>
+      <!-- Columna 1: Logo -->
+      <div class="footer-col footer-logo">
+        {% if section.settings.footer_logo_svg != blank %}
+          <div class="footer-logo-svg">{{ section.settings.footer_logo_svg }}</div>
+        {% elsif section.settings.footer_logo != blank %}
+          <img src="{{ section.settings.footer_logo | img_url: 'master' }}" alt="{{ shop.name }}" class="footer-logo-img">
+        {% else %}
+          <img src="{{ 'LOGO-BLANCO.png' | asset_url }}" alt="{{ shop.name }}" class="footer-logo-img">
         {% endif %}
-        {{ form.errors | default_errors }}
-        <input type="email" name="contact[email]" placeholder="email address" required>
-        <input type="hidden" name="contact[tags]" value="newsletter">
-        <label class="checkbox-container">
-          <input type="checkbox" name="agree" required>
-          <span>I agree to receive emails from Descontinuado.</span>
-        </label>
-        <button type="submit" class="footer-button">SUBSCRIBE</button>
-      {% endform %}
-    </div>
+      </div>
 
+      <!-- Columna 2: Quick Links -->
+      <div class="footer-col footer-links-1">
+        <ul class="links-column">
+          <li><a href="/collections/all">Shop All</a></li>
+          <li><a href="/collections/best-sellers">Best Sellers</a></li>
+          <li><a href="/pages/contact">Contact Us</a></li>
+          <li><a href="/pages/faq">FAQ</a></li>
+          <li><a href="/pages/care-guide">Care Guide</a></li>
+        </ul>
+      </div>
+
+      <!-- Columna 3: Policies -->
+      <div class="footer-col footer-links-2">
+        <ul class="links-column">
+          <li><a href="/pages/shipping">Shipping</a></li>
+          <li><a href="/pages/privacy-policy">Privacy Policy</a></li>
+          <li><a href="/pages/terms-and-conditions">Terms & Conditions</a></li>
+          <li><a href="/pages/returns">Returns & Exchanges</a></li>
+        </ul>
+      </div>
+
+      <!-- Columna 4: Subscribe -->
+      <div class="footer-col footer-subscribe">
+        <h3>SUBSCRIBE AND GET 10% OFF YOUR FIRST ORDER</h3>
+        {% form 'contact' %}
+          {% if form.posted_successfully? %}
+            <p class="form-success">Thank you for subscribing!</p>
+          {% endif %}
+          {{ form.errors | default_errors }}
+          <input type="email" name="contact[email]" placeholder="email address" required>
+          <input type="hidden" name="contact[tags]" value="newsletter">
+          <label class="checkbox-container">
+            <input type="checkbox" name="agree" required>
+            <span>I agree to receive emails from Descontinuado.</span>
+          </label>
+          <button type="submit" class="footer-button">SUBSCRIBE</button>
+        {% endform %}
+      </div>
+
+    </div>
   </div>
 
   <!-- Franja inferior: copyright + desarrollado por -->
@@ -86,45 +87,26 @@
   }
 
   .footer-container {
-    display: grid;
-    grid-template-columns: 35% 1fr 1fr; /* Logo, Quick Links + Policies, Newsletter */
-    gap: 50px;
     max-width: 1300px;
     margin: 0 auto 50px;
-    align-items: start;
   }
-  /* En desktop, Quick Links y Policies lado a lado en columna 2 */
-  .footer-links {
-    grid-column: 2;
-    grid-row: 1;
-    display: inline-block;
-    width: calc(50% - 15px);
-    vertical-align: top;
-    margin-right: 30px;
-    box-sizing: border-box;
+  .footer-columns {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 50px;
+    flex-wrap: nowrap;
   }
-  .footer-policies {
-    grid-column: 2;
-    grid-row: 1;
-    display: inline-block;
-    width: calc(50% - 15px);
-    vertical-align: top;
-    margin-left: 0;
-    box-sizing: border-box;
+  .footer-col {
+    flex: 1;
+    min-width: 200px;
   }
-  .footer-newsletter {
-    grid-column: 3;
-    grid-row: 1;
-    margin-top: 0;
-    margin-left: 0;
-    width: 100%;
-    box-sizing: border-box;
+  .footer-logo {
+    max-width: 320px;
   }
-  /* Asegurar font-size correcto para todos los elementos */
-  .footer-logo,
-  .footer-links,
-  .footer-policies,
-  .footer-newsletter {
+  .footer-links-1,
+  .footer-links-2,
+  .footer-subscribe {
     font-size: 13px;
   }
 
@@ -137,7 +119,7 @@
     max-width: none;
   }
 
-  /* Links en desktop: Quick Links y Policies lado a lado (ya configurado arriba con inline-block) */
+  /* Columns content */
   .links-column {
     list-style: none;
     padding: 0;
@@ -161,7 +143,7 @@
   }
 
   /* Newsletter */
-  .footer-newsletter h3 {
+  .footer-subscribe h3 {
     font-family: 'Chivo-Medium', sans-serif;
     font-size: 12px;
     text-transform: uppercase;
@@ -169,19 +151,19 @@
     color: #fff;
     margin-bottom: 15px;
   }
-  .footer-newsletter .form-success {
+  .footer-subscribe .form-success {
     color: #fff;
     font-size: 12px;
     margin-bottom: 10px;
     font-family: 'D-DIN', sans-serif;
   }
-  .footer-newsletter .errors {
+  .footer-subscribe .errors {
     color: #ff6b6b;
     font-size: 12px;
     margin-bottom: 10px;
     font-family: 'D-DIN', sans-serif;
   }
-  .footer-newsletter form input[type="email"] {
+  .footer-subscribe form input[type="email"] {
     width: 100%;
     background: transparent;
     border: 1px solid #fff;
@@ -191,7 +173,7 @@
     margin-bottom: 10px;
     font-family: 'D-DIN', sans-serif;
   }
-  .footer-newsletter .checkbox-container {
+  .footer-subscribe .checkbox-container {
     display: flex;
     align-items: flex-start;
     font-size: 12px;
@@ -200,7 +182,7 @@
     font-family: 'D-DIN', sans-serif;
     line-height: 1.4;
   }
-  .footer-newsletter .checkbox-container input {
+  .footer-subscribe .checkbox-container input {
     margin-right: 8px;
     margin-top: 2px;
   }
@@ -243,108 +225,49 @@
     text-decoration: underline;
   }
 
-  /* Responsive Tablet y Mobile */
-  @media (max-width: 991px) {
+  /* Tablet */
+  @media (max-width: 1023px) and (min-width: 768px) {
+    .footer-columns {
+      flex-wrap: wrap;
+      gap: 30px;
+    }
+    .footer-links-1,
+    .footer-links-2,
+    .footer-subscribe {
+      flex: 1 1 0;
+      min-width: 0;
+    }
+    .footer-subscribe {
+      max-width: none;
+    }
+    .footer-logo {
+      order: 4;
+      flex: 1 1 100%;
+      width: 100%;
+      text-align: center;
+      margin-top: 40px;
+    }
+  }
+
+  /* Mobile */
+  @media (max-width: 767px) {
     .footer-v1 {
       padding: 50px 0 20px;
     }
     .footer-container {
-      display: flex;
+      padding: 0 3%;
+      margin: 0 auto 40px;
+    }
+    .footer-columns {
       flex-direction: column;
-      gap: 40px;
-      padding: 0 4%;
-      font-size: 13px;
+      gap: 35px;
     }
-    .footer-container::before {
-      display: none;
-    }
-    .footer-policies {
-      display: block;
-    }
-    .footer-newsletter {
-      order: 1;
-      width: 100%;
-      margin-left: 0;
-      margin-right: 0;
-      padding: 0;
-      box-sizing: border-box;
-      margin-bottom: 20px;
-    }
-    /* Quick Links (izquierda) y Policies (derecha) lado a lado */
-    .footer-links {
-      order: 2;
-      grid-column: auto;
-      grid-row: auto;
-      display: inline-block;
-      width: calc(50% - 10px);
-      vertical-align: top;
-      margin-right: 20px;
-      margin-bottom: 20px;
-      max-width: none;
-      box-sizing: border-box;
-    }
-    .footer-links .links-column {
-      display: flex;
-      flex-direction: column;
-      text-align: left;
-    }
-    .footer-policies {
-      order: 2;
-      grid-column: auto;
-      grid-row: auto;
-      display: inline-block;
-      width: calc(50% - 10px);
-      vertical-align: top;
-      margin-left: 0;
-      margin-right: 0;
-      margin-bottom: 20px;
-      max-width: none;
-      box-sizing: border-box;
-    }
-    .footer-policies .links-column {
-      display: flex;
-      flex-direction: column;
-      text-align: left;
-    }
+    .footer-subscribe { order: 1; }
+    .footer-links-1 { order: 2; }
+    .footer-links-2 { order: 3; }
     .footer-logo {
       order: 4;
-      grid-column: auto;
-      display: flex;
-      justify-content: center;
-      margin-top: 0;
-    }
-  }
-  @media (max-width: 600px) {
-    .footer-v1 {
-      padding: 40px 0 20px;
-    }
-    .footer-container {
-      gap: 30px;
-      padding: 0 3%;
-    }
-    .footer-newsletter {
-      width: calc(100% + 6%);
-      margin-left: -3%;
-      padding: 0 3%;
-    }
-    .footer-newsletter form input[type="email"] {
-      font-size: 12px;
-      padding: 12px;
-    }
-    .footer-button {
-      padding: 12px 0;
-      font-size: 12px;
-      width: 100%;
-    }
-    .footer-newsletter .checkbox-container {
-      font-size: 11px;
-    }
-    .footer-links,
-    .footer-policies {
-      gap: 15px;
-    }
-    .footer-bottom p {
-      font-size: 11px;
+      text-align: center;
     }
   }
 </style>
