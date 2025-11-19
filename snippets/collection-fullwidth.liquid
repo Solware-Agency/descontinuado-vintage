@@ -25,8 +25,10 @@
                 {% comment %} Extraer información del producto para filtrado {% endcomment %}
                 {% assign product_colors_string = '' %}
                 {% assign product_colors_array = '' | split: ',' %}
+                {% assign product_colors_names_array = '' | split: ',' %}
                 {% assign product_sizes_string = '' %}
                 {% assign product_sizes_array = '' | split: ',' %}
+                {% assign product_sizes_names_array = '' | split: ',' %}
                 {% assign color_option_index = -1 %}
                 
                 {% comment %} Buscar opción de color {% endcomment %}
@@ -38,12 +40,10 @@
                   {% endif %}
                 {% endfor %}
                 
-                {% comment %} Recopilar colores y tallas del producto {% endcomment %}
-                {% for variant in product.variants %}
-                  {% comment %} Recopilar color {% endcomment %}
-                  {% assign color_name = '' %}
-                  {% if color_option_index >= 0 %}
-                    {% comment %} Método 1: Obtener desde opción de variante {% endcomment %}
+                {% comment %} Recopilar colores desde opción de variante {% endcomment %}
+                {% if color_option_index >= 0 %}
+                  {% for variant in product.variants %}
+                    {% assign color_name = '' %}
                     {% if color_option_index == 0 and variant.option1 != blank %}
                       {% assign color_name = variant.option1 | strip %}
                     {% elsif color_option_index == 1 and variant.option2 != blank %}
@@ -51,57 +51,21 @@
                     {% elsif color_option_index == 2 and variant.option3 != blank %}
                       {% assign color_name = variant.option3 | strip %}
                     {% endif %}
-                  {% else %}
-                    {% comment %} Método 2: Intentar obtener desde metafield de variante {% endcomment %}
-                    {% if variant.metafields.custom.color != blank %}
-                      {% assign color_name = variant.metafields.custom.color | strip %}
-                    {% elsif variant.metafields.custom.colour != blank %}
-                      {% assign color_name = variant.metafields.custom.colour | strip %}
-                    {% elsif variant.metafields.custom.color_name != blank %}
-                      {% assign color_name = variant.metafields.custom.color_name | strip %}
-                    {% endif %}
-                  {% endif %}
-                  
-                  {% if color_name != blank %}
-                    {% assign color_handle = color_name | handleize %}
-                    {% assign color_check = '|' | append: color_handle | append: '|' %}
-                    {% unless product_colors_string contains color_check %}
-                      {% assign product_colors_string = product_colors_string | append: color_check %}
-                      {% assign product_colors_array = product_colors_array | push: color_handle %}
-                    {% endunless %}
-                  {% endif %}
-                  
-                  {% comment %} Recopilar tallas desde metafield de variantes {% endcomment %}
-                  {% if variant.metafields.custom.talla_estandar != blank %}
-                    {% assign size_value = variant.metafields.custom.talla_estandar | strip %}
-                    {% if size_value != blank %}
-                      {% assign size_handle = size_value | handleize %}
-                      {% assign size_check = '|' | append: size_handle | append: '|' %}
-                      {% unless product_sizes_string contains size_check %}
-                        {% assign product_sizes_string = product_sizes_string | append: size_check %}
-                        {% assign product_sizes_array = product_sizes_array | push: size_handle %}
-                      {% endunless %}
-                    {% endif %}
-                  {% endif %}
-                {% endfor %}
-                
-                {% comment %} Método 3: Intentar obtener color desde metafield de producto si no se encontró en variantes {% endcomment %}
-                {% if product_colors_array.size == 0 %}
-                  {% if product.metafields.custom.color != blank %}
-                    {% assign color_name = product.metafields.custom.color | strip %}
+                    
                     {% if color_name != blank %}
                       {% assign color_handle = color_name | handleize %}
                       {% assign color_check = '|' | append: color_handle | append: '|' %}
                       {% unless product_colors_string contains color_check %}
                         {% assign product_colors_string = product_colors_string | append: color_check %}
                         {% assign product_colors_array = product_colors_array | push: color_handle %}
+                        {% assign product_colors_names_array = product_colors_names_array | push: color_name %}
                       {% endunless %}
                     {% endif %}
-                  {% endif %}
+                  {% endfor %}
                 {% endif %}
                 
-                {% comment %} Fallback: leer talla desde producto si no se encontró en variantes {% endcomment %}
-                {% if product_sizes_array.size == 0 and product.metafields.custom.talla_estandar != blank %}
+                {% comment %} Recopilar tallas desde metafield de producto (custom.talla_estandar) {% endcomment %}
+                {% if product.metafields.custom.talla_estandar != blank %}
                   {% assign size_value = product.metafields.custom.talla_estandar | strip %}
                   {% if size_value != blank %}
                     {% assign size_handle = size_value | handleize %}
@@ -109,6 +73,7 @@
                     {% unless product_sizes_string contains size_check %}
                       {% assign product_sizes_string = product_sizes_string | append: size_check %}
                       {% assign product_sizes_array = product_sizes_array | push: size_handle %}
+                      {% assign product_sizes_names_array = product_sizes_names_array | push: size_value %}
                     {% endunless %}
                   {% endif %}
                 {% endif %}
@@ -121,7 +86,9 @@
                 
                 <div class="col-lg-3 col-md-6 col-6 pb-4 trans-product product-item-wrapper" 
                      data-product-colors="{{ product_colors_array | join: ',' }}"
+                     data-product-colors-names="{{ product_colors_names_array | join: '|||' }}"
                      data-product-sizes="{{ product_sizes_array | join: ',' }}"
+                     data-product-sizes-names="{{ product_sizes_names_array | join: '|||' }}"
                      data-product-price="{{ product_min_price }}"
                      data-product-id="{{ product.id }}">
                   {% include 'product-item-v1' %}

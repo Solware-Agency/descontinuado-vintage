@@ -35,165 +35,19 @@
             </select>
           </div>
 
-          {% comment %} Filtro de Color - Dinámico desde productos reales {% endcomment %}
+          {% comment %} Filtro de Color - Dinámico desde opción de variante {% endcomment %}
           <div class="filter-dropdown-wrapper">
             <select class="filter-dropdown" id="filter-color" data-filter="color">
               <option value="">COLOR</option>
-              {% comment %} Recopilar colores únicos de los productos de la colección {% endcomment %}
-              {% comment %} Intentar obtener TODOS los productos de la colección (no solo los paginados) {% endcomment %}
-              {% assign all_collection_products = collection.products %}
-              {% comment %} Si estamos en un contexto paginado, intentar obtener todos los productos {% endcomment %}
-              {% if collections[collection.handle] != blank %}
-                {% assign all_collection_products = collections[collection.handle].products %}
-              {% endif %}
-              
-              {% assign unique_colors_string = '' %}
-              {% assign unique_colors_array = '' | split: ',' %}
-              {% assign color_map_array = '' | split: ',' %}
-              
-              {% for product in all_collection_products %}
-                {% comment %} Método 1: Buscar la opción "Color" o "Colour" en las opciones del producto {% endcomment %}
-                {% assign color_option_index = -1 %}
-                {% for option in product.options %}
-                  {% assign option_lower = option | downcase | strip %}
-                  {% if option_lower == 'color' or option_lower == 'colour' or option_lower contains 'color' %}
-                    {% assign color_option_index = forloop.index0 %}
-                    {% break %}
-                  {% endif %}
-                {% endfor %}
-                
-                {% comment %} Si se encontró la opción de color, extraer valores de variantes {% endcomment %}
-                {% if color_option_index >= 0 %}
-                  {% for variant in product.variants %}
-                    {% assign color_name = '' %}
-                    {% if color_option_index == 0 and variant.option1 != blank %}
-                      {% assign color_name = variant.option1 | strip %}
-                    {% elsif color_option_index == 1 and variant.option2 != blank %}
-                      {% assign color_name = variant.option2 | strip %}
-                    {% elsif color_option_index == 2 and variant.option3 != blank %}
-                      {% assign color_name = variant.option3 | strip %}
-                    {% endif %}
-                    
-                    {% if color_name != blank %}
-                      {% assign color_handle = color_name | handleize %}
-                      {% assign color_check = '|' | append: color_handle | append: '|' %}
-                      {% unless unique_colors_string contains color_check %}
-                        {% assign unique_colors_string = unique_colors_string | append: color_check %}
-                        {% assign unique_colors_array = unique_colors_array | push: color_handle %}
-                        {% assign color_map_array = color_map_array | push: color_name %}
-                      {% endunless %}
-                    {% endif %}
-                  {% endfor %}
-                {% else %}
-                  {% comment %} Método 2: Intentar obtener color desde metafield de variante {% endcomment %}
-                  {% for variant in product.variants %}
-                    {% assign color_name = '' %}
-                    {% if variant.metafields.custom.color != blank %}
-                      {% assign color_name = variant.metafields.custom.color | strip %}
-                    {% elsif variant.metafields.custom.colour != blank %}
-                      {% assign color_name = variant.metafields.custom.colour | strip %}
-                    {% elsif variant.metafields.custom.color_name != blank %}
-                      {% assign color_name = variant.metafields.custom.color_name | strip %}
-                    {% endif %}
-                    
-                    {% if color_name != blank %}
-                      {% assign color_handle = color_name | handleize %}
-                      {% assign color_check = '|' | append: color_handle | append: '|' %}
-                      {% unless unique_colors_string contains color_check %}
-                        {% assign unique_colors_string = unique_colors_string | append: color_check %}
-                        {% assign unique_colors_array = unique_colors_array | push: color_handle %}
-                        {% assign color_map_array = color_map_array | push: color_name %}
-                      {% endunless %}
-                    {% endif %}
-                  {% endfor %}
-                  
-                  {% comment %} Método 3: Intentar obtener color desde metafield de producto {% endcomment %}
-                  {% if product.metafields.custom.color != blank %}
-                    {% assign color_name = product.metafields.custom.color | strip %}
-                    {% if color_name != blank %}
-                      {% assign color_handle = color_name | handleize %}
-                      {% assign color_check = '|' | append: color_handle | append: '|' %}
-                      {% unless unique_colors_string contains color_check %}
-                        {% assign unique_colors_string = unique_colors_string | append: color_check %}
-                        {% assign unique_colors_array = unique_colors_array | push: color_handle %}
-                        {% assign color_map_array = color_map_array | push: color_name %}
-                      {% endunless %}
-                    {% endif %}
-                  {% endif %}
-                {% endif %}
-              {% endfor %}
-              
-              {% comment %} Mostrar solo colores encontrados dinámicamente en los productos {% endcomment %}
-              {% for color_handle in unique_colors_array %}
-                {% assign color_index = forloop.index0 %}
-                {% assign color_name = color_map_array[color_index] %}
-                <option value="{{ color_handle }}" {% if current_tags contains color_handle %}selected{% endif %}>
-                  {{ color_name }}
-                </option>
-              {% endfor %}
+              {% comment %} Los colores se poblarán dinámicamente con JavaScript según productos visibles {% endcomment %}
             </select>
           </div>
 
-          {% comment %} Filtro de Talla (usando metafield custom.talla_estandar) {% endcomment %}
+          {% comment %} Filtro de Talla (usando metafield custom.talla_estandar de producto) {% endcomment %}
           <div class="filter-dropdown-wrapper">
             <select class="filter-dropdown" id="filter-size" data-filter="size">
               <option value="">TALLA</option>
-              {% comment %} Extraer tallas desde metafield custom.talla_estandar de los productos reales {% endcomment %}
-              {% comment %} Intentar obtener TODOS los productos de la colección (no solo los paginados) {% endcomment %}
-              {% assign all_collection_products = collection.products %}
-              {% comment %} Si estamos en un contexto paginado, intentar obtener todos los productos {% endcomment %}
-              {% if collections[collection.handle] != blank %}
-                {% assign all_collection_products = collections[collection.handle].products %}
-              {% endif %}
-              
-              {% assign unique_sizes_string = '' %}
-              {% assign unique_sizes_array = '' | split: ',' %}
-              {% assign size_map_array = '' | split: ',' %}
-              
-              {% for product in all_collection_products %}
-                {% comment %} Leer metafield desde variantes primero, luego desde producto como fallback {% endcomment %}
-                {% assign size_found = false %}
-                {% for variant in product.variants %}
-                  {% if variant.metafields.custom.talla_estandar != blank %}
-                    {% assign size_value = variant.metafields.custom.talla_estandar | strip %}
-                    {% if size_value != blank %}
-                      {% assign size_handle = size_value | handleize %}
-                      {% assign size_check = '|' | append: size_handle | append: '|' %}
-                      {% unless unique_sizes_string contains size_check %}
-                        {% assign unique_sizes_string = unique_sizes_string | append: size_check %}
-                        {% assign unique_sizes_array = unique_sizes_array | push: size_handle %}
-                        {% assign size_map_array = size_map_array | push: size_value %}
-                      {% endunless %}
-                      {% assign size_found = true %}
-                    {% endif %}
-                  {% endif %}
-                {% endfor %}
-                
-                {% comment %} Fallback: leer desde producto si no se encontró en variantes {% endcomment %}
-                {% unless size_found %}
-                  {% if product.metafields.custom.talla_estandar != blank %}
-                    {% assign size_value = product.metafields.custom.talla_estandar | strip %}
-                    {% if size_value != blank %}
-                      {% assign size_handle = size_value | handleize %}
-                      {% assign size_check = '|' | append: size_handle | append: '|' %}
-                      {% unless unique_sizes_string contains size_check %}
-                        {% assign unique_sizes_string = unique_sizes_string | append: size_check %}
-                        {% assign unique_sizes_array = unique_sizes_array | push: size_handle %}
-                        {% assign size_map_array = size_map_array | push: size_value %}
-                      {% endunless %}
-                    {% endif %}
-                  {% endif %}
-                {% endunless %}
-              {% endfor %}
-              
-              {% comment %} Mostrar solo tallas encontradas desde metafields {% endcomment %}
-              {% for size_handle in unique_sizes_array %}
-                {% assign size_index = forloop.index0 %}
-                {% assign size_name = size_map_array[size_index] %}
-                <option value="{{ size_handle }}" {% if current_tags contains size_handle %}selected{% endif %}>
-                  {{ size_name }}
-                </option>
-              {% endfor %}
+              {% comment %} Las tallas se poblarán dinámicamente con JavaScript según productos visibles {% endcomment %}
             </select>
           </div>
 
@@ -332,6 +186,23 @@
       filterDropdowns.forEach(function(dropdown) {
         dropdown.addEventListener('change', function() {
           console.log('Filtro cambiado:', dropdown.id, '=', dropdown.value);
+          
+          // Si cambia el filtro de color, resetear talla y precio
+          if (dropdown.id === 'filter-color') {
+            const sizeFilter = document.getElementById('filter-size');
+            const priceFilter = document.getElementById('filter-price');
+            if (sizeFilter) sizeFilter.value = '';
+            if (priceFilter) priceFilter.value = '';
+          }
+          
+          // Si cambia el filtro de talla, resetear precio
+          if (dropdown.id === 'filter-size') {
+            const priceFilter = document.getElementById('filter-price');
+            if (priceFilter) priceFilter.value = '';
+          }
+          
+          // Actualizar dropdowns según jerarquía y luego aplicar filtros
+          updateFilterDropdowns();
           applyFilters();
         });
       });
@@ -400,8 +271,182 @@
       // Aplicar filtros después de restaurar
       if (color || size || price || constraint) {
         setTimeout(function() {
+          // Primero actualizar dropdowns, luego aplicar filtros
+          updateFilterDropdowns();
           applyFilters();
         }, 100);
+      } else {
+        // Si no hay filtros en URL, poblar dropdowns inicialmente
+        setTimeout(function() {
+          updateFilterDropdowns();
+        }, 100);
+      }
+    }
+    
+    // Función para recopilar colores y tallas de productos visibles
+    function getVisibleProductsData() {
+      const productWrappers = document.querySelectorAll('.product-item-wrapper');
+      const colorsMap = {}; // { handle: nombre_original }
+      const sizesMap = {}; // { handle: nombre_original }
+      
+      productWrappers.forEach(function(wrapper) {
+        // Solo considerar productos que están visibles (no ocultos por display:none)
+        const isVisible = wrapper.offsetParent !== null || 
+                         (wrapper.style.display !== 'none' && wrapper.style.opacity !== '0');
+        
+        if (!isVisible) return;
+        
+        // Recopilar colores
+        const productColors = wrapper.getAttribute('data-product-colors');
+        if (productColors && productColors.trim() !== '') {
+          const colors = productColors.split(',').map(function(c) { 
+            return handleize(c.trim()); 
+          }).filter(function(c) { return c !== ''; });
+          
+          // Necesitamos obtener el nombre original del color
+          // Como solo tenemos el handle en data-attribute, usaremos el handle como nombre
+          // (En un caso ideal, tendríamos data-product-colors-names, pero por ahora usamos handle)
+          colors.forEach(function(colorHandle) {
+            if (!colorsMap[colorHandle]) {
+              // Convertir handle a nombre legible (capitalizar primera letra de cada palabra)
+              const colorName = colorHandle.split('-').map(function(word) {
+                return word.charAt(0).toUpperCase() + word.slice(1);
+              }).join(' ');
+              colorsMap[colorHandle] = colorName;
+            }
+          });
+        }
+        
+        // Recopilar tallas
+        const productSizes = wrapper.getAttribute('data-product-sizes');
+        if (productSizes && productSizes.trim() !== '') {
+          const sizes = productSizes.split(',').map(function(s) { 
+            return handleize(s.trim()); 
+          }).filter(function(s) { return s !== ''; });
+          
+          sizes.forEach(function(sizeHandle) {
+            if (!sizesMap[sizeHandle]) {
+              // Convertir handle a nombre legible (mayúsculas)
+              const sizeName = sizeHandle.toUpperCase();
+              sizesMap[sizeHandle] = sizeName;
+            }
+          });
+        }
+      });
+      
+      return { colors: colorsMap, sizes: sizesMap };
+    }
+    
+    // Función para actualizar dropdowns según productos visibles
+    function updateFilterDropdowns() {
+      const colorFilter = document.getElementById('filter-color');
+      const sizeFilter = document.getElementById('filter-size');
+      const categoryFilter = document.getElementById('filter-category');
+      const selectedColor = colorFilter ? colorFilter.value : '';
+      const selectedSize = sizeFilter ? sizeFilter.value : '';
+      
+      // Obtener productos visibles (sin filtros de color/talla aplicados aún)
+      // Primero aplicar solo filtros anteriores en la jerarquía
+      const tempProductWrappers = document.querySelectorAll('.product-item-wrapper');
+      
+      // Determinar qué productos considerar según jerarquía
+      // Si hay color seleccionado, solo considerar productos con ese color
+      // Si hay talla seleccionada, solo considerar productos con esa talla (después de color)
+      
+      // Para color: considerar todos los productos inicialmente, o solo los que pasaron filtros anteriores
+      let productsToConsider = Array.from(tempProductWrappers);
+      
+      // Si hay color seleccionado, filtrar por color primero
+      if (selectedColor && selectedColor.trim() !== '') {
+        productsToConsider = productsToConsider.filter(function(wrapper) {
+          const productColors = wrapper.getAttribute('data-product-colors');
+          if (!productColors || productColors.trim() === '') return false;
+          const colors = productColors.split(',').map(function(c) { 
+            return handleize(c.trim()); 
+          }).filter(function(c) { return c !== ''; });
+          const selectedColorHandle = handleize(selectedColor.trim());
+          return colors.indexOf(selectedColorHandle) !== -1;
+        });
+      }
+      
+      // Recopilar colores de productos considerados (sin filtro de color aplicado aún)
+      const allColorsMap = {};
+      const allSizesMap = {};
+      
+      // Primero, recopilar de TODOS los productos para el dropdown de color
+      tempProductWrappers.forEach(function(wrapper) {
+        const productColors = wrapper.getAttribute('data-product-colors');
+        const productColorsNames = wrapper.getAttribute('data-product-colors-names');
+        if (productColors && productColors.trim() !== '') {
+          const colors = productColors.split(',').map(function(c) { 
+            return handleize(c.trim()); 
+          }).filter(function(c) { return c !== ''; });
+          const colorNames = productColorsNames ? productColorsNames.split('|||') : [];
+          
+          colors.forEach(function(colorHandle, index) {
+            if (!allColorsMap[colorHandle]) {
+              // Usar nombre original si está disponible, sino convertir handle
+              const colorName = colorNames[index] || colorHandle.split('-').map(function(word) {
+                return word.charAt(0).toUpperCase() + word.slice(1);
+              }).join(' ');
+              allColorsMap[colorHandle] = colorName;
+            }
+          });
+        }
+      });
+      
+      // Para talla: recopilar solo de productos que pasaron el filtro de color (si hay)
+      productsToConsider.forEach(function(wrapper) {
+        const productSizes = wrapper.getAttribute('data-product-sizes');
+        const productSizesNames = wrapper.getAttribute('data-product-sizes-names');
+        if (productSizes && productSizes.trim() !== '') {
+          const sizes = productSizes.split(',').map(function(s) { 
+            return handleize(s.trim()); 
+          }).filter(function(s) { return s !== ''; });
+          const sizeNames = productSizesNames ? productSizesNames.split('|||') : [];
+          
+          sizes.forEach(function(sizeHandle, index) {
+            if (!allSizesMap[sizeHandle]) {
+              // Usar nombre original si está disponible, sino convertir handle
+              const sizeName = sizeNames[index] || sizeHandle.toUpperCase();
+              allSizesMap[sizeHandle] = sizeName;
+            }
+          });
+        }
+      });
+      
+      // Actualizar dropdown de color (siempre muestra todos los colores disponibles)
+      if (colorFilter) {
+        const currentValue = colorFilter.value;
+        colorFilter.innerHTML = '<option value="">COLOR</option>';
+        
+        const sortedColors = Object.keys(allColorsMap).sort();
+        sortedColors.forEach(function(colorHandle) {
+          const option = document.createElement('option');
+          option.value = colorHandle;
+          option.textContent = allColorsMap[colorHandle];
+          if (colorHandle === currentValue) {
+            option.selected = true;
+          }
+          colorFilter.appendChild(option);
+        });
+      }
+      
+      // Actualizar dropdown de talla (solo muestra tallas de productos que pasaron filtros anteriores)
+      if (sizeFilter) {
+        const currentValue = sizeFilter.value;
+        sizeFilter.innerHTML = '<option value="">TALLA</option>';
+        
+        const sortedSizes = Object.keys(allSizesMap).sort();
+        sortedSizes.forEach(function(sizeHandle) {
+          const option = document.createElement('option');
+          option.value = sizeHandle;
+          option.textContent = allSizesMap[sizeHandle];
+          if (sizeHandle === currentValue) {
+            option.selected = true;
+          }
+          sizeFilter.appendChild(option);
+        });
       }
     }
     
@@ -589,6 +634,12 @@
       
       // Actualizar URL sin recargar página
       updateURL(selectedColor, selectedSize, selectedPrice);
+      
+      // Actualizar dropdowns después de aplicar filtros (para reflejar productos visibles)
+      // Esto asegura que los dropdowns muestren solo opciones relevantes
+      setTimeout(function() {
+        updateFilterDropdowns();
+      }, 100);
     }
     
     function updateURL(color, size, price) {
