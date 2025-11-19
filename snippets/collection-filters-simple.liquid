@@ -40,12 +40,19 @@
             <select class="filter-dropdown" id="filter-color" data-filter="color">
               <option value="">COLOR</option>
               {% comment %} Recopilar colores únicos de los productos de la colección {% endcomment %}
+              {% comment %} Intentar obtener TODOS los productos de la colección (no solo los paginados) {% endcomment %}
+              {% assign all_collection_products = collection.products %}
+              {% comment %} Si estamos en un contexto paginado, intentar obtener todos los productos {% endcomment %}
+              {% if collections[collection.handle] != blank %}
+                {% assign all_collection_products = collections[collection.handle].products %}
+              {% endif %}
+              
               {% assign unique_colors_string = '' %}
               {% assign unique_colors_array = '' | split: ',' %}
               {% assign color_map_array = '' | split: ',' %}
               
-              {% for product in collection.products %}
-                {% comment %} Buscar la opción "Color" o "Colour" en las opciones del producto {% endcomment %}
+              {% for product in all_collection_products %}
+                {% comment %} Método 1: Buscar la opción "Color" o "Colour" en las opciones del producto {% endcomment %}
                 {% assign color_option_index = -1 %}
                 {% for option in product.options %}
                   {% assign option_lower = option | downcase | strip %}
@@ -77,6 +84,42 @@
                       {% endunless %}
                     {% endif %}
                   {% endfor %}
+                {% else %}
+                  {% comment %} Método 2: Intentar obtener color desde metafield de variante {% endcomment %}
+                  {% for variant in product.variants %}
+                    {% assign color_name = '' %}
+                    {% if variant.metafields.custom.color != blank %}
+                      {% assign color_name = variant.metafields.custom.color | strip %}
+                    {% elsif variant.metafields.custom.colour != blank %}
+                      {% assign color_name = variant.metafields.custom.colour | strip %}
+                    {% elsif variant.metafields.custom.color_name != blank %}
+                      {% assign color_name = variant.metafields.custom.color_name | strip %}
+                    {% endif %}
+                    
+                    {% if color_name != blank %}
+                      {% assign color_handle = color_name | handleize %}
+                      {% assign color_check = '|' | append: color_handle | append: '|' %}
+                      {% unless unique_colors_string contains color_check %}
+                        {% assign unique_colors_string = unique_colors_string | append: color_check %}
+                        {% assign unique_colors_array = unique_colors_array | push: color_handle %}
+                        {% assign color_map_array = color_map_array | push: color_name %}
+                      {% endunless %}
+                    {% endif %}
+                  {% endfor %}
+                  
+                  {% comment %} Método 3: Intentar obtener color desde metafield de producto {% endcomment %}
+                  {% if product.metafields.custom.color != blank %}
+                    {% assign color_name = product.metafields.custom.color | strip %}
+                    {% if color_name != blank %}
+                      {% assign color_handle = color_name | handleize %}
+                      {% assign color_check = '|' | append: color_handle | append: '|' %}
+                      {% unless unique_colors_string contains color_check %}
+                        {% assign unique_colors_string = unique_colors_string | append: color_check %}
+                        {% assign unique_colors_array = unique_colors_array | push: color_handle %}
+                        {% assign color_map_array = color_map_array | push: color_name %}
+                      {% endunless %}
+                    {% endif %}
+                  {% endif %}
                 {% endif %}
               {% endfor %}
               
@@ -96,11 +139,18 @@
             <select class="filter-dropdown" id="filter-size" data-filter="size">
               <option value="">TALLA</option>
               {% comment %} Extraer tallas desde metafield custom.talla_estandar de los productos reales {% endcomment %}
+              {% comment %} Intentar obtener TODOS los productos de la colección (no solo los paginados) {% endcomment %}
+              {% assign all_collection_products = collection.products %}
+              {% comment %} Si estamos en un contexto paginado, intentar obtener todos los productos {% endcomment %}
+              {% if collections[collection.handle] != blank %}
+                {% assign all_collection_products = collections[collection.handle].products %}
+              {% endif %}
+              
               {% assign unique_sizes_string = '' %}
               {% assign unique_sizes_array = '' | split: ',' %}
               {% assign size_map_array = '' | split: ',' %}
               
-              {% for product in collection.products %}
+              {% for product in all_collection_products %}
                 {% comment %} Leer metafield desde variantes primero, luego desde producto como fallback {% endcomment %}
                 {% assign size_found = false %}
                 {% for variant in product.variants %}
@@ -281,6 +331,7 @@
       
       filterDropdowns.forEach(function(dropdown) {
         dropdown.addEventListener('change', function() {
+          console.log('Filtro cambiado:', dropdown.id, '=', dropdown.value);
           applyFilters();
         });
       });
@@ -381,8 +432,15 @@
       const selectedSize = sizeFilter ? sizeFilter.value : '';
       const selectedPrice = priceFilter ? priceFilter.value : '';
       
+      console.log('Aplicando filtros:', {
+        color: selectedColor,
+        size: selectedSize,
+        price: selectedPrice
+      });
+      
       // Filtrar productos del lado del cliente
       const productWrappers = document.querySelectorAll('.product-item-wrapper');
+      console.log('Productos encontrados:', productWrappers.length);
       let visibleCount = 0;
       
       // Agregar clase de transición
@@ -442,31 +500,39 @@
         // Filtro por precio
         if (showProduct && selectedPrice && selectedPrice.trim() !== '') {
           const productPriceAttr = wrapper.getAttribute('data-product-price');
-          // Limpiar el valor de posibles caracteres no numéricos y convertir a número
-          let priceStr = (productPriceAttr || '0').toString();
-          // Reemplazar comas por puntos para formato decimal
-          priceStr = priceStr.replace(/,/g, '.');
-          // Eliminar todo excepto números y punto decimal
-          priceStr = priceStr.replace(/[^\d.]/g, '');
-          const productPrice = parseFloat(priceStr);
           
-          // Verificar que el precio sea un número válido
-          if (isNaN(productPrice)) {
+          // Debug: verificar que el atributo existe
+          if (!productPriceAttr) {
+            console.warn('Producto sin data-product-price:', wrapper);
             showProduct = false;
           } else {
-            let priceMatch = false;
-            const priceValue = productPrice;
+            // Limpiar el valor de posibles caracteres no numéricos y convertir a número
+            let priceStr = productPriceAttr.toString().trim();
+            // Reemplazar comas por puntos para formato decimal
+            priceStr = priceStr.replace(/,/g, '.');
+            // Eliminar todo excepto números y punto decimal
+            priceStr = priceStr.replace(/[^\d.]/g, '');
+            const productPrice = parseFloat(priceStr);
             
-            if (selectedPrice === '0-50') {
-              priceMatch = priceValue >= 0 && priceValue < 50;
-            } else if (selectedPrice === '50-150') {
-              priceMatch = priceValue >= 50 && priceValue <= 150;
-            } else if (selectedPrice === '150+') {
-              priceMatch = priceValue >= 150;
-            }
-            
-            if (!priceMatch) {
+            // Verificar que el precio sea un número válido
+            if (isNaN(productPrice) || productPrice < 0) {
+              console.warn('Precio inválido para producto:', productPriceAttr, '->', productPrice);
               showProduct = false;
+            } else {
+              let priceMatch = false;
+              const priceValue = productPrice;
+              
+              if (selectedPrice === '0-50') {
+                priceMatch = priceValue >= 0 && priceValue < 50;
+              } else if (selectedPrice === '50-150') {
+                priceMatch = priceValue >= 50 && priceValue <= 150;
+              } else if (selectedPrice === '150+') {
+                priceMatch = priceValue >= 150;
+              }
+              
+              if (!priceMatch) {
+                showProduct = false;
+              }
             }
           }
         }

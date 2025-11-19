@@ -40,8 +40,10 @@
                 
                 {% comment %} Recopilar colores y tallas del producto {% endcomment %}
                 {% for variant in product.variants %}
+                  {% comment %} Recopilar color {% endcomment %}
+                  {% assign color_name = '' %}
                   {% if color_option_index >= 0 %}
-                    {% assign color_name = '' %}
+                    {% comment %} Método 1: Obtener desde opción de variante {% endcomment %}
                     {% if color_option_index == 0 and variant.option1 != blank %}
                       {% assign color_name = variant.option1 | strip %}
                     {% elsif color_option_index == 1 and variant.option2 != blank %}
@@ -49,15 +51,24 @@
                     {% elsif color_option_index == 2 and variant.option3 != blank %}
                       {% assign color_name = variant.option3 | strip %}
                     {% endif %}
-                    
-                    {% if color_name != blank %}
-                      {% assign color_handle = color_name | handleize %}
-                      {% assign color_check = '|' | append: color_handle | append: '|' %}
-                      {% unless product_colors_string contains color_check %}
-                        {% assign product_colors_string = product_colors_string | append: color_check %}
-                        {% assign product_colors_array = product_colors_array | push: color_handle %}
-                      {% endunless %}
+                  {% else %}
+                    {% comment %} Método 2: Intentar obtener desde metafield de variante {% endcomment %}
+                    {% if variant.metafields.custom.color != blank %}
+                      {% assign color_name = variant.metafields.custom.color | strip %}
+                    {% elsif variant.metafields.custom.colour != blank %}
+                      {% assign color_name = variant.metafields.custom.colour | strip %}
+                    {% elsif variant.metafields.custom.color_name != blank %}
+                      {% assign color_name = variant.metafields.custom.color_name | strip %}
                     {% endif %}
+                  {% endif %}
+                  
+                  {% if color_name != blank %}
+                    {% assign color_handle = color_name | handleize %}
+                    {% assign color_check = '|' | append: color_handle | append: '|' %}
+                    {% unless product_colors_string contains color_check %}
+                      {% assign product_colors_string = product_colors_string | append: color_check %}
+                      {% assign product_colors_array = product_colors_array | push: color_handle %}
+                    {% endunless %}
                   {% endif %}
                   
                   {% comment %} Recopilar tallas desde metafield de variantes {% endcomment %}
@@ -74,6 +85,21 @@
                   {% endif %}
                 {% endfor %}
                 
+                {% comment %} Método 3: Intentar obtener color desde metafield de producto si no se encontró en variantes {% endcomment %}
+                {% if product_colors_array.size == 0 %}
+                  {% if product.metafields.custom.color != blank %}
+                    {% assign color_name = product.metafields.custom.color | strip %}
+                    {% if color_name != blank %}
+                      {% assign color_handle = color_name | handleize %}
+                      {% assign color_check = '|' | append: color_handle | append: '|' %}
+                      {% unless product_colors_string contains color_check %}
+                        {% assign product_colors_string = product_colors_string | append: color_check %}
+                        {% assign product_colors_array = product_colors_array | push: color_handle %}
+                      {% endunless %}
+                    {% endif %}
+                  {% endif %}
+                {% endif %}
+                
                 {% comment %} Fallback: leer talla desde producto si no se encontró en variantes {% endcomment %}
                 {% if product_sizes_array.size == 0 and product.metafields.custom.talla_estandar != blank %}
                   {% assign size_value = product.metafields.custom.talla_estandar | strip %}
@@ -88,7 +114,10 @@
                 {% endif %}
                 
                 {% comment %} Obtener precio mínimo del producto (en centavos, convertir a unidades) {% endcomment %}
-                {% assign product_min_price = product.price_min | divided_by: 100.0 | times: 1 %}
+                {% assign product_min_price_cents = product.price_min %}
+                {% assign product_min_price = product_min_price_cents | divided_by: 100.0 %}
+                {% comment %} Forzar formato numérico sin espacios ni formato de moneda {% endcomment %}
+                {% assign product_min_price = product_min_price | round: 2 %}
                 
                 <div class="col-lg-3 col-md-6 col-6 pb-4 trans-product product-item-wrapper" 
                      data-product-colors="{{ product_colors_array | join: ',' }}"
