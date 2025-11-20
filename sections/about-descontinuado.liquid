@@ -1,0 +1,100 @@
+<section class="about-descontinuado" data-section-id="{{ section.id }}" data-section-type="about-descontinuado">
+  <div class="about-container">
+    <!-- Columna izquierda: texto -->
+    <div class="about-text" {% if section.settings.mobile_order == 'image_first' %}style="order: 2;"{% endif %}>
+      {% if section.settings.title != blank %}
+        <h2>{{ section.settings.title }}</h2>
+      {% endif %}
+      {% if section.settings.description != blank %}
+        <p>{{ section.settings.description }}</p>
+      {% endif %}
+      {% if section.settings.button_text != blank and section.settings.button_url != blank %}
+        <a href="{{ section.settings.button_url }}" class="about-button">{{ section.settings.button_text }}</a>
+      {% endif %}
+    </div>
+
+    <!-- Columna derecha: imagen -->
+    <div class="about-image" {% if section.settings.mobile_order == 'image_first' %}style="order: 1;"{% endif %}>
+      {% if section.settings.image != blank %}
+        <img 
+          src="{{ section.settings.image | img_url: 'master' }}" 
+          alt="{{ section.settings.image.alt | default: 'Descontinuado Vintage' | escape }}"
+          loading="lazy"
+        >
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "About Descontinuado",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Contenido"
+    },
+    {
+      "type": "textarea",
+      "id": "title",
+      "label": "Título",
+      "default": "AT DESCONTINUADO, WE\nBELIEVE IN THE VALUE\nOF WHAT IS NO LONGER MADE"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Texto descriptivo",
+      "default": "We seek out unique pieces from well-known designers, as well as from brands that have vanished but left a lasting impression. Garments with history, impeccable quality, and an iconic style that stands out."
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Imagen"
+    },
+    {
+      "type": "header",
+      "content": "Botón"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Texto del botón",
+      "default": "SHOP"
+    },
+    {
+      "type": "url",
+      "id": "button_url",
+      "label": "URL del botón",
+      "default": "/collections/all"
+    },
+    {
+      "type": "header",
+      "content": "Diseño responsive"
+    },
+    {
+      "type": "select",
+      "id": "mobile_order",
+      "label": "Orden en móvil",
+      "options": [
+        {
+          "value": "text_first",
+          "label": "Texto arriba, imagen abajo"
+        },
+        {
+          "value": "image_first",
+          "label": "Imagen arriba, texto abajo"
+        }
+      ],
+      "default": "image_first",
+      "info": "En desktop siempre será: texto izquierda, imagen derecha"
+    }
+  ],
+  "presets": [
+    {
+      "name": "About Descontinuado",
+      "category": "Homepage"
+    }
+  ]
+}
+{% endschema %}
+

@@ -1,0 +1,114 @@
+<section class="hero-banner-wrapper" data-section-id="{{ section.id }}" data-section-type="hero-banner">
+  <div class="hero-banner" style="{% if section.settings.background_image %}background-image: url('{{ section.settings.background_image | img_url: 'master' }}');{% endif %} min-height: {{ section.settings.min_height }}vh; padding-top: {{ section.settings.padding_top }}px; padding-bottom: {{ section.settings.padding_bottom }}px;">
+    <div class="hero-content" style="text-align: {{ section.settings.text_alignment }};">
+      {% if section.settings.subtitle != blank %}
+        <p class="hero-subtitle">{{ section.settings.subtitle }}</p>
+      {% endif %}
+      {% if section.settings.button_text != blank and section.settings.button_url != blank %}
+        <a href="{{ section.settings.button_url }}" class="hero-button">{{ section.settings.button_text }}</a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Hero Banner",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Imagen de fondo"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Imagen de fondo",
+      "info": "Recomendado: 1920 x 1080px"
+    },
+    {
+      "type": "header",
+      "content": "Contenido"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Texto principal",
+      "default": "the art of timeless pieces"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Texto del botón",
+      "default": "SHOP"
+    },
+    {
+      "type": "url",
+      "id": "button_url",
+      "label": "URL del botón",
+      "default": "/collections/all"
+    },
+    {
+      "type": "header",
+      "content": "Diseño"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Alineación del texto",
+      "options": [
+        {
+          "value": "center",
+          "label": "Centro"
+        },
+        {
+          "value": "left",
+          "label": "Izquierda"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Espaciado"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding superior",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding inferior",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "min_height",
+      "label": "Altura mínima",
+      "min": 40,
+      "max": 100,
+      "step": 5,
+      "unit": "vh",
+      "default": 80,
+      "info": "Altura mínima del banner en viewport height"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero Banner",
+      "category": "Homepage"
+    }
+  ]
+}
+{% endschema %}
+

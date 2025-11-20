@@ -1,0 +1,182 @@
+{% liquid
+  assign bg_color = section.settings.background_color | default: '#F1F2F2'
+  assign gap = section.settings.grid_gap | default: 80
+  assign padding_top = section.settings.padding_top | default: 80
+  assign padding_bottom = section.settings.padding_bottom | default: 80
+  assign columns_desktop = section.settings.columns_desktop | default: 3
+  assign columns_tablet = section.settings.columns_tablet | default: 2
+  assign columns_mobile = section.settings.columns_mobile | default: 1
+%}
+
+<section
+  class="custom-services"
+  data-section-id="{{ section.id }}"
+  data-section-type="services-icons"
+  style="
+    --services-bg-color: {{ bg_color }};
+    --services-gap: {{ gap }}px;
+    --services-padding-top: {{ padding_top }}px;
+    --services-padding-bottom: {{ padding_bottom }}px;
+    --services-columns-desktop: {{ columns_desktop }};
+    --services-columns-tablet: {{ columns_tablet }};
+    --services-columns-mobile: {{ columns_mobile }};
+  "
+>
+  <div class="services-container">
+    {% if section.blocks.size > 0 %}
+      {% for block in section.blocks %}
+        <div class="service-item" {{ block.shopify_attributes }}>
+          {% if block.settings.icon_svg != blank %}
+            <div class="service-icon-wrapper" aria-hidden="true">
+              {{ block.settings.icon_svg }}
+            </div>
+          {% endif %}
+
+          {% if block.settings.title != blank %}
+            <h3>{{ block.settings.title }}</h3>
+          {% endif %}
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="service-item">
+        <h3>Agrega bloques de servicio para mostrarlos aquí.</h3>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Services Icons",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Diseño"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Color de fondo",
+      "default": "#F1F2F2"
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "label": "Separación entre cards",
+      "min": 20,
+      "max": 120,
+      "step": 5,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding superior",
+      "min": 0,
+      "max": 160,
+      "step": 5,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding inferior",
+      "min": 0,
+      "max": 160,
+      "step": 5,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "header",
+      "content": "Columnas por breakpoint"
+    },
+    {
+      "type": "select",
+      "id": "columns_desktop",
+      "label": "Columnas en desktop (≥ 992px)",
+      "options": [
+        { "value": "1", "label": "1 columna" },
+        { "value": "2", "label": "2 columnas" },
+        { "value": "3", "label": "3 columnas" }
+      ],
+      "default": "3"
+    },
+    {
+      "type": "select",
+      "id": "columns_tablet",
+      "label": "Columnas en tablet (600px – 991px)",
+      "options": [
+        { "value": "1", "label": "1 columna" },
+        { "value": "2", "label": "2 columnas" },
+        { "value": "3", "label": "3 columnas" }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Columnas en móvil (< 600px)",
+      "options": [
+        { "value": "1", "label": "1 columna" },
+        { "value": "2", "label": "2 columnas" }
+      ],
+      "default": "1"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "service",
+      "name": "Servicio",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Título",
+          "default": "WORLDWIDE SHIPPING"
+        },
+        {
+          "type": "textarea",
+          "id": "icon_svg",
+          "label": "Icono SVG",
+          "info": "Pega SVG optimizado. Debe incluir la clase 'service-icon' para mantener estilos.",
+          "default": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 126.56 87.07\" class=\"service-icon\"><circle cx=\"32.29\" cy=\"74.86\" r=\"10.71\" fill=\"none\" stroke=\"#231f20\" stroke-width=\"3\" stroke-miterlimit=\"10\"/><circle cx=\"97.79\" cy=\"74.86\" r=\"10.71\" fill=\"none\" stroke=\"#231f20\" stroke-width=\"3\" stroke-miterlimit=\"10\"/><polyline points=\"98.04 27.28 125.06 38.93 125.06 76.05\" fill=\"none\" stroke=\"#231f20\" stroke-width=\"3\" stroke-miterlimit=\"10\"/><path d=\"M22.35,76.05c-12.75,0-20.85-8.29-20.85-18.53V1.5h76.82c10.89,0,19.72,7.09,19.72,15.83v35.71\" fill=\"none\" stroke=\"#231f20\" stroke-width=\"3\" stroke-miterlimit=\"10\"/><line x1=\"64.41\" y1=\"76.05\" x2=\"42.93\" y2=\"76.05\" fill=\"none\" stroke=\"#231f20\" stroke-width=\"3\" stroke-miterlimit=\"10\"/></svg>"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [
+    {
+      "name": "Services Icons",
+      "category": "Homepage",
+      "blocks": [
+        {
+          "type": "service",
+          "settings": {
+            "title": "WORLDWIDE SHIPPING",
+            "icon_svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 126.56 87.07\" class=\"service-icon\"><circle cx=\"32.29\" cy=\"74.86\" r=\"10.71\" fill=\"none\" stroke=\"#231f20\" stroke-width=\"3\" stroke-miterlimit=\"10\"/><circle cx=\"97.79\" cy=\"74.86\" r=\"10.71\" fill=\"none\" stroke=\"#231f20\" stroke-width=\"3\" stroke-miterlimit=\"10\"/><polyline points=\"98.04 27.28 125.06 38.93 125.06 76.05\" fill=\"none\" stroke=\"#231f20\" stroke-width=\"3\" stroke-miterlimit=\"10\"/><path d=\"M22.35,76.05c-12.75,0-20.85-8.29-20.85-18.53V1.5h76.82c10.89,0,19.72,7.09,19.72,15.83v35.71\" fill=\"none\" stroke=\"#231f20\" stroke-width=\"3\" stroke-miterlimit=\"10\"/><line x1=\"64.41\" y1=\"76.05\" x2=\"42.93\" y2=\"76.05\" fill=\"none\" stroke=\"#231f20\" stroke-width=\"3\" stroke-miterlimit=\"10\"/></svg>"
+          }
+        },
+        {
+          "type": "service",
+          "settings": {
+            "title": "VISIT OUR SHOWROOM",
+            "icon_svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\" class=\"service-icon\"><path d=\"M50 5a30 30 0 0 0-30 30c0 20 30 60 30 60s30-40 30-60A30 30 0 0 0 50 5zm0 43a13 13 0 1 1 13-13 13 13 0 0 1-13 13z\" fill=\"none\" stroke=\"#231f20\" stroke-width=\"3\" /></svg>"
+          }
+        },
+        {
+          "type": "service",
+          "settings": {
+            "title": "CUSTOMER SERVICE",
+            "icon_svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 117.31 105.3\" class=\"service-icon\"><path d=\"M77.06,1.5H1.5v53.68c0,5.76,4.67,10.43,10.43,10.43h3.34c1.68,0,3.05,1.36,3.05,3.05v21.07c0,.26.3.39.49.23l27.82-23.62c.55-.47,1.25-.72,1.97-.72h34.43c5.76,0,10.43-4.67,10.43-10.43V17.91c0-9.06-7.35-16.41-16.41-16.41Z\" fill=\"none\" stroke=\"#231f20\" stroke-width=\"3\" stroke-miterlimit=\"10\" /><path d=\"M115.81,25.7v43.25c0,5.76-4.67,10.43-10.43,10.43h-3.34c-1.68,0-3.05,1.36-3.05,3.05v21.07c0,.26-.3.39-.49.23l-27.82-23.62c-.55-.47-1.25-.72-1.97-.72h-22.79\" fill=\"none\" stroke=\"#231f20\" stroke-width=\"3\" stroke-miterlimit=\"10\" /></svg>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
+

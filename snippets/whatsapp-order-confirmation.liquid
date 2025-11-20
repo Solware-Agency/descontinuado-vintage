@@ -4,22 +4,93 @@
 {% endcomment %}
 
 <div id="whatsapp-confirmation-box"></div>
+<div id="whatsapp-confirmation-overlay"></div>
 
 <style>
+  /* Modal Overlay */
+  #whatsapp-confirmation-overlay {
+    display: none !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    background-color: rgba(0, 0, 0, 0.7) !important;
+    z-index: 999999 !important;
+    justify-content: center !important;
+    align-items: center !important;
+    animation: fadeIn 0.3s ease !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  #whatsapp-confirmation-overlay.show {
+    display: flex !important;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideUp {
+    from {
+      transform: translateY(50px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
   #whatsapp-confirmation-box {
-    margin: 30px 0;
+    margin: 0;
     padding: 0;
     width: 100%;
+    display: none;
   }
 
   .whatsapp-confirmation-container {
     background-color: #ffffff;
     border: 1px solid #e0e0e0;
-    border-radius: 4px;
-    padding: 25px;
-    margin: 20px auto;
+    border-radius: 8px;
+    padding: 30px;
+    margin: 20px;
     max-width: 600px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    position: relative;
+    animation: slideUp 0.4s ease;
+  }
+
+  .whatsapp-confirmation-close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+  }
+
+  .whatsapp-confirmation-close:hover {
+    background-color: #f0f0f0;
+    color: #000;
   }
 
   .whatsapp-confirmation-title {
@@ -396,18 +467,10 @@
   function insertWhatsAppBlock() {
     console.log('[WhatsApp] insertWhatsAppBlock llamado');
     
-    // Verificar si ya existe el bloque
-    var existingBox = document.getElementById('whatsapp-confirmation-box');
-    if (!existingBox) {
-      console.log('[WhatsApp] ERROR: Contenedor whatsapp-confirmation-box no encontrado');
-      return;
-    }
-
-    console.log('[WhatsApp] Contenedor encontrado');
-
-    // Verificar si ya tiene contenido
-    if (existingBox.innerHTML.trim() !== '') {
-      console.log('[WhatsApp] El bloque ya tiene contenido');
+    // Verificar si el modal ya existe y está visible
+    var existingOverlay = document.getElementById('whatsapp-confirmation-overlay');
+    if (existingOverlay && existingOverlay.classList.contains('show')) {
+      console.log('[WhatsApp] El modal ya está visible');
       return;
     }
 
@@ -416,28 +479,19 @@
     console.log('[WhatsApp] window.Shopify existe:', typeof window.Shopify !== 'undefined');
     
     var checkout = getOrderData();
+    var message = '';
     
-    if (!checkout) {
-      console.log('[WhatsApp] ERROR: No se pudieron obtener datos del pedido desde ninguna fuente');
-      console.log('[WhatsApp] Intentando extraer desde DOM...');
-      // Intentar una vez más después de un pequeño delay
-      setTimeout(function() {
-        checkout = getOrderData();
-        if (checkout) {
-          insertWhatsAppBlock();
-        } else {
-          console.log('[WhatsApp] No se pudieron obtener datos. El bloque no se mostrará.');
-        }
-      }, 2000);
-      return;
+    if (checkout) {
+      console.log('[WhatsApp] Datos del pedido obtenidos, construyendo mensaje...');
+      message = buildWhatsAppMessage(checkout);
     }
-
-    console.log('[WhatsApp] Datos del pedido obtenidos, construyendo mensaje...');
-    var message = buildWhatsAppMessage(checkout);
     
+    // Si no hay mensaje, crear uno genérico
     if (!message) {
-      console.log('[WhatsApp] ERROR: No se pudo construir el mensaje');
-      return;
+      console.log('[WhatsApp] No se pudieron obtener datos completos, creando mensaje genérico...');
+      message = '¡Hola! 👋 Acabo de finalizar una compra en tu tienda.\n\n';
+      message += 'Me gustaría confirmar los detalles del pedido y coordinar el envío.\n\n';
+      message += 'Por favor, comparte conmigo la información del pedido.';
     }
     
     console.log('[WhatsApp] Mensaje construido exitosamente, longitud:', message.length);
@@ -453,11 +507,23 @@
       return div.innerHTML;
     }
 
-    // Crear el HTML del bloque
+    // Codificar el mensaje para URL
+    var encodedMessage = encodeURIComponent(message);
+    var whatsappUrl = 'https://wa.me/584122150171?text=' + encodedMessage;
+
+    // Función para escapar HTML
+    function escapeHtml(text) {
+      var div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // Crear el HTML del modal
     var html = '<div class="whatsapp-confirmation-container">';
+    html += '<button class="whatsapp-confirmation-close" onclick="this.closest(\'#whatsapp-confirmation-overlay\').classList.remove(\'show\')" aria-label="Cerrar">&times;</button>';
     html += '<h3 class="whatsapp-confirmation-title">Confirmar Pedido por WhatsApp</h3>';
     html += '<div class="whatsapp-confirmation-preview">' + escapeHtml(message).replace(/\n/g, '<br>') + '</div>';
-    html += '<a href="' + whatsappUrl + '" target="_blank" rel="noopener noreferrer" class="whatsapp-confirmation-button">';
+    html += '<a href="' + whatsappUrl + '" target="_blank" rel="noopener noreferrer" class="whatsapp-confirmation-button" onclick="setTimeout(function(){document.getElementById(\'whatsapp-confirmation-overlay\').classList.remove(\'show\')}, 500);">';
     html += '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="currentColor">';
     html += '<path d="M4.868,43.303l2.694-9.835C5.9,30.59,5.026,27.324,5.027,23.979C5.032,13.514,13.548,5,24.014,5c5.079,0.002,9.845,1.979,13.43,5.566c3.584,3.588,5.558,8.356,5.556,13.428c-0.004,10.465-8.522,18.98-18.986,18.98c-0.001,0,0,0,0,0h-0.008c-3.177-0.001-6.3-0.798-9.073-2.311L4.868,43.303z"></path>';
     html += '<path fill="#40c351" d="M35.176,12.832c-2.98-2.982-6.941-4.625-11.157-4.626c-8.704,0-15.783,7.076-15.787,15.774c-0.001,2.981,0.833,5.883,2.413,8.396l0.376,0.597l-1.595,5.821l5.973-1.566l0.577,0.342c2.422,1.438,5.2,2.198,8.032,2.199h0.006c8.698,0,15.777-7.077,15.78-15.776C39.795,19.778,38.156,15.814,35.176,12.832z"></path>';
@@ -467,9 +533,25 @@
     html += '</a>';
     html += '</div>';
 
-    // Insertar el HTML
-    existingBox.innerHTML = html;
-    console.log('[WhatsApp] ✅ Bloque insertado exitosamente en el DOM');
+    // Buscar o crear el overlay
+    var overlay = document.getElementById('whatsapp-confirmation-overlay');
+    if (!overlay) {
+      overlay = document.createElement('div');
+      overlay.id = 'whatsapp-confirmation-overlay';
+      document.body.appendChild(overlay);
+    }
+    
+    // Insertar el contenido del modal
+    overlay.innerHTML = html;
+    
+    // Cerrar al hacer click fuera del modal
+    overlay.addEventListener('click', function(e) {
+      if (e.target === overlay) {
+        overlay.classList.remove('show');
+      }
+    });
+    
+    console.log('[WhatsApp] ✅ Modal insertado exitosamente en el DOM');
   }
 
   // Función para buscar el resumen del pedido e insertar el contenedor
@@ -645,23 +727,56 @@
       findOrderSummaryAndInsert();
     }
 
-    // También intentar después de un pequeño delay por si el contenido se carga dinámicamente
-    setTimeout(function() {
-      console.log('[WhatsApp] Intento después de 1 segundo');
-      findOrderSummaryAndInsert();
+    // Función para mostrar el modal (se ejecuta después de 3 segundos)
+    function showModalAfterDelay() {
+      console.log('[WhatsApp] ⏰ Mostrando modal después de 3 segundos...');
+      
+      // Insertar el bloque si no existe
       insertWhatsAppBlock();
-    }, 1000);
+      
+      // Buscar o crear el overlay
+      var overlay = document.getElementById('whatsapp-confirmation-overlay');
+      
+      if (!overlay) {
+        console.log('[WhatsApp] Creando overlay...');
+        // Crear el overlay si no existe
+        overlay = document.createElement('div');
+        overlay.id = 'whatsapp-confirmation-overlay';
+        document.body.appendChild(overlay);
+      }
+      
+      // Mostrar el overlay
+      setTimeout(function() {
+        if (overlay) {
+          overlay.classList.add('show');
+          console.log('[WhatsApp] ✅ Modal mostrado exitosamente!');
+          
+          // Verificar que realmente se muestra
+          setTimeout(function() {
+            var isVisible = overlay.classList.contains('show') && 
+                           window.getComputedStyle(overlay).display !== 'none';
+            console.log('[WhatsApp] Modal visible:', isVisible);
+            if (!isVisible) {
+              console.error('[WhatsApp] ⚠️ El modal no es visible! Verificar CSS.');
+            }
+          }, 200);
+        } else {
+          console.error('[WhatsApp] ⚠️ ERROR: No se pudo encontrar el overlay');
+        }
+      }, 100);
+    }
 
+    // Ejecutar después de 3 segundos - GARANTIZADO
+    console.log('[WhatsApp] ⏱️ Programando modal para aparecer en 3 segundos...');
+    setTimeout(showModalAfterDelay, 3000);
+    
+    // Backup: también intentar después de 5 segundos por si acaso
     setTimeout(function() {
-      console.log('[WhatsApp] Intento después de 3 segundos');
-      findOrderSummaryAndInsert();
-      insertWhatsAppBlock();
-    }, 3000);
-
-    setTimeout(function() {
-      console.log('[WhatsApp] Intento después de 5 segundos');
-      findOrderSummaryAndInsert();
-      insertWhatsAppBlock();
+      var overlay = document.getElementById('whatsapp-confirmation-overlay');
+      if (overlay && !overlay.classList.contains('show')) {
+        console.log('[WhatsApp] Backup: Mostrando modal después de 5 segundos...');
+        overlay.classList.add('show');
+      }
     }, 5000);
 
     // Intentar cada segundo durante 15 segundos por si el objeto se carga más tarde
@@ -684,8 +799,8 @@
       } else if (attempts >= maxAttempts) {
         console.log('[WhatsApp] Máximo de intentos alcanzado. Intentando insertar de todas formas...');
         clearInterval(interval);
-        // Intentar insertar de todas formas si estamos en Order Status Page
-        if (isOrderStatusPage()) {
+        // Intentar insertar de todas formas si estamos en página de agradecimiento
+        if (isThankYouPage()) {
           findOrderSummaryAndInsert();
         }
       }
