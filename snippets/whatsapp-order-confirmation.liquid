@@ -3,7 +3,7 @@
   Se inserta dinámicamente en la Order Status Page después del resumen del pedido
 {% endcomment %}
 
-<div id="whatsapp-confirmation-box"></div>
+<!-- WhatsApp Confirmation Modal - Solo se muestra en página de agradecimiento -->
 <div id="whatsapp-confirmation-overlay"></div>
 
 <style>
@@ -48,11 +48,9 @@
     }
   }
 
+  /* El contenedor whatsapp-confirmation-box ya no se usa, solo el overlay */
   #whatsapp-confirmation-box {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    display: none;
+    display: none !important;
   }
 
   .whatsapp-confirmation-container {
@@ -554,15 +552,15 @@
     console.log('[WhatsApp] ✅ Modal insertado exitosamente en el DOM');
   }
 
-  // Función para buscar el resumen del pedido e insertar el contenedor
-  function findOrderSummaryAndInsert() {
-    console.log('[WhatsApp] findOrderSummaryAndInsert llamado');
+  // Función para preparar el modal (ya no insertamos en el DOM, solo preparamos)
+  function prepareWhatsAppModal() {
+    console.log('[WhatsApp] prepareWhatsAppModal llamado');
     
-    // Verificar si el contenedor ya existe
-    var existingBox = document.getElementById('whatsapp-confirmation-box');
-    if (existingBox && existingBox.innerHTML.trim() !== '') {
-      console.log('[WhatsApp] El contenedor ya existe y tiene contenido');
-      return; // Ya está insertado y tiene contenido
+    // Verificar si el modal ya está preparado y visible
+    var existingOverlay = document.getElementById('whatsapp-confirmation-overlay');
+    if (existingOverlay && existingOverlay.classList.contains('show')) {
+      console.log('[WhatsApp] El modal ya está visible');
+      return; // Ya está mostrado
     }
 
     // Buscar elementos comunes de Shopify Order Status Page
@@ -626,36 +624,8 @@
                      document.body;
     }
 
-    // Si el contenedor ya existe pero está vacío, solo intentar insertar contenido
-    if (existingBox) {
-      console.log('[WhatsApp] Contenedor existe pero está vacío, intentando insertar contenido');
-      insertWhatsAppBlock();
-      return;
-    }
-
-    console.log('[WhatsApp] Creando nuevo contenedor...');
-    // Crear el contenedor
-    var box = document.createElement('div');
-    box.id = 'whatsapp-confirmation-box';
-    
-    // Insertar después del elemento objetivo
-    if (targetElement && targetElement.parentNode) {
-      console.log('[WhatsApp] Insertando contenedor después del elemento objetivo');
-      // Intentar insertar después del elemento
-      if (targetElement.nextSibling) {
-        targetElement.parentNode.insertBefore(box, targetElement.nextSibling);
-      } else {
-        targetElement.parentNode.appendChild(box);
-      }
-    } else {
-      console.log('[WhatsApp] Insertando contenedor al final del body (último recurso)');
-      // Como último recurso, insertar al final del body
-      document.body.appendChild(box);
-    }
-
-    console.log('[WhatsApp] Contenedor creado, intentando insertar contenido...');
-    // Intentar insertar el contenido
-    insertWhatsAppBlock();
+    // Solo preparar el modal, no insertar nada en el DOM todavía
+    console.log('[WhatsApp] Modal preparado, se mostrará después de 3 segundos');
   }
 
   // Función para verificar si estamos en la página de Agradecimiento (Thank You)
@@ -716,25 +686,23 @@
 
     console.log('[WhatsApp] Continuando con la inicialización...');
 
-    // Esperar a que el DOM esté listo
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', function() {
-        console.log('[WhatsApp] DOM cargado');
-        findOrderSummaryAndInsert();
-      });
-    } else {
-      console.log('[WhatsApp] DOM ya está listo');
-      findOrderSummaryAndInsert();
-    }
+    // No necesitamos insertar nada en el DOM todavía, solo preparar
+    console.log('[WhatsApp] Preparando modal para mostrar después de 3 segundos...');
 
     // Función para mostrar el modal (se ejecuta después de 3 segundos)
     function showModalAfterDelay() {
       console.log('[WhatsApp] ⏰ Mostrando modal después de 3 segundos...');
       
-      // Insertar el bloque si no existe
+      // Solo ejecutar si estamos en página de agradecimiento
+      if (!isThankYouPage()) {
+        console.log('[WhatsApp] No es página de agradecimiento, cancelando modal');
+        return;
+      }
+      
+      // Insertar el bloque del modal
       insertWhatsAppBlock();
       
-      // Buscar o crear el overlay
+      // Buscar el overlay (ya debería existir en el HTML)
       var overlay = document.getElementById('whatsapp-confirmation-overlay');
       
       if (!overlay) {
@@ -743,6 +711,8 @@
         overlay = document.createElement('div');
         overlay.id = 'whatsapp-confirmation-overlay';
         document.body.appendChild(overlay);
+        // Re-insertar el contenido
+        insertWhatsAppBlock();
       }
       
       // Mostrar el overlay
@@ -766,15 +736,17 @@
       }, 100);
     }
 
-    // Ejecutar después de 3 segundos - GARANTIZADO
+    // Ejecutar después de 3 segundos - SOLO si estamos en página de agradecimiento
     console.log('[WhatsApp] ⏱️ Programando modal para aparecer en 3 segundos...');
     setTimeout(showModalAfterDelay, 3000);
     
     // Backup: también intentar después de 5 segundos por si acaso
     setTimeout(function() {
+      if (!isThankYouPage()) return;
       var overlay = document.getElementById('whatsapp-confirmation-overlay');
       if (overlay && !overlay.classList.contains('show')) {
         console.log('[WhatsApp] Backup: Mostrando modal después de 5 segundos...');
+        insertWhatsAppBlock();
         overlay.classList.add('show');
       }
     }, 5000);
@@ -790,19 +762,15 @@
         console.log('[WhatsApp] Shopify.checkout encontrado en intento #' + attempts);
         if (window.Shopify.checkout.order) {
           console.log('[WhatsApp] Shopify.checkout.order encontrado!');
-          findOrderSummaryAndInsert();
-          insertWhatsAppBlock();
+          // No hacer nada aquí, el modal se mostrará después de 3 segundos
           clearInterval(interval);
         } else {
           console.log('[WhatsApp] Shopify.checkout existe pero order no está disponible aún');
         }
       } else if (attempts >= maxAttempts) {
-        console.log('[WhatsApp] Máximo de intentos alcanzado. Intentando insertar de todas formas...');
+        console.log('[WhatsApp] Máximo de intentos alcanzado.');
         clearInterval(interval);
-        // Intentar insertar de todas formas si estamos en página de agradecimiento
-        if (isThankYouPage()) {
-          findOrderSummaryAndInsert();
-        }
+        // El modal se mostrará después de 3 segundos de todas formas
       }
     }, 1000);
   }
