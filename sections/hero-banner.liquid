@@ -1,5 +1,5 @@
 <section class="hero-banner-wrapper" data-section-id="{{ section.id }}" data-section-type="hero-banner">
-  <div class="hero-banner" style="{% if section.settings.background_image %}background-image: url('{{ section.settings.background_image | img_url: 'master' }}');{% endif %} min-height: {{ section.settings.min_height }}vh; padding-top: {{ section.settings.padding_top }}px; padding-bottom: {{ section.settings.padding_bottom }}px;">
+  <div class="hero-banner" style="{% if section.settings.background_image %}background-image: url('{{ section.settings.background_image | img_url: 'master' }}');{% endif %} min-height: {{ section.settings.min_height }}vh;">
     <div class="hero-content">
       {% if section.settings.subtitle != blank %}
         <p class="hero-subtitle">{{ section.settings.subtitle }}</p>
@@ -66,30 +66,6 @@
         }
       ],
       "default": "center"
-    },
-    {
-      "type": "header",
-      "content": "Espaciado"
-    },
-    {
-      "type": "range",
-      "id": "padding_top",
-      "label": "Padding superior",
-      "min": 0,
-      "max": 100,
-      "step": 5,
-      "unit": "px",
-      "default": 0
-    },
-    {
-      "type": "range",
-      "id": "padding_bottom",
-      "label": "Padding inferior",
-      "min": 0,
-      "max": 100,
-      "step": 5,
-      "unit": "px",
-      "default": 0
     },
     {
       "type": "range",
