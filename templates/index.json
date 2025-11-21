@@ -1,1 +1,137 @@
-{"sections":{"custom_liquid_LdinTg":{"type":"custom-liquid","name":"Banner principal","settings":{"custom_liquid":"<section class=\"hero-banner-wrapper\">\n  <div class=\"hero-banner\">\n    <div class=\"hero-content\">\n      <p class=\"hero-subtitle\">the art of timeless pieces<\/p>\n      <a href=\"\/collections\/all\" class=\"hero-button\">SHOP<\/a>\n    <\/div>\n  <\/div>\n<\/section>\n\n<style>\n  \/* --- Asegúrate de tener DIN-Light cargada en assets --- *\/\n  @font-face {\n    font-family: 'DIN-Light';\n    src: url('{{ \"DIN-Light.woff2\" | asset_url }}') format('woff2'),\n         url('{{ \"DIN-Light.woff\" | asset_url }}') format('woff'),\n         url('{{ \"DIN-Light.otf\" | asset_url }}') format('opentype');\n    font-weight: 300;\n    font-style: normal;\n    font-display: swap;\n  }\n\n  \/* --- Contenedor general que fuerza ancho completo --- *\/\n  .hero-banner-wrapper {\n    width: 100vw;\n    margin-left: calc(-50vw + 50%);\n    overflow: hidden;\n  }\n\n  .hero-banner {\n    position: relative;\n    width: 100%;\n    min-height: 80vh;\n    background-image: url(\"https:\/\/cdn.shopify.com\/s\/files\/1\/0723\/0269\/0361\/files\/BANNER1.png?v=1760921702\");\n    background-size: cover;\n    background-position: center;\n    background-repeat: no-repeat;\n    display: flex;\n    justify-content: center;\n    align-items: center;\n    text-align: center;\n    color: #fff;\n  }\n\n  \/* --- Texto y botón centrados --- *\/\n  .hero-content {\n    z-index: 2;\n    padding: 0 20px;\n  }\n\n  .hero-subtitle {\n    font-family: 'DIN-Light', 'D-DIN', sans-serif;\n    font-size: clamp(20px, 3vw, 26px);\n    font-style: normal;\n    font-weight: 300;\n    margin-bottom: 25px;\n    letter-spacing: 0.5px;\n    color: #fff;\n  }\n\n  .hero-button {\n    display: inline-block;\n    border: 1px solid #fff;\n    padding: 10px 24px;\n    font-size: 12px;\n    font-family: 'D-DIN', sans-serif;\n    font-weight: 700;\n    letter-spacing: 1px;\n    text-transform: uppercase;\n    color: #fff;\n    text-decoration: none;\n    transition: all 0.3s ease;\n    cursor: pointer;\n  }\n\n  .hero-button:hover {\n    background-color: #fff;\n    color: #000;\n  }\n\n  \/* --- Responsive --- *\/\n  @media (max-width: 768px) {\n    .hero-banner {\n      min-height: 70vh;\n      background-position: top center;\n    }\n    .hero-subtitle {\n      font-size: 20px;\n      margin-bottom: 20px;\n    }\n    .hero-button {\n      padding: 9px 22px;\n      font-size: 11px;\n    }\n  }\n\n  @media (max-width: 480px) {\n    .hero-banner {\n      min-height: 60vh;\n    }\n    .hero-subtitle {\n      font-size: 18px;\n    }\n  }\n<\/style>"}},"section_product_v1_kdbgVa":{"type":"section-product-v1","name":"PRODUCT V1","settings":{"bg_section":"#ffffff","section_title":"OUR PIECES","desc_content":"","select_collection":"pants","products_limit":3,"margin_top":"100","margin_bottom":"100"}},"custom_liquid_KXVU6L":{"type":"custom-liquid","name":"Iconos","settings":{"custom_liquid":"<section class=\"custom-services\">\n  <div class=\"services-container\">\n\n    <!-- WORLDWIDE SHIPPING -->\n    <div class=\"service-item\">\n      <div class=\"service-icon-wrapper\">\n        <svg xmlns=\"http:\/\/www.w3.org\/2000\/svg\" viewBox=\"0 0 126.56 87.07\" class=\"service-icon\">\n          <circle cx=\"32.29\" cy=\"74.86\" r=\"10.71\" fill=\"none\" stroke=\"#231f20\" stroke-width=\"3\" stroke-miterlimit=\"10\"\/>\n          <circle cx=\"97.79\" cy=\"74.86\" r=\"10.71\" fill=\"none\" stroke=\"#231f20\" stroke-width=\"3\" stroke-miterlimit=\"10\"\/>\n          <polyline points=\"98.04 27.28 125.06 38.93 125.06 76.05\" fill=\"none\" stroke=\"#231f20\" stroke-width=\"3\" stroke-miterlimit=\"10\"\/>\n          <path d=\"M22.35,76.05c-12.75,0-20.85-8.29-20.85-18.53V1.5h76.82c10.89,0,19.72,7.09,19.72,15.83v35.71\" fill=\"none\" stroke=\"#231f20\" stroke-width=\"3\" stroke-miterlimit=\"10\"\/>\n          <line x1=\"64.41\" y1=\"76.05\" x2=\"42.93\" y2=\"76.05\" fill=\"none\" stroke=\"#231f20\" stroke-width=\"3\" stroke-miterlimit=\"10\"\/>\n        <\/svg>\n      <\/div>\n      <h3>WORLDWIDE SHIPPING<\/h3>\n    <\/div>\n\n    <!-- SHOWROOM -->\n    <div class=\"service-item\">\n      <div class=\"service-icon-wrapper\">\n        <svg xmlns=\"http:\/\/www.w3.org\/2000\/svg\" viewBox=\"0 0 100 100\" class=\"service-icon\">\n          <path d=\"M50 5a30 30 0 0 0-30 30c0 20 30 60 30 60s30-40 30-60A30 30 0 0 0 50 5zm0 43a13 13 0 1 1 13-13 13 13 0 0 1-13 13z\" fill=\"none\" stroke=\"#231f20\" stroke-width=\"3\" \/>\n        <\/svg>\n      <\/div>\n      <h3>VISIT OUR SHOWROOM<\/h3>\n    <\/div>\n\n    <!-- CUSTOMER SERVICE -->\n    <div class=\"service-item\">\n      <div class=\"service-icon-wrapper\">\n        <svg xmlns=\"http:\/\/www.w3.org\/2000\/svg\" viewBox=\"0 0 117.31 105.3\" class=\"service-icon\">\n          <path d=\"M77.06,1.5H1.5v53.68c0,5.76,4.67,10.43,10.43,10.43h3.34c1.68,0,3.05,1.36,3.05,3.05v21.07c0,.26.3.39.49.23l27.82-23.62c.55-.47,1.25-.72,1.97-.72h34.43c5.76,0,10.43-4.67,10.43-10.43V17.91c0-9.06-7.35-16.41-16.41-16.41Z\" fill=\"none\" stroke=\"#231f20\" stroke-width=\"3\" stroke-miterlimit=\"10\" \/>\n          <path d=\"M115.81,25.7v43.25c0,5.76-4.67,10.43-10.43,10.43h-3.34c-1.68,0-3.05,1.36-3.05,3.05v21.07c0,.26-.3.39-.49.23l-27.82-23.62c-.55-.47-1.25-.72-1.97-.72h-22.79\" fill=\"none\" stroke=\"#231f20\" stroke-width=\"3\" stroke-miterlimit=\"10\" \/>\n        <\/svg>\n      <\/div>\n      <h3>CUSTOMER SERVICE<\/h3>\n    <\/div>\n\n  <\/div>\n<\/section>\n\n<style>\n  @font-face {\n    font-family: 'D-DIN';\n    src: url('{{ \"D-DIN.woff2\" | asset_url }}') format('woff2'),\n         url('{{ \"D-DIN.woff\" | asset_url }}') format('woff'),\n         url('{{ \"D-DIN.otf\" | asset_url }}') format('opentype');\n    font-weight: 400;\n    font-style: normal;\n    font-display: swap;\n  }\n\n  .custom-services {\n    background-color: #F1F2F2;\n    padding: 80px 0;\n    text-align: center;\n  }\n\n  .services-container {\n    display: grid;\n    grid-template-columns: repeat(3, 1fr);\n    gap: 80px;\n    justify-items: center;\n    align-items: stretch;\n    max-width: 1100px;\n    margin: 0 auto;\n    padding: 0 40px;\n  }\n\n  .service-item {\n    display: flex;\n    flex-direction: column;\n    align-items: center;\n    text-align: center;\n    transition: transform 0.3s ease, opacity 0.3s ease;\n  }\n\n  .service-item:hover {\n    transform: translateY(-6px);\n    opacity: 0.9;\n  }\n\n  \/* --- Wrapper para igualar alturas de íconos --- *\/\n  .service-icon-wrapper {\n    height: 80px; \/* 👈 fija un área igual para todos *\/\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    margin-bottom: 20px;\n  }\n\n  .service-icon {\n    width: 60px;\n    height: auto;\n  }\n\n  .service-item h3 {\n    font-family: 'D-DIN', sans-serif;\n    font-size: 18px;\n    font-weight: 700;\n    letter-spacing: 1px;\n    color: #231f20;\n    text-transform: uppercase;\n    margin: 0;\n  }\n\n  \/* 🔸 Tablet *\/\n  @media (max-width: 992px) {\n    .services-container {\n      grid-template-columns: repeat(2, 1fr);\n      gap: 60px;\n      padding: 0 30px;\n    }\n    .service-icon-wrapper {\n      height: 70px;\n    }\n  }\n\n  \/* 🔹 Móvil *\/\n  @media (max-width: 600px) {\n    .custom-services {\n      padding: 60px 0;\n    }\n\n    .services-container {\n      grid-template-columns: 1fr;\n      gap: 40px;\n      padding: 0 20px;\n    }\n\n    .service-icon-wrapper {\n      height: 60px;\n      margin-bottom: 15px;\n    }\n\n    .service-item h3 {\n      font-size: 13px;\n      letter-spacing: 0.8px;\n    }\n  }\n<\/style>"}},"custom_liquid_eQwJAg":{"type":"custom-liquid","name":"Get Inspired","settings":{"custom_liquid":"<section class=\"get-inspired\">\n  <h2 class=\"get-inspired-title\">GET INSPIRED<\/h2>\n\n  <div class=\"get-inspired-grid\">\n    <div class=\"inspired-item\">\n      <img src=\"https:\/\/cdn.shopify.com\/s\/files\/1\/0723\/0269\/0361\/files\/DESCONTINUADO1.png?v=1760921763\" alt=\"Look 1\">\n    <\/div>\n    <div class=\"inspired-item\">\n      <img src=\"https:\/\/cdn.shopify.com\/s\/files\/1\/0723\/0269\/0361\/files\/DESCONTINUADO2.png?v=1760921759\" alt=\"Look 2\">\n    <\/div>\n    <div class=\"inspired-item\">\n      <img src=\"https:\/\/cdn.shopify.com\/s\/files\/1\/0723\/0269\/0361\/files\/HOME-DESCONTINUADO3.png?v=1760921762\" alt=\"Look 3\">\n    <\/div>\n  <\/div>\n<\/section>\n\n<style>\n  \/* === Fuente Galgo cargada desde assets === *\/\n  @font-face {\n    font-family: 'Galgo';\n    src: url('{{ \"Galgo.woff2\" | asset_url }}') format('woff2'),\n         url('{{ \"Galgo.woff\" | asset_url }}') format('woff'),\n         url('{{ \"Galgo.otf\" | asset_url }}') format('opentype');\n    font-weight: 400;\n    font-style: normal;\n    font-display: swap;\n  }\n\n  \/* === SECCIÓN PRINCIPAL === *\/\n  .get-inspired {\n    background-color: #000;\n    padding: 100px 0; \/* espacio igual arriba y abajo *\/\n    text-align: center;\n    display: flex;\n    flex-direction: column;\n    justify-content: center;\n    align-items: center;\n  }\n\n  .get-inspired-title {\n    font-family: 'Galgo', sans-serif;\n    font-size: clamp(40px, 6vw, 80px);\n    color: #fff;\n    letter-spacing: 2px;\n    text-transform: uppercase;\n    line-height: 1.1;\n    margin: 0; \/* elimina márgenes del H2 *\/\n    padding: 0;\n  }\n\n  \/* === GRID DE IMÁGENES === *\/\n  .get-inspired-grid {\n    display: grid;\n    grid-template-columns: repeat(3, 1fr);\n    gap: 25px;\n    max-width: 1100px;\n    margin: 0 auto;\n    padding: 60px 30px 0; \/* espacio superior para separar del título *\/\n  }\n\n  .inspired-item {\n    overflow: hidden;\n    border-radius: 2px;\n    transition: transform 0.4s ease;\n  }\n\n  .inspired-item img {\n    width: 100%;\n    height: auto;\n    aspect-ratio: 3 \/ 4;\n    object-fit: cover;\n    transition: transform 0.4s ease;\n  }\n\n  .inspired-item:hover img {\n    transform: scale(1.05);\n  }\n\n  \/* === RESPONSIVE === *\/\n  @media (max-width: 992px) {\n    .get-inspired {\n      padding: 80px 0; \/* menos alto en tablets *\/\n    }\n    .get-inspired-grid {\n      grid-template-columns: repeat(2, 1fr);\n      gap: 20px;\n      padding: 50px 20px 0;\n    }\n  }\n\n  @media (max-width: 600px) {\n    .get-inspired {\n      padding: 60px 0; \/* aún más compacto *\/\n    }\n    .get-inspired-title {\n      font-size: 40px; \/* tamaño fijo legible *\/\n      margin-bottom: 0;\n    }\n    .get-inspired-grid {\n      grid-template-columns: 1fr;\n      gap: 25px;\n      padding: 40px 20px 0;\n    }\n    .inspired-item img {\n      aspect-ratio: 4 \/ 5;\n    }\n  }\n<\/style>"}},"custom_liquid_9L3X3U":{"type":"custom-liquid","name":"we belive","settings":{"custom_liquid":"<section class=\"about-descontinuado\">\n  <div class=\"about-container\">\n    <!-- Columna izquierda: texto -->\n    <div class=\"about-text\">\n      <h2>\n        AT DESCONTINUADO, WE<br>\n        BELIEVE IN THE VALUE<br>\n        OF WHAT IS NO LONGER MADE\n      <\/h2>\n      <p>\n        We seek out unique pieces from well-known designers, as well as\n        from brands that have vanished but left a lasting impression.\n        Garments with history, impeccable quality, and an iconic style that\n        stands out.\n      <\/p>\n      <a href=\"\/collections\/all\" class=\"about-button\">SHOP<\/a>\n    <\/div>\n\n    <!-- Columna derecha: imagen -->\n    <div class=\"about-image\">\n      <img src=\"https:\/\/cdn.shopify.com\/s\/files\/1\/0723\/0269\/0361\/files\/DESCONTINUADO-VINTAGqnj.png?v=1747910981\" alt=\"Descontinuado Vintage\"\/>\n    <\/div>\n  <\/div>\n<\/section>\n\n<style>\n  \/* === Fuentes desde assets === *\/\n  @font-face {\n    font-family: 'Chivo-Medium';\n    src: url('{{ \"Chivo-Medium.woff2\" | asset_url }}') format('woff2'),\n         url('{{ \"Chivo-Medium.woff\" | asset_url }}') format('woff'),\n         url('{{ \"Chivo-Medium.otf\" | asset_url }}') format('opentype');\n    font-weight: 500;\n    font-style: normal;\n    font-display: swap;\n  }\n\n  @font-face {\n    font-family: 'D-DIN';\n    src: url('{{ \"D-DIN.woff2\" | asset_url }}') format('woff2'),\n         url('{{ \"D-DIN.woff\" | asset_url }}') format('woff'),\n         url('{{ \"D-DIN.otf\" | asset_url }}') format('opentype');\n    font-weight: 400;\n    font-style: normal;\n    font-display: swap;\n  }\n\n  \/* === SECCIÓN GENERAL === *\/\n  .about-descontinuado {\n    width: 100%;\n    background-color: #fff;\n    color: #000;\n  }\n\n  .about-container {\n    display: flex;\n    flex-wrap: wrap;\n    width: 100%;\n    min-height: 80vh;\n  }\n\n  \/* === COLUMNA DE TEXTO === *\/\n  .about-text {\n    flex: 1 1 50%;\n    display: flex;\n    flex-direction: column;\n    justify-content: center;\n    padding: 80px 100px;\n  }\n\n  .about-text h2 {\n    font-family: 'Chivo-Medium', sans-serif; \/* 👈 títulos *\/\n    font-size: 32px;\n    font-weight: 500;\n    line-height: 1.3;\n    letter-spacing: 0.5px;\n    text-transform: uppercase;\n    margin-bottom: 25px;\n  }\n\n  .about-text p {\n    font-family: 'D-DIN', sans-serif; \/* 👈 párrafos *\/\n    font-size: 15px;\n    line-height: 1.7;\n    max-width: 440px;\n    margin-bottom: 35px;\n    color: #222;\n  }\n\n  \/* === BOTÓN === *\/\n  .about-button {\n    display: inline-block;\n    font-family: 'D-DIN', sans-serif;\n    border: 1px solid #000;\n    padding: 10px 24px;\n    font-size: 12px;\n    font-weight: 700;\n    letter-spacing: 1px;\n    text-transform: uppercase;\n    color: #000;\n    text-decoration: none;\n    transition: all 0.3s ease;\n    cursor: pointer;\n    width: auto;\n    max-width: 200px;\n    text-align: center;\n  }\n\n  .about-button:hover {\n    background-color: #000;\n    color: #fff;\n  }\n\n  \/* === COLUMNA DE IMAGEN === *\/\n  .about-image {\n    flex: 1 1 50%;\n  }\n\n  .about-image img {\n    width: 100%;\n    height: 100%;\n    object-fit: cover;\n    display: block;\n  }\n\n  \/* === RESPONSIVE === *\/\n  @media (max-width: 1024px) {\n    .about-text {\n      padding: 60px 70px;\n    }\n    .about-text h2 {\n      font-size: 28px;\n    }\n  }\n\n  @media (max-width: 768px) {\n    .about-container {\n      flex-direction: column;\n    }\n    .about-text {\n      padding: 60px 40px;\n      text-align: center;\n    }\n    .about-text p {\n      margin-left: auto;\n      margin-right: auto;\n    }\n    .about-image {\n      order: -1; \/* Mueve la imagen arriba en mobile *\/\n    }\n    .about-button {\n      margin: 20px auto 0;\n    }\n  }\n\n  @media (max-width: 480px) {\n    .about-text {\n      padding: 50px 30px;\n    }\n    .about-text h2 {\n      font-size: 24px;\n    }\n    .about-text p {\n      font-size: 14px;\n    }\n  }\n<\/style>"}}},"order":["custom_liquid_LdinTg","section_product_v1_kdbgVa","custom_liquid_KXVU6L","custom_liquid_eQwJAg","custom_liquid_9L3X3U"]}
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "hero_banner_qGYBCG": {
+      "type": "hero-banner",
+      "name": "Hero Banner",
+      "settings": {
+        "background_image": "shopify://shop_images/BANNER1.png",
+        "subtitle": "the art of timeless pieces",
+        "button_text": "SHOP",
+        "button_url": "shopify://collections/all",
+        "text_alignment": "center",
+        "padding_top": 0,
+        "padding_bottom": 0,
+        "min_height": 80
+      }
+    },
+    "section_product_v1_kdbgVa": {
+      "type": "section-product-v1",
+      "name": "PRODUCT V1",
+      "settings": {
+        "bg_section": "#ffffff",
+        "section_title": "OUR PIECES",
+        "desc_content": "",
+        "select_collection": "pants",
+        "products_limit": 3,
+        "margin_top": "100",
+        "margin_bottom": "100"
+      }
+    },
+    "services_icons_qQgYMQ": {
+      "type": "services-icons",
+      "blocks": {
+        "service_KFEKVk": {
+          "type": "service",
+          "settings": {
+            "title": "WORLDWIDE SHIPPING",
+            "icon_svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewbox=\"0 0 126.56 87.07\" class=\"service-icon\"><circle cx=\"32.29\" cy=\"74.86\" r=\"10.71\" fill=\"none\" stroke=\"#231f20\" stroke-width=\"3\" stroke-miterlimit=\"10\"></circle><circle cx=\"97.79\" cy=\"74.86\" r=\"10.71\" fill=\"none\" stroke=\"#231f20\" stroke-width=\"3\" stroke-miterlimit=\"10\"></circle><polyline points=\"98.04 27.28 125.06 38.93 125.06 76.05\" fill=\"none\" stroke=\"#231f20\" stroke-width=\"3\" stroke-miterlimit=\"10\"></polyline><path d=\"M22.35,76.05c-12.75,0-20.85-8.29-20.85-18.53V1.5h76.82c10.89,0,19.72,7.09,19.72,15.83v35.71\" fill=\"none\" stroke=\"#231f20\" stroke-width=\"3\" stroke-miterlimit=\"10\"></path><line x1=\"64.41\" y1=\"76.05\" x2=\"42.93\" y2=\"76.05\" fill=\"none\" stroke=\"#231f20\" stroke-width=\"3\" stroke-miterlimit=\"10\"></line></svg>"
+          }
+        },
+        "service_PhgcNj": {
+          "type": "service",
+          "settings": {
+            "title": "VISIT OUR SHOWROOM",
+            "icon_svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewbox=\"0 0 100 100\" class=\"service-icon\"><path d=\"M50 5a30 30 0 0 0-30 30c0 20 30 60 30 60s30-40 30-60A30 30 0 0 0 50 5zm0 43a13 13 0 1 1 13-13 13 13 0 0 1-13 13z\" fill=\"none\" stroke=\"#231f20\" stroke-width=\"3\"></path></svg>"
+          }
+        },
+        "service_mLzjhr": {
+          "type": "service",
+          "settings": {
+            "title": "CUSTOMER SERVICE",
+            "icon_svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewbox=\"0 0 117.31 105.3\" class=\"service-icon\"><path d=\"M77.06,1.5H1.5v53.68c0,5.76,4.67,10.43,10.43,10.43h3.34c1.68,0,3.05,1.36,3.05,3.05v21.07c0,.26.3.39.49.23l27.82-23.62c.55-.47,1.25-.72,1.97-.72h34.43c5.76,0,10.43-4.67,10.43-10.43V17.91c0-9.06-7.35-16.41-16.41-16.41Z\" fill=\"none\" stroke=\"#231f20\" stroke-width=\"3\" stroke-miterlimit=\"10\"></path><path d=\"M115.81,25.7v43.25c0,5.76-4.67,10.43-10.43,10.43h-3.34c-1.68,0-3.05,1.36-3.05,3.05v21.07c0,.26-.3.39-.49.23l-27.82-23.62c-.55-.47-1.25-.72-1.97-.72h-22.79\" fill=\"none\" stroke=\"#231f20\" stroke-width=\"3\" stroke-miterlimit=\"10\"></path></svg>"
+          }
+        }
+      },
+      "block_order": [
+        "service_KFEKVk",
+        "service_PhgcNj",
+        "service_mLzjhr"
+      ],
+      "name": "Services Icons",
+      "settings": {
+        "background_color": "#F1F2F2",
+        "grid_gap": 80,
+        "padding_top": 80,
+        "padding_bottom": 80,
+        "columns_desktop": "3",
+        "columns_tablet": "2",
+        "columns_mobile": "1"
+      }
+    },
+    "get_inspired_KgAxVY": {
+      "type": "get-inspired",
+      "blocks": {
+        "image_9Pgzwr": {
+          "type": "image",
+          "settings": {
+            "alt_text": ""
+          }
+        },
+        "image_RHJQeL": {
+          "type": "image",
+          "settings": {
+            "alt_text": ""
+          }
+        },
+        "image_K8yQfj": {
+          "type": "image",
+          "settings": {
+            "alt_text": ""
+          }
+        }
+      },
+      "block_order": [
+        "image_9Pgzwr",
+        "image_RHJQeL",
+        "image_K8yQfj"
+      ],
+      "name": "Get Inspired",
+      "settings": {
+        "title": "GET INSPIRED",
+        "gap": 25,
+        "columns_desktop": "3",
+        "columns_tablet": "2",
+        "padding_top": 100,
+        "padding_bottom": 100
+      }
+    },
+    "about_descontinuado_eXiXdG": {
+      "type": "about-descontinuado",
+      "name": "About Descontinuado",
+      "settings": {
+        "title": "AT DESCONTINUADO, WE\nBELIEVE IN THE VALUE\nOF WHAT IS NO LONGER MADE",
+        "description": "We seek out unique pieces from well-known designers, as well as from brands that have vanished but left a lasting impression. Garments with history, impeccable quality, and an iconic style that stands out.",
+        "image": "shopify://shop_images/DESCONTINUADO-VINTAGqnj.png",
+        "button_text": "SHOP",
+        "button_url": "shopify://collections/all",
+        "mobile_order": "image_first"
+      }
+    }
+  },
+  "order": [
+    "hero_banner_qGYBCG",
+    "section_product_v1_kdbgVa",
+    "services_icons_qQgYMQ",
+    "get_inspired_KgAxVY",
+    "about_descontinuado_eXiXdG"
+  ]
+}
