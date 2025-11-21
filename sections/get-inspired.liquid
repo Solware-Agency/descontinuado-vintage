@@ -3,20 +3,115 @@
     <h2 class="get-inspired-title">{{ section.settings.title }}</h2>
   {% endif %}
   
-  <div class="get-inspired-grid" style="--inspired-gap: {{ section.settings.gap }}px; --inspired-columns-desktop: {{ section.settings.columns_desktop }}; --inspired-columns-tablet: {{ section.settings.columns_tablet }}; gap: var(--inspired-gap); grid-template-columns: repeat(var(--inspired-columns-desktop), 1fr);">
-    {% for block in section.blocks %}
-      <div class="inspired-item" {{ block.shopify_attributes }}>
-        {% if block.settings.image != blank %}
-          <img 
-            src="{{ block.settings.image | img_url: 'master' }}" 
-            alt="{{ block.settings.alt_text | default: block.settings.image.alt | escape }}"
-            loading="lazy"
-          >
-        {% endif %}
-      </div>
-    {% endfor %}
-  </div>
+  {% if section.blocks.size > 0 %}
+    <!-- Grid para Desktop y Tablet -->
+    <div class="get-inspired-grid" style="--inspired-gap: {{ section.settings.gap }}px; --inspired-columns-desktop: {{ section.settings.columns_desktop }}; --inspired-columns-tablet: {{ section.settings.columns_tablet }}; gap: var(--inspired-gap); grid-template-columns: repeat(var(--inspired-columns-desktop), 1fr);">
+      {% for block in section.blocks %}
+        <div class="inspired-item" {{ block.shopify_attributes }}>
+          {% if block.settings.image != blank %}
+            <img 
+              src="{{ block.settings.image | img_url: 'master' }}" 
+              alt="{{ block.settings.alt_text | default: block.settings.image.alt | escape }}"
+              loading="lazy"
+            >
+          {% else %}
+            <div class="inspired-placeholder">
+              <p>Agrega una imagen en este bloque</p>
+            </div>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+
+    <!-- Carrusel para Mobile -->
+    <div class="get-inspired-carousel" id="get-inspired-carousel-{{ section.id }}">
+      {% for block in section.blocks %}
+        <div class="inspired-item" {{ block.shopify_attributes }}>
+          {% if block.settings.image != blank %}
+            <img 
+              src="{{ block.settings.image | img_url: 'master' }}" 
+              alt="{{ block.settings.alt_text | default: block.settings.image.alt | escape }}"
+              loading="lazy"
+            >
+          {% else %}
+            <div class="inspired-placeholder">
+              <p>Agrega una imagen en este bloque</p>
+            </div>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="get-inspired-empty">
+      <p>Agrega bloques de imagen desde el editor para mostrar contenido aquí.</p>
+    </div>
+  {% endif %}
 </section>
+
+<script>
+  (function() {
+    var sectionId = '{{ section.id }}';
+    
+    function initGetInspiredCarousel() {
+      var carousel = document.getElementById('get-inspired-carousel-' + sectionId);
+      
+      if (!carousel) return;
+      
+      // Esperar a que jQuery y Slick estén disponibles
+      if (typeof jQuery === 'undefined' || !jQuery.fn.slick) {
+        setTimeout(initGetInspiredCarousel, 100);
+        return;
+      }
+      
+      var $carousel = jQuery(carousel);
+      
+      // Función para inicializar/destruir carrusel según el tamaño de pantalla
+      function handleCarousel() {
+        if (window.innerWidth <= 600) {
+          // Mobile: inicializar carrusel
+          if (!$carousel.hasClass('slick-initialized')) {
+            $carousel.slick({
+              dots: true,
+              arrows: true,
+              infinite: true,
+              speed: 300,
+              slidesToShow: 1,
+              slidesToScroll: 1,
+              adaptiveHeight: false,
+              autoplay: false,
+              fade: false,
+              cssEase: 'ease'
+            });
+          }
+        } else {
+          // Desktop/Tablet: destruir carrusel si está inicializado
+          if ($carousel.hasClass('slick-initialized')) {
+            $carousel.slick('unslick');
+          }
+        }
+      }
+      
+      // Inicializar al cargar
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+          setTimeout(handleCarousel, 200);
+        });
+      } else {
+        setTimeout(handleCarousel, 200);
+      }
+      
+      // Manejar redimensionamiento
+      var resizeTimer;
+      window.addEventListener('resize', function() {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(handleCarousel, 250);
+      });
+    }
+    
+    // Iniciar
+    initGetInspiredCarousel();
+  })();
+</script>
 
 {% schema %}
 {

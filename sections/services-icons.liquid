@@ -22,6 +22,7 @@
     --services-columns-mobile: {{ columns_mobile }};
   "
 >
+  <!-- Grid para Desktop y Tablet -->
   <div class="services-container">
     {% if section.blocks.size > 0 %}
       {% for block in section.blocks %}
@@ -43,7 +44,95 @@
       </div>
     {% endif %}
   </div>
+
+  <!-- Carrusel para Mobile -->
+  <div class="services-carousel" id="services-carousel-{{ section.id }}">
+    {% if section.blocks.size > 0 %}
+      {% for block in section.blocks %}
+        <div class="service-item" {{ block.shopify_attributes }}>
+          {% if block.settings.icon_svg != blank %}
+            <div class="service-icon-wrapper" aria-hidden="true">
+              {{ block.settings.icon_svg }}
+            </div>
+          {% endif %}
+
+          {% if block.settings.title != blank %}
+            <h3>{{ block.settings.title }}</h3>
+          {% endif %}
+        </div>
+      {% endfor %}
+    {% endif %}
+  </div>
 </section>
+
+<script>
+  (function() {
+    var sectionId = '{{ section.id }}';
+    
+    function initServicesCarousel() {
+      var carousel = document.getElementById('services-carousel-' + sectionId);
+      
+      if (!carousel) return;
+      
+      // Esperar a que jQuery y Slick estén disponibles
+      if (typeof jQuery === 'undefined' || !jQuery.fn.slick) {
+        setTimeout(initServicesCarousel, 100);
+        return;
+      }
+      
+      var $carousel = jQuery(carousel);
+      
+      // Función para inicializar/destruir carrusel según el tamaño de pantalla
+      function handleCarousel() {
+        if (window.innerWidth <= 600) {
+          // Mobile: inicializar carrusel con autoplay
+          if (!$carousel.hasClass('slick-initialized')) {
+            $carousel.slick({
+              dots: false,
+              arrows: false,
+              infinite: true,
+              speed: 800,
+              slidesToShow: 1,
+              slidesToScroll: 1,
+              autoplay: true,
+              autoplaySpeed: 3000,
+              fade: false,
+              cssEase: 'ease-in-out',
+              pauseOnHover: false,
+              pauseOnFocus: false,
+              swipe: true,
+              touchMove: true
+            });
+          }
+        } else {
+          // Desktop/Tablet: destruir carrusel si está inicializado
+          if ($carousel.hasClass('slick-initialized')) {
+            $carousel.slick('unslick');
+          }
+        }
+      }
+      
+      // Inicializar al cargar
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+          setTimeout(handleCarousel, 200);
+        });
+      } else {
+        setTimeout(handleCarousel, 200);
+      }
+      
+      // Manejar redimensionamiento
+      var resizeTimer;
+      window.addEventListener('resize', function() {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(handleCarousel, 250);
+      });
+    }
+    
+    // Iniciar
+    initServicesCarousel();
+  })();
+</script>
 
 {% schema %}
 {

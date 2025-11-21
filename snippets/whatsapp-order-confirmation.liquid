@@ -342,73 +342,141 @@
       payment_method: null
     };
 
-    // Buscar número de pedido
+    // Buscar número de pedido - Selectores específicos de Shopify
     var orderNumberSelectors = [
       '[data-order-number]',
+      '[data-order]',
+      '[data-checkout-order-number]',
       '.order-number',
+      '.order__number',
       '[class*="order-number"]',
-      '[id*="order-number"]',
-      'h1, h2, h3, h4'
+      '[class*="order__number"]'
     ];
     
     for (var i = 0; i < orderNumberSelectors.length; i++) {
       var elements = document.querySelectorAll(orderNumberSelectors[i]);
       for (var j = 0; j < elements.length; j++) {
         var text = elements[j].textContent || '';
-        // Buscar patrones como "#1234" o "Order #1234"
-        var match = text.match(/#?\s*(\d+)/);
+        var dataAttr = elements[j].getAttribute('data-order-number') || 
+                      elements[j].getAttribute('data-order') ||
+                      elements[j].getAttribute('data-checkout-order-number');
+        
+        if (dataAttr) {
+          orderData.order_number = dataAttr;
+          console.log('[WhatsApp] Número de pedido encontrado en data-attribute:', orderData.order_number);
+          break;
+        }
+        
+        // Buscar patrones como "#1234", "Order #1234", "Pedido #1234"
+        var match = text.match(/(?:order|pedido|#)\s*#?\s*(\d+)/i);
         if (match && match[1]) {
           orderData.order_number = match[1];
-          console.log('[WhatsApp] Número de pedido encontrado en DOM:', orderData.order_number);
+          console.log('[WhatsApp] Número de pedido encontrado en texto:', orderData.order_number);
           break;
         }
       }
       if (orderData.order_number) break;
     }
 
-    // Buscar total
+    // Buscar total - Selectores específicos de Shopify
     var totalSelectors = [
-      '[data-total]',
+      '[data-order-total]',
+      '[data-total-price]',
+      '[data-checkout-total]',
       '.order-total',
-      '[class*="total"]',
-      '[class*="price"]'
+      '.order__total',
+      '[class*="order-total"]',
+      '[class*="order__total"]',
+      '[class*="total-price"]'
     ];
     
     for (var i = 0; i < totalSelectors.length; i++) {
       var elements = document.querySelectorAll(totalSelectors[i]);
       for (var j = 0; j < elements.length; j++) {
+        var dataAttr = elements[j].getAttribute('data-order-total') ||
+                      elements[j].getAttribute('data-total-price') ||
+                      elements[j].getAttribute('data-checkout-total');
+        
+        if (dataAttr) {
+          orderData.total_price = dataAttr.replace(',', '.');
+          console.log('[WhatsApp] Total encontrado en data-attribute:', orderData.total_price);
+          break;
+        }
+        
         var text = elements[j].textContent || '';
-        // Buscar patrones de precio como "$123.45" o "123.45 USD"
-        var match = text.match(/[\$]?\s*(\d+[.,]\d{2})/);
+        // Buscar patrones de precio como "$123.45", "123.45 USD", "Total: $123.45"
+        var match = text.match(/(?:total|total pagado|total paid)[:\s]*[\$]?\s*(\d+[.,]\d{2})/i);
         if (match && match[1]) {
           orderData.total_price = match[1].replace(',', '.');
-          console.log('[WhatsApp] Total encontrado en DOM:', orderData.total_price);
+          console.log('[WhatsApp] Total encontrado en texto:', orderData.total_price);
           break;
         }
       }
       if (orderData.total_price) break;
     }
 
-    // Buscar items en tablas
-    var tables = document.querySelectorAll('table');
-    for (var i = 0; i < tables.length; i++) {
-      var rows = tables[i].querySelectorAll('tr');
-      for (var j = 0; j < rows.length; j++) {
-        var cells = rows[j].querySelectorAll('td, th');
-        if (cells.length >= 2) {
-          var itemName = cells[0].textContent.trim();
-          var quantity = cells[cells.length - 2] ? cells[cells.length - 2].textContent.trim() : '1';
-          if (itemName && !itemName.toLowerCase().includes('total') && !itemName.toLowerCase().includes('subtotal')) {
+    // Buscar items - Selectores específicos de Shopify
+    var itemSelectors = [
+      '[data-line-item]',
+      '[data-order-item]',
+      '.line-item',
+      '.order-item',
+      '[class*="line-item"]',
+      '[class*="order-item"]'
+    ];
+    
+    // Primero buscar por selectores específicos
+    for (var i = 0; i < itemSelectors.length; i++) {
+      var items = document.querySelectorAll(itemSelectors[i]);
+      if (items.length > 0) {
+        for (var j = 0; j < items.length; j++) {
+          var itemName = items[j].querySelector('[data-product-title]') ||
+                        items[j].querySelector('.product-title') ||
+                        items[j].querySelector('[class*="product-title"]');
+          var quantity = items[j].querySelector('[data-quantity]') ||
+                        items[j].querySelector('.quantity') ||
+                        items[j].querySelector('[class*="quantity"]');
+          
+          if (itemName) {
             orderData.line_items.push({
-              title: itemName,
-              quantity: parseInt(quantity) || 1
+              title: itemName.textContent.trim(),
+              quantity: quantity ? parseInt(quantity.textContent.trim()) || 1 : 1
             });
           }
         }
+        if (orderData.line_items.length > 0) {
+          console.log('[WhatsApp] Items encontrados por selectores específicos:', orderData.line_items.length);
+          break;
+        }
       }
-      if (orderData.line_items.length > 0) {
-        console.log('[WhatsApp] Items encontrados en DOM:', orderData.line_items.length);
-        break;
+    }
+    
+    // Si no encontramos, buscar en tablas de la página de agradecimiento
+    if (orderData.line_items.length === 0) {
+      var tables = document.querySelectorAll('table');
+      for (var i = 0; i < tables.length; i++) {
+        var rows = tables[i].querySelectorAll('tr');
+        for (var j = 0; j < rows.length; j++) {
+          var cells = rows[j].querySelectorAll('td, th');
+          if (cells.length >= 2) {
+            var itemName = cells[0].textContent.trim();
+            var quantity = cells[cells.length - 2] ? cells[cells.length - 2].textContent.trim() : '1';
+            if (itemName && 
+                !itemName.toLowerCase().includes('total') && 
+                !itemName.toLowerCase().includes('subtotal') &&
+                !itemName.toLowerCase().includes('producto') &&
+                !itemName.toLowerCase().includes('product')) {
+              orderData.line_items.push({
+                title: itemName,
+                quantity: parseInt(quantity) || 1
+              });
+            }
+          }
+        }
+        if (orderData.line_items.length > 0) {
+          console.log('[WhatsApp] Items encontrados en tabla:', orderData.line_items.length);
+          break;
+        }
       }
     }
 
@@ -629,36 +697,28 @@
   }
 
   // Función para verificar si estamos en la página de Agradecimiento (Thank You)
+  // DETECCIÓN ESTRICTA - Solo URLs específicas de Shopify
   function isThankYouPage() {
     var path = window.location.pathname.toLowerCase();
     var href = window.location.href.toLowerCase();
-    var title = document.title.toLowerCase();
+    var search = window.location.search.toLowerCase();
     
-    // Verificar por URL - páginas de agradecimiento de Shopify
-    var isThankYou = path.includes('/thank_you') || 
-                     path.includes('/thank-you') ||
-                     path.includes('/checkouts/') ||
-                     href.includes('thank_you') ||
-                     href.includes('thank-you') ||
-                     href.includes('order_status') ||
-                     title.includes('thank you') ||
-                     title.includes('agradecimiento') ||
-                     title.includes('order confirmation') ||
-                     document.querySelector('[data-order-status]') ||
-                     document.querySelector('.order-status') ||
-                     document.querySelector('[class*="order-status"]') ||
-                     document.querySelector('[class*="thank-you"]') ||
-                     document.querySelector('[class*="order-confirmation"]') ||
-                     document.querySelector('[class*="checkout"]') ||
-                     // Buscar texto común en páginas de agradecimiento
-                     (document.body && (
-                       document.body.textContent.includes('Thank you') ||
-                       document.body.textContent.includes('Gracias') ||
-                       document.body.textContent.includes('Order confirmation') ||
-                       document.body.textContent.includes('Confirmación de pedido')
-                     ));
+    // Verificación ESTRICTA solo por URL - NO por texto del body
+    // Patrones específicos de Shopify Order Status Page
+    var isThankYou = 
+      // URLs exactas de Shopify
+      path.includes('/thank_you') || 
+      path.includes('/thank-you') ||
+      // Checkouts de Shopify con parámetros específicos
+      (path.includes('/checkouts/') && (search.includes('thank_you') || search.includes('order_status'))) ||
+      // URLs con order_status
+      href.includes('order_status') ||
+      href.includes('order-status') ||
+      // Verificar elementos específicos de Shopify Order Status Page
+      (document.querySelector('[data-order-status]') && 
+       (path.includes('/checkouts/') || path.includes('/thank')));
     
-    console.log('[WhatsApp] Verificando página de Agradecimiento - Path:', path, 'Is Thank You Page:', isThankYou);
+    console.log('[WhatsApp] Verificando página de Agradecimiento - Path:', path, 'Href:', href, 'Is Thank You Page:', isThankYou);
     return isThankYou;
   }
 
@@ -689,15 +749,33 @@
     // No necesitamos insertar nada en el DOM todavía, solo preparar
     console.log('[WhatsApp] Preparando modal para mostrar después de 3 segundos...');
 
+    // Verificar si ya se mostró el modal en esta sesión
+    var modalShownKey = 'whatsapp_modal_shown';
+    var wasShownInThankYouPage = sessionStorage.getItem('whatsapp_modal_thankyou_shown') === 'true';
+    
     // Función para mostrar el modal (se ejecuta después de 3 segundos)
     function showModalAfterDelay() {
-      console.log('[WhatsApp] ⏰ Mostrando modal después de 3 segundos...');
+      console.log('[WhatsApp] ⏰ Verificando si mostrar modal...');
       
-      // Solo ejecutar si estamos en página de agradecimiento
-      if (!isThankYouPage()) {
-        console.log('[WhatsApp] No es página de agradecimiento, cancelando modal');
+      // Verificar si ya se mostró en esta sesión (después de salir de página de agradecimiento)
+      var alreadyShown = sessionStorage.getItem(modalShownKey) === 'true';
+      
+      // Solo mostrar si:
+      // 1. Estamos en página de agradecimiento Y no se ha mostrado todavía
+      // 2. O salimos de página de agradecimiento Y no se ha mostrado todavía (una vez)
+      var isThankYou = isThankYouPage();
+      
+      if (!isThankYou && !wasShownInThankYouPage) {
+        console.log('[WhatsApp] No es página de agradecimiento y no venimos de ahí, cancelando');
         return;
       }
+      
+      if (alreadyShown && !isThankYou) {
+        console.log('[WhatsApp] Ya se mostró después de salir de página de agradecimiento, cancelando');
+        return;
+      }
+      
+      console.log('[WhatsApp] ⏰ Mostrando modal después de 3 segundos...');
       
       // Insertar el bloque del modal
       insertWhatsAppBlock();
@@ -707,11 +785,9 @@
       
       if (!overlay) {
         console.log('[WhatsApp] Creando overlay...');
-        // Crear el overlay si no existe
         overlay = document.createElement('div');
         overlay.id = 'whatsapp-confirmation-overlay';
         document.body.appendChild(overlay);
-        // Re-insertar el contenido
         insertWhatsAppBlock();
       }
       
@@ -719,37 +795,28 @@
       setTimeout(function() {
         if (overlay) {
           overlay.classList.add('show');
-          console.log('[WhatsApp] ✅ Modal mostrado exitosamente!');
           
-          // Verificar que realmente se muestra
-          setTimeout(function() {
-            var isVisible = overlay.classList.contains('show') && 
-                           window.getComputedStyle(overlay).display !== 'none';
-            console.log('[WhatsApp] Modal visible:', isVisible);
-            if (!isVisible) {
-              console.error('[WhatsApp] ⚠️ El modal no es visible! Verificar CSS.');
-            }
-          }, 200);
+          // Marcar como mostrado
+          if (isThankYou) {
+            sessionStorage.setItem('whatsapp_modal_thankyou_shown', 'true');
+          } else {
+            sessionStorage.setItem(modalShownKey, 'true');
+          }
+          
+          console.log('[WhatsApp] ✅ Modal mostrado exitosamente!');
         } else {
           console.error('[WhatsApp] ⚠️ ERROR: No se pudo encontrar el overlay');
         }
       }, 100);
     }
 
-    // Ejecutar después de 3 segundos - SOLO si estamos en página de agradecimiento
-    console.log('[WhatsApp] ⏱️ Programando modal para aparecer en 3 segundos...');
-    setTimeout(showModalAfterDelay, 3000);
-    
-    // Backup: también intentar después de 5 segundos por si acaso
-    setTimeout(function() {
-      if (!isThankYouPage()) return;
-      var overlay = document.getElementById('whatsapp-confirmation-overlay');
-      if (overlay && !overlay.classList.contains('show')) {
-        console.log('[WhatsApp] Backup: Mostrando modal después de 5 segundos...');
-        insertWhatsAppBlock();
-        overlay.classList.add('show');
-      }
-    }, 5000);
+    // Solo ejecutar si estamos en página de agradecimiento O si venimos de ahí
+    if (isThankYou || wasShownInThankYouPage) {
+      console.log('[WhatsApp] ⏱️ Programando modal para aparecer en 3 segundos...');
+      setTimeout(showModalAfterDelay, 3000);
+    } else {
+      console.log('[WhatsApp] No es página de agradecimiento, no se mostrará el modal');
+    }
 
     // Intentar cada segundo durante 15 segundos por si el objeto se carga más tarde
     var attempts = 0;
