@@ -9,11 +9,21 @@
       {% for block in section.blocks %}
         <div class="inspired-item" {{ block.shopify_attributes }}>
           {% if block.settings.image != blank %}
-            <img 
-              src="{{ block.settings.image | img_url: 'master' }}" 
-              alt="{{ block.settings.alt_text | default: block.settings.image.alt | escape }}"
-              loading="lazy"
-            >
+            {% if block.settings.link_url != blank %}
+              <a href="{{ block.settings.link_url }}" class="inspired-link">
+                <img 
+                  src="{{ block.settings.image | img_url: 'master' }}" 
+                  alt="{{ block.settings.alt_text | default: block.settings.image.alt | escape }}"
+                  loading="lazy"
+                >
+              </a>
+            {% else %}
+              <img 
+                src="{{ block.settings.image | img_url: 'master' }}" 
+                alt="{{ block.settings.alt_text | default: block.settings.image.alt | escape }}"
+                loading="lazy"
+              >
+            {% endif %}
           {% else %}
             <div class="inspired-placeholder">
               <p>Agrega una imagen en este bloque</p>
@@ -28,11 +38,21 @@
       {% for block in section.blocks %}
         <div class="inspired-item" {{ block.shopify_attributes }}>
           {% if block.settings.image != blank %}
-            <img 
-              src="{{ block.settings.image | img_url: 'master' }}" 
-              alt="{{ block.settings.alt_text | default: block.settings.image.alt | escape }}"
-              loading="lazy"
-            >
+            {% if block.settings.link_url != blank %}
+              <a href="{{ block.settings.link_url }}" class="inspired-link">
+                <img 
+                  src="{{ block.settings.image | img_url: 'master' }}" 
+                  alt="{{ block.settings.alt_text | default: block.settings.image.alt | escape }}"
+                  loading="lazy"
+                >
+              </a>
+            {% else %}
+              <img 
+                src="{{ block.settings.image | img_url: 'master' }}" 
+                alt="{{ block.settings.alt_text | default: block.settings.image.alt | escape }}"
+                loading="lazy"
+              >
+            {% endif %}
           {% else %}
             <div class="inspired-placeholder">
               <p>Agrega una imagen en este bloque</p>
@@ -80,7 +100,19 @@
               adaptiveHeight: false,
               autoplay: false,
               fade: false,
-              cssEase: 'ease'
+              cssEase: 'ease',
+              swipe: true,
+              touchMove: true,
+              draggable: true,
+              touchThreshold: 5
+            });
+            
+            // Asegurar que las imágenes sean clickeables
+            $carousel.on('init', function() {
+              $carousel.find('.inspired-item img').css({
+                'pointer-events': 'auto',
+                'cursor': 'pointer'
+              });
             });
           }
         } else {
@@ -139,6 +171,12 @@
           "id": "alt_text",
           "label": "Texto alternativo",
           "info": "Si se deja vacío, se usará el texto alternativo de la imagen"
+        },
+        {
+          "type": "url",
+          "id": "link_url",
+          "label": "URL del enlace",
+          "info": "Opcional: Agrega una URL para que la imagen sea clickeable (producto, colección, página, etc.)"
         }
       ]
     }

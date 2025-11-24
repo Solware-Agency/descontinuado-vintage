@@ -903,7 +903,14 @@ Add the page template as a class for easy page or template specific styling.
   <script src="{{ 'add-to-cart-popup.js' | asset_url }}?v={{ 'now' | date: '%s' }}" defer></script>
 
   <!-- WhatsApp Order Confirmation Block -->
-  {% include 'whatsapp-order-confirmation' %}
+  {% comment %}
+    DESACTIVADO: Este código no funciona en Order Status Page porque esa página
+    no usa theme.liquid. El script debe ir en:
+    Settings → Checkout → Order status page → Additional scripts
+    
+    Ver archivo: whatsapp-order-status-script.js
+  {% endcomment %}
+  {% comment %}{% include 'whatsapp-order-confirmation' %}{% endcomment %}
 
 </body>
 </html>
