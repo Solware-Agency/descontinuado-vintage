@@ -18,8 +18,6 @@
         "button_text": "SHOP",
         "button_url": "shopify://collections/all",
         "text_alignment": "center",
-        "padding_top": 0,
-        "padding_bottom": 0,
         "min_height": 80
       }
     },
@@ -67,15 +65,7 @@
         "service_mLzjhr"
       ],
       "name": "Services Icons",
-      "settings": {
-        "background_color": "#F1F2F2",
-        "grid_gap": 80,
-        "padding_top": 80,
-        "padding_bottom": 80,
-        "columns_desktop": "3",
-        "columns_tablet": "2",
-        "columns_mobile": "1"
-      }
+      "settings": {}
     },
     "get_inspired_KgAxVY": {
       "type": "get-inspired",
@@ -83,18 +73,21 @@
         "image_9Pgzwr": {
           "type": "image",
           "settings": {
+            "image": "shopify://shop_images/DESCONTINUADO2.png",
             "alt_text": ""
           }
         },
         "image_RHJQeL": {
           "type": "image",
           "settings": {
+            "image": "shopify://shop_images/DESCONTINUADO1.png",
             "alt_text": ""
           }
         },
         "image_K8yQfj": {
           "type": "image",
           "settings": {
+            "image": "shopify://shop_images/HOME-DESCONTINUADO3.png",
             "alt_text": ""
           }
         }
@@ -106,12 +99,7 @@
       ],
       "name": "Get Inspired",
       "settings": {
-        "title": "GET INSPIRED",
-        "gap": 25,
-        "columns_desktop": "3",
-        "columns_tablet": "2",
-        "padding_top": 100,
-        "padding_bottom": 100
+        "title": "GET INSPIRED"
       }
     },
     "about_descontinuado_eXiXdG": {
@@ -122,8 +110,7 @@
         "description": "We seek out unique pieces from well-known designers, as well as from brands that have vanished but left a lasting impression. Garments with history, impeccable quality, and an iconic style that stands out.",
         "image": "shopify://shop_images/DESCONTINUADO-VINTAGqnj.png",
         "button_text": "SHOP",
-        "button_url": "shopify://collections/all",
-        "mobile_order": "image_first"
+        "button_url": "shopify://collections/all"
       }
     }
   },
