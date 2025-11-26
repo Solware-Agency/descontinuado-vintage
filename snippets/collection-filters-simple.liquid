@@ -252,18 +252,22 @@
             const productId = wrapper.getAttribute('data-product-id');
             
             const debugColorIndex = wrapper.getAttribute('data-debug-color-index');
+            const debugSizeIndex = wrapper.getAttribute('data-debug-size-index');
             const debugHasTalla = wrapper.getAttribute('data-debug-has-talla');
+            const debugOptions = wrapper.getAttribute('data-debug-options');
             
             // Verificar HTML completo del elemento para debug
             const outerHTML = wrapper.outerHTML ? wrapper.outerHTML.substring(0, 500) : '(no disponible)';
             
             console.log('=== Producto #' + (index + 1) + ' (ID: ' + (productId || 'sin ID') + ') ===');
+            console.log('  Opciones disponibles:', debugOptions || '(no encontrado)');
             console.log('  data-product-colors:', colors || '(vacío)');
             console.log('  data-product-colors-names:', colorsNames || '(vacío)');
             console.log('  data-product-sizes:', sizes || '(vacío)');
             console.log('  data-product-sizes-names:', sizesNames || '(vacío)');
             console.log('  data-product-price:', price || '(vacío)');
             console.log('  DEBUG - color_option_index:', debugColorIndex || '(no encontrado)');
+            console.log('  DEBUG - size_option_index:', debugSizeIndex || '(no encontrado)');
             console.log('  DEBUG - tiene metafield talla:', debugHasTalla || '(no encontrado)');
             console.log('  HTML (primeros 500 chars):', outerHTML);
             
@@ -271,10 +275,12 @@
             if (!colors && !sizes) {
               console.warn('  ⚠️ Este producto NO tiene data-attributes de color ni talla');
               if (debugColorIndex === '-1' || debugColorIndex === null || debugColorIndex === '') {
-                console.warn('    → Razón: No se encontró opción "Color" en las variantes (index: ' + debugColorIndex + ')');
+                console.warn('    → Razón Color: No se encontró opción "Color" en las variantes (index: ' + debugColorIndex + ')');
               }
-              if (debugHasTalla === 'no' || debugHasTalla === null || debugHasTalla === '') {
-                console.warn('    → Razón: No tiene metafield custom.talla_estandar');
+              if ((debugSizeIndex === '-1' || debugSizeIndex === null || debugSizeIndex === '') && (debugHasTalla === 'no' || debugHasTalla === null || debugHasTalla === '')) {
+                console.warn('    → Razón Talla: No se encontró opción "Size/Talla" en las variantes (index: ' + debugSizeIndex + ') y no tiene metafield custom.talla_estandar');
+              } else if (debugSizeIndex === '-1' || debugSizeIndex === null || debugSizeIndex === '') {
+                console.warn('    → Razón Talla: No se encontró opción "Size/Talla" en las variantes (index: ' + debugSizeIndex + ')');
               }
             } else {
               console.log('  ✅ Este producto SÍ tiene data-attributes');
@@ -322,11 +328,31 @@
         }
         if (productsWithSizes === 0) {
           console.error('❌ PROBLEMA: Ningún producto tiene datos de talla');
-          console.error('   → Verifica que los productos tengan el metafield custom.talla_estandar configurado');
+          console.error('   → Verifica que los productos tengan:');
+          console.error('      1. Una opción de variante llamada "Size", "Talla" o "Tamaño"');
+          console.error('      2. O el metafield custom.talla_estandar configurado');
         }
         if (productsWithPrice === 0) {
           console.error('❌ PROBLEMA: Ningún producto tiene datos de precio');
           console.error('   → Verifica que los productos tengan precio configurado');
+        } else {
+          // Mostrar rango de precios encontrados
+          let minPrice = Infinity;
+          let maxPrice = -Infinity;
+          allWrappers.forEach(function(wrapper) {
+            const priceAttr = wrapper.getAttribute('data-product-price');
+            if (priceAttr && priceAttr.trim() !== '') {
+              const price = parseFloat(priceAttr.toString().trim().replace(/[^\d.]/g, ''));
+              if (!isNaN(price)) {
+                if (price < minPrice) minPrice = price;
+                if (price > maxPrice) maxPrice = price;
+              }
+            }
+          });
+          if (minPrice !== Infinity && maxPrice !== -Infinity) {
+            console.log('💰 Rango de precios encontrado:', minPrice, '-', maxPrice);
+            console.log('   Filtros disponibles: 0-50, 50-150, 150+');
+          }
         }
       }, 200);
       
@@ -548,8 +574,10 @@
       if (Object.keys(allSizesMap).length === 0) {
         console.warn('⚠️ No se encontraron tallas en los productos');
         console.warn('   Posibles causas:');
-        console.warn('   1. Los productos no tienen el metafield custom.talla_estandar configurado');
-        console.warn('   2. El metafield está vacío o no tiene valor');
+        console.warn('   1. Los productos no tienen una opción de variante llamada "Size", "Talla" o "Tamaño"');
+        console.warn('   2. Los productos no tienen el metafield custom.talla_estandar configurado');
+        console.warn('   3. Las variantes no tienen valores en la opción de talla');
+        console.warn('   4. Los productos no tienen variantes');
       }
       
       // Actualizar dropdown de color (siempre muestra todos los colores disponibles)
@@ -691,7 +719,7 @@
           
           // Debug: verificar que el atributo existe
           if (!productPriceAttr || productPriceAttr.trim() === '') {
-            console.warn('Producto sin data-product-price:', wrapper);
+            console.warn('⚠️ Producto sin data-product-price:', wrapper);
             showProduct = false;
           } else {
             // Limpiar el valor de posibles caracteres no numéricos y convertir a número
@@ -704,7 +732,7 @@
             
             // Verificar que el precio sea un número válido
             if (isNaN(productPrice) || productPrice < 0) {
-              console.warn('Precio inválido para producto:', productPriceAttr, '->', productPrice);
+              console.warn('❌ Precio inválido para producto:', productPriceAttr, '->', productPrice);
               console.warn('   Valor original:', productPriceAttr);
               console.warn('   Valor procesado:', priceStr);
               showProduct = false;
@@ -712,12 +740,21 @@
               let priceMatch = false;
               const priceValue = productPrice;
               
+              // Aplicar filtro según rango seleccionado
               if (selectedPrice === '0-50') {
                 priceMatch = priceValue >= 0 && priceValue < 50;
               } else if (selectedPrice === '50-150') {
                 priceMatch = priceValue >= 50 && priceValue <= 150;
               } else if (selectedPrice === '150+') {
                 priceMatch = priceValue >= 150;
+              } else {
+                console.warn('⚠️ Rango de precio desconocido:', selectedPrice);
+                priceMatch = false;
+              }
+              
+              // Debug solo si hay problema
+              if (!priceMatch && visibleCount < 5) {
+                console.log('🔍 Filtro precio - Producto ID:', productId, '| Precio:', priceValue, '| Rango:', selectedPrice, '| No coincide');
               }
               
               if (!priceMatch) {

@@ -30,13 +30,22 @@
                 {% assign product_sizes_array = '' | split: ',' %}
                 {% assign product_sizes_names_array = '' | split: ',' %}
                 {% assign color_option_index = -1 %}
+                {% assign size_option_index = -1 %}
                 
-                {% comment %} Buscar opción de color {% endcomment %}
+                {% comment %} Buscar opciones de color y talla {% endcomment %}
                 {% for option in product.options %}
                   {% assign option_lower = option | downcase | strip %}
-                  {% if option_lower == 'color' or option_lower == 'colour' or option_lower contains 'color' %}
-                    {% assign color_option_index = forloop.index0 %}
-                    {% break %}
+                  {% comment %} Buscar color - múltiples variantes {% endcomment %}
+                  {% if color_option_index == -1 %}
+                    {% if option_lower == 'color' or option_lower == 'colour' or option_lower == 'colores' or option_lower contains 'color' %}
+                      {% assign color_option_index = forloop.index0 %}
+                    {% endif %}
+                  {% endif %}
+                  {% comment %} Buscar talla - múltiples variantes {% endcomment %}
+                  {% if size_option_index == -1 %}
+                    {% if option_lower == 'size' or option_lower == 'talla' or option_lower == 'tallas' or option_lower == 'tamaño' or option_lower == 'tamaños' or option_lower contains 'size' or option_lower contains 'talla' %}
+                      {% assign size_option_index = forloop.index0 %}
+                    {% endif %}
                   {% endif %}
                 {% endfor %}
                 
@@ -64,8 +73,32 @@
                   {% endfor %}
                 {% endif %}
                 
-                {% comment %} Recopilar tallas desde metafield de producto (custom.talla_estandar) {% endcomment %}
-                {% if product.metafields.custom.talla_estandar != blank %}
+                {% comment %} Recopilar tallas desde opción de variante (prioridad) {% endcomment %}
+                {% if size_option_index >= 0 %}
+                  {% for variant in product.variants %}
+                    {% assign size_name = '' %}
+                    {% if size_option_index == 0 and variant.option1 != blank %}
+                      {% assign size_name = variant.option1 | strip %}
+                    {% elsif size_option_index == 1 and variant.option2 != blank %}
+                      {% assign size_name = variant.option2 | strip %}
+                    {% elsif size_option_index == 2 and variant.option3 != blank %}
+                      {% assign size_name = variant.option3 | strip %}
+                    {% endif %}
+                    
+                    {% if size_name != blank %}
+                      {% assign size_handle = size_name | handleize %}
+                      {% assign size_check = '|' | append: size_handle | append: '|' %}
+                      {% unless product_sizes_string contains size_check %}
+                        {% assign product_sizes_string = product_sizes_string | append: size_check %}
+                        {% assign product_sizes_array = product_sizes_array | push: size_handle %}
+                        {% assign product_sizes_names_array = product_sizes_names_array | push: size_name %}
+                      {% endunless %}
+                    {% endif %}
+                  {% endfor %}
+                {% endif %}
+                
+                {% comment %} Recopilar tallas desde metafield de producto (custom.talla_estandar) como fallback {% endcomment %}
+                {% if product_sizes_array.size == 0 and product.metafields.custom.talla_estandar != blank %}
                   {% assign size_value = product.metafields.custom.talla_estandar | strip %}
                   {% if size_value != blank %}
                     {% assign size_handle = size_value | handleize %}
@@ -80,14 +113,22 @@
                 
                 {% comment %} Obtener precio mínimo del producto (en centavos, convertir a unidades) {% endcomment %}
                 {% assign product_min_price_cents = product.price_min %}
-                {% assign product_min_price = product_min_price_cents | divided_by: 100.0 %}
-                {% comment %} Forzar formato numérico sin espacios ni formato de moneda {% endcomment %}
-                {% assign product_min_price = product_min_price | round: 2 %}
+                {% comment %} Convertir de centavos a unidades y asegurar formato numérico limpio {% endcomment %}
+                {% if product_min_price_cents > 0 %}
+                  {% assign product_min_price = product_min_price_cents | divided_by: 100.0 %}
+                  {% assign product_min_price = product_min_price | round: 2 %}
+                {% else %}
+                  {% assign product_min_price = 0 %}
+                {% endif %}
+                {% comment %} Asegurar que sea un número sin formato de moneda {% endcomment %}
+                {% assign product_min_price = product_min_price | times: 1 %}
                 
                 {% comment %} Debug: verificar qué se está generando {% endcomment %}
                 {% comment %}
                 DEBUG Producto {{ product.id }}:
+                - Opciones disponibles: {% for opt in product.options %}{{ opt }}{% unless forloop.last %}, {% endunless %}{% endfor %}
                 - color_option_index: {{ color_option_index }}
+                - size_option_index: {{ size_option_index }}
                 - product_colors_array.size: {{ product_colors_array.size }}
                 - product_sizes_array.size: {{ product_sizes_array.size }}
                 - product.metafields.custom.talla_estandar: {{ product.metafields.custom.talla_estandar }}
@@ -101,7 +142,9 @@
                      data-product-price="{{ product_min_price }}"
                      data-product-id="{{ product.id }}"
                      data-debug-color-index="{{ color_option_index }}"
-                     data-debug-has-talla="{% if product.metafields.custom.talla_estandar != blank %}yes{% else %}no{% endif %}">
+                     data-debug-size-index="{{ size_option_index }}"
+                     data-debug-has-talla="{% if product.metafields.custom.talla_estandar != blank %}yes{% else %}no{% endif %}"
+                     data-debug-options="{% for opt in product.options %}{{ opt }}{% unless forloop.last %}|{% endunless %}{% endfor %}">
                   {% include 'product-item-v1' %}
                 </div>
                 {% else %}
