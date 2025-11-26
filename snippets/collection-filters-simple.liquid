@@ -182,7 +182,19 @@
     
     function initFilters() {
       console.log('Inicializando filtros...');
+      
+      // Verificar que los elementos existan
+      const productsContainer = document.getElementById('products-container');
+      if (!productsContainer) {
+        console.error('❌ NO se encontró el contenedor #products-container');
+        return;
+      }
+      
       const filterDropdowns = document.querySelectorAll('.filter-dropdown');
+      if (filterDropdowns.length === 0) {
+        console.error('❌ NO se encontraron dropdowns de filtros');
+        return;
+      }
       
       filterDropdowns.forEach(function(dropdown) {
         dropdown.addEventListener('change', function() {
@@ -215,6 +227,15 @@
         
         if (productWrappers.length === 0) {
           console.error('❌ NO se encontraron productos con clase .product-item-wrapper');
+          console.error('   Buscando alternativas...');
+          // Intentar buscar productos con otras clases comunes
+          const altProducts = document.querySelectorAll('.product-item, .product, [data-product-id]');
+          console.log('   Productos encontrados con otras clases:', altProducts.length);
+          if (altProducts.length > 0) {
+            console.warn('   ⚠️ Los productos no tienen la clase .product-item-wrapper');
+            console.warn('   Esto impedirá que los filtros funcionen correctamente');
+          }
+          return;
         }
         
         productWrappers.forEach(function(wrapper, index) {
@@ -270,6 +291,43 @@
       setTimeout(function() {
         console.log('Poblando dropdowns inicialmente...');
         updateFilterDropdowns();
+        
+        // Mostrar resumen de diagnóstico
+        const allWrappers = document.querySelectorAll('.product-item-wrapper');
+        let productsWithColors = 0;
+        let productsWithSizes = 0;
+        let productsWithPrice = 0;
+        
+        allWrappers.forEach(function(wrapper) {
+          if (wrapper.getAttribute('data-product-colors') && wrapper.getAttribute('data-product-colors').trim() !== '') {
+            productsWithColors++;
+          }
+          if (wrapper.getAttribute('data-product-sizes') && wrapper.getAttribute('data-product-sizes').trim() !== '') {
+            productsWithSizes++;
+          }
+          if (wrapper.getAttribute('data-product-price') && wrapper.getAttribute('data-product-price').trim() !== '') {
+            productsWithPrice++;
+          }
+        });
+        
+        console.log('=== RESUMEN DE DIAGNÓSTICO ===');
+        console.log('Total de productos:', allWrappers.length);
+        console.log('Productos con colores:', productsWithColors, '/', allWrappers.length);
+        console.log('Productos con tallas:', productsWithSizes, '/', allWrappers.length);
+        console.log('Productos con precio:', productsWithPrice, '/', allWrappers.length);
+        
+        if (productsWithColors === 0) {
+          console.error('❌ PROBLEMA: Ningún producto tiene datos de color');
+          console.error('   → Verifica que los productos tengan una opción de variante llamada "Color" o "Colour"');
+        }
+        if (productsWithSizes === 0) {
+          console.error('❌ PROBLEMA: Ningún producto tiene datos de talla');
+          console.error('   → Verifica que los productos tengan el metafield custom.talla_estandar configurado');
+        }
+        if (productsWithPrice === 0) {
+          console.error('❌ PROBLEMA: Ningún producto tiene datos de precio');
+          console.error('   → Verifica que los productos tengan precio configurado');
+        }
       }, 200);
       
       // Restaurar valores desde URL si existen
@@ -457,6 +515,14 @@
       
       console.log('Colores encontrados:', Object.keys(allColorsMap).length, allColorsMap);
       
+      if (Object.keys(allColorsMap).length === 0) {
+        console.warn('⚠️ No se encontraron colores en los productos');
+        console.warn('   Posibles causas:');
+        console.warn('   1. Los productos no tienen una opción de variante llamada "Color" o "Colour"');
+        console.warn('   2. Las variantes no tienen valores en la opción de color');
+        console.warn('   3. Los productos no tienen variantes');
+      }
+      
       // Para talla: recopilar solo de productos que pasaron el filtro de color (si hay)
       productsToConsider.forEach(function(wrapper) {
         const productSizes = wrapper.getAttribute('data-product-sizes');
@@ -478,6 +544,13 @@
       });
       
       console.log('Tallas encontradas:', Object.keys(allSizesMap).length, allSizesMap);
+      
+      if (Object.keys(allSizesMap).length === 0) {
+        console.warn('⚠️ No se encontraron tallas en los productos');
+        console.warn('   Posibles causas:');
+        console.warn('   1. Los productos no tienen el metafield custom.talla_estandar configurado');
+        console.warn('   2. El metafield está vacío o no tiene valor');
+      }
       
       // Actualizar dropdown de color (siempre muestra todos los colores disponibles)
       if (colorFilter) {
@@ -617,7 +690,7 @@
           const productPriceAttr = wrapper.getAttribute('data-product-price');
           
           // Debug: verificar que el atributo existe
-          if (!productPriceAttr) {
+          if (!productPriceAttr || productPriceAttr.trim() === '') {
             console.warn('Producto sin data-product-price:', wrapper);
             showProduct = false;
           } else {
@@ -632,6 +705,8 @@
             // Verificar que el precio sea un número válido
             if (isNaN(productPrice) || productPrice < 0) {
               console.warn('Precio inválido para producto:', productPriceAttr, '->', productPrice);
+              console.warn('   Valor original:', productPriceAttr);
+              console.warn('   Valor procesado:', priceStr);
               showProduct = false;
             } else {
               let priceMatch = false;
