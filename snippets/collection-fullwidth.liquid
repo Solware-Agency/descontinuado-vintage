@@ -95,6 +95,47 @@
                       {% endunless %}
                     {% endif %}
                   {% endfor %}
+                {% else %}
+                  {% comment %} Fallback: si no se encontró opción de talla, usar la opción que NO es color {% endcomment %}
+                  {% for variant in product.variants %}
+                    {% if color_option_index == 0 %}
+                      {% comment %} Si color está en option1, buscar talla en option2 o option3 {% endcomment %}
+                      {% if variant.option2 != blank %}
+                        {% assign size_name = variant.option2 | strip %}
+                      {% elsif variant.option3 != blank %}
+                        {% assign size_name = variant.option3 | strip %}
+                      {% endif %}
+                    {% elsif color_option_index == 1 %}
+                      {% comment %} Si color está en option2, buscar talla en option1 o option3 {% endcomment %}
+                      {% if variant.option1 != blank %}
+                        {% assign size_name = variant.option1 | strip %}
+                      {% elsif variant.option3 != blank %}
+                        {% assign size_name = variant.option3 | strip %}
+                      {% endif %}
+                    {% elsif color_option_index == 2 %}
+                      {% comment %} Si color está en option3, buscar talla en option1 o option2 {% endcomment %}
+                      {% if variant.option1 != blank %}
+                        {% assign size_name = variant.option1 | strip %}
+                      {% elsif variant.option2 != blank %}
+                        {% assign size_name = variant.option2 | strip %}
+                      {% endif %}
+                    {% else %}
+                      {% comment %} Si no hay color, usar option1 como talla por defecto {% endcomment %}
+                      {% if variant.option1 != blank %}
+                        {% assign size_name = variant.option1 | strip %}
+                      {% endif %}
+                    {% endif %}
+                    
+                    {% if size_name != blank %}
+                      {% assign size_handle = size_name | handleize %}
+                      {% assign size_check = '|' | append: size_handle | append: '|' %}
+                      {% unless product_sizes_string contains size_check %}
+                        {% assign product_sizes_string = product_sizes_string | append: size_check %}
+                        {% assign product_sizes_array = product_sizes_array | push: size_handle %}
+                        {% assign product_sizes_names_array = product_sizes_names_array | push: size_name %}
+                      {% endunless %}
+                    {% endif %}
+                  {% endfor %}
                 {% endif %}
                 
                 {% comment %} Recopilar tallas desde metafield de producto (custom.talla_estandar) como fallback {% endcomment %}
@@ -144,7 +185,8 @@
                      data-debug-color-index="{{ color_option_index }}"
                      data-debug-size-index="{{ size_option_index }}"
                      data-debug-has-talla="{% if product.metafields.custom.talla_estandar != blank %}yes{% else %}no{% endif %}"
-                     data-debug-options="{% for opt in product.options %}{{ opt }}{% unless forloop.last %}|{% endunless %}{% endfor %}">
+                     data-debug-options="{% for opt in product.options %}{{ opt }}{% unless forloop.last %}|{% endunless %}{% endfor %}"
+                     data-debug-variant-options="{% for variant in product.variants limit: 1 %}{{ variant.option1 }}|{{ variant.option2 }}|{{ variant.option3 }}{% endfor %}">
                   {% include 'product-item-v1' %}
                 </div>
                 {% else %}

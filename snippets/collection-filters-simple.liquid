@@ -255,12 +255,14 @@
             const debugSizeIndex = wrapper.getAttribute('data-debug-size-index');
             const debugHasTalla = wrapper.getAttribute('data-debug-has-talla');
             const debugOptions = wrapper.getAttribute('data-debug-options');
+            const debugVariantOptions = wrapper.getAttribute('data-debug-variant-options');
             
             // Verificar HTML completo del elemento para debug
             const outerHTML = wrapper.outerHTML ? wrapper.outerHTML.substring(0, 500) : '(no disponible)';
             
             console.log('=== Producto #' + (index + 1) + ' (ID: ' + (productId || 'sin ID') + ') ===');
             console.log('  Opciones disponibles:', debugOptions || '(no encontrado)');
+            console.log('  Valores de variante (ejemplo):', debugVariantOptions || '(no encontrado)');
             console.log('  data-product-colors:', colors || '(vacío)');
             console.log('  data-product-colors-names:', colorsNames || '(vacío)');
             console.log('  data-product-sizes:', sizes || '(vacío)');
@@ -269,6 +271,19 @@
             console.log('  DEBUG - color_option_index:', debugColorIndex || '(no encontrado)');
             console.log('  DEBUG - size_option_index:', debugSizeIndex || '(no encontrado)');
             console.log('  DEBUG - tiene metafield talla:', debugHasTalla || '(no encontrado)');
+            
+            // Debug específico para tallas
+            if (!sizes || sizes.trim() === '') {
+              console.warn('  ⚠️ PROBLEMA: Este producto NO tiene tallas extraídas');
+              console.warn('     Opciones del producto:', debugOptions);
+              console.warn('     Valores de variante:', debugVariantOptions);
+              console.warn('     size_option_index:', debugSizeIndex);
+              if (debugSizeIndex === '-1' || debugSizeIndex === null || debugSizeIndex === '') {
+                console.warn('     → No se encontró una opción llamada "Size", "Talla" o "Tamaño"');
+                console.warn('     → Intentando usar la opción que NO es color como fallback');
+              }
+            }
+            
             console.log('  HTML (primeros 500 chars):', outerHTML);
             
             // Verificar si el elemento tiene los atributos en el HTML
