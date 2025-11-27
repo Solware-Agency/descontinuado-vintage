@@ -14,7 +14,7 @@
       "settings": {
         "select_style_bread": "style_1",
         "ena_bg_img": true,
-        "bg_breadcrumb": "shopify://shop_images/DESCONTINUADO-VINTAGeee.jpg",
+        "bg_breadcrumb": "{{ collection.image }}",
         "bg_color_breadcrumb": "#ffffff",
         "color_breadcrumb": "#ffffff",
         "collection_layout": "full_width",
