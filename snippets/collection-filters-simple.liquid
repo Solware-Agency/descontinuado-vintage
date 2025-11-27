@@ -182,19 +182,7 @@
     
     function initFilters() {
       console.log('Inicializando filtros...');
-      
-      // Verificar que los elementos existan
-      const productsContainer = document.getElementById('products-container');
-      if (!productsContainer) {
-        console.error('❌ NO se encontró el contenedor #products-container');
-        return;
-      }
-      
       const filterDropdowns = document.querySelectorAll('.filter-dropdown');
-      if (filterDropdowns.length === 0) {
-        console.error('❌ NO se encontraron dropdowns de filtros');
-        return;
-      }
       
       filterDropdowns.forEach(function(dropdown) {
         dropdown.addEventListener('change', function() {
@@ -227,15 +215,6 @@
         
         if (productWrappers.length === 0) {
           console.error('❌ NO se encontraron productos con clase .product-item-wrapper');
-          console.error('   Buscando alternativas...');
-          // Intentar buscar productos con otras clases comunes
-          const altProducts = document.querySelectorAll('.product-item, .product, [data-product-id]');
-          console.log('   Productos encontrados con otras clases:', altProducts.length);
-          if (altProducts.length > 0) {
-            console.warn('   ⚠️ Los productos no tienen la clase .product-item-wrapper');
-            console.warn('   Esto impedirá que los filtros funcionen correctamente');
-          }
-          return;
         }
         
         productWrappers.forEach(function(wrapper, index) {
@@ -252,50 +231,29 @@
             const productId = wrapper.getAttribute('data-product-id');
             
             const debugColorIndex = wrapper.getAttribute('data-debug-color-index');
-            const debugSizeIndex = wrapper.getAttribute('data-debug-size-index');
             const debugHasTalla = wrapper.getAttribute('data-debug-has-talla');
-            const debugOptions = wrapper.getAttribute('data-debug-options');
-            const debugVariantOptions = wrapper.getAttribute('data-debug-variant-options');
             
             // Verificar HTML completo del elemento para debug
             const outerHTML = wrapper.outerHTML ? wrapper.outerHTML.substring(0, 500) : '(no disponible)';
             
             console.log('=== Producto #' + (index + 1) + ' (ID: ' + (productId || 'sin ID') + ') ===');
-            console.log('  Opciones disponibles:', debugOptions || '(no encontrado)');
-            console.log('  Valores de variante (ejemplo):', debugVariantOptions || '(no encontrado)');
             console.log('  data-product-colors:', colors || '(vacío)');
             console.log('  data-product-colors-names:', colorsNames || '(vacío)');
             console.log('  data-product-sizes:', sizes || '(vacío)');
             console.log('  data-product-sizes-names:', sizesNames || '(vacío)');
             console.log('  data-product-price:', price || '(vacío)');
             console.log('  DEBUG - color_option_index:', debugColorIndex || '(no encontrado)');
-            console.log('  DEBUG - size_option_index:', debugSizeIndex || '(no encontrado)');
             console.log('  DEBUG - tiene metafield talla:', debugHasTalla || '(no encontrado)');
-            
-            // Debug específico para tallas
-            if (!sizes || sizes.trim() === '') {
-              console.warn('  ⚠️ PROBLEMA: Este producto NO tiene tallas extraídas');
-              console.warn('     Opciones del producto:', debugOptions);
-              console.warn('     Valores de variante:', debugVariantOptions);
-              console.warn('     size_option_index:', debugSizeIndex);
-              if (debugSizeIndex === '-1' || debugSizeIndex === null || debugSizeIndex === '') {
-                console.warn('     → No se encontró una opción llamada "Size", "Talla" o "Tamaño"');
-                console.warn('     → Intentando usar la opción que NO es color como fallback');
-              }
-            }
-            
             console.log('  HTML (primeros 500 chars):', outerHTML);
             
             // Verificar si el elemento tiene los atributos en el HTML
             if (!colors && !sizes) {
               console.warn('  ⚠️ Este producto NO tiene data-attributes de color ni talla');
               if (debugColorIndex === '-1' || debugColorIndex === null || debugColorIndex === '') {
-                console.warn('    → Razón Color: No se encontró opción "Color" en las variantes (index: ' + debugColorIndex + ')');
+                console.warn('    → Razón: No se encontró opción "Color" en las variantes (index: ' + debugColorIndex + ')');
               }
-              if ((debugSizeIndex === '-1' || debugSizeIndex === null || debugSizeIndex === '') && (debugHasTalla === 'no' || debugHasTalla === null || debugHasTalla === '')) {
-                console.warn('    → Razón Talla: No se encontró opción "Size/Talla" en las variantes (index: ' + debugSizeIndex + ') y no tiene metafield custom.talla_estandar');
-              } else if (debugSizeIndex === '-1' || debugSizeIndex === null || debugSizeIndex === '') {
-                console.warn('    → Razón Talla: No se encontró opción "Size/Talla" en las variantes (index: ' + debugSizeIndex + ')');
+              if (debugHasTalla === 'no' || debugHasTalla === null || debugHasTalla === '') {
+                console.warn('    → Razón: No tiene metafield custom.talla_estandar');
               }
             } else {
               console.log('  ✅ Este producto SÍ tiene data-attributes');
@@ -312,63 +270,6 @@
       setTimeout(function() {
         console.log('Poblando dropdowns inicialmente...');
         updateFilterDropdowns();
-        
-        // Mostrar resumen de diagnóstico
-        const allWrappers = document.querySelectorAll('.product-item-wrapper');
-        let productsWithColors = 0;
-        let productsWithSizes = 0;
-        let productsWithPrice = 0;
-        
-        allWrappers.forEach(function(wrapper) {
-          if (wrapper.getAttribute('data-product-colors') && wrapper.getAttribute('data-product-colors').trim() !== '') {
-            productsWithColors++;
-          }
-          if (wrapper.getAttribute('data-product-sizes') && wrapper.getAttribute('data-product-sizes').trim() !== '') {
-            productsWithSizes++;
-          }
-          if (wrapper.getAttribute('data-product-price') && wrapper.getAttribute('data-product-price').trim() !== '') {
-            productsWithPrice++;
-          }
-        });
-        
-        console.log('=== RESUMEN DE DIAGNÓSTICO ===');
-        console.log('Total de productos:', allWrappers.length);
-        console.log('Productos con colores:', productsWithColors, '/', allWrappers.length);
-        console.log('Productos con tallas:', productsWithSizes, '/', allWrappers.length);
-        console.log('Productos con precio:', productsWithPrice, '/', allWrappers.length);
-        
-        if (productsWithColors === 0) {
-          console.error('❌ PROBLEMA: Ningún producto tiene datos de color');
-          console.error('   → Verifica que los productos tengan una opción de variante llamada "Color" o "Colour"');
-        }
-        if (productsWithSizes === 0) {
-          console.error('❌ PROBLEMA: Ningún producto tiene datos de talla');
-          console.error('   → Verifica que los productos tengan:');
-          console.error('      1. Una opción de variante llamada "Size", "Talla" o "Tamaño"');
-          console.error('      2. O el metafield custom.talla_estandar configurado');
-        }
-        if (productsWithPrice === 0) {
-          console.error('❌ PROBLEMA: Ningún producto tiene datos de precio');
-          console.error('   → Verifica que los productos tengan precio configurado');
-        } else {
-          // Mostrar rango de precios encontrados
-          let minPrice = Infinity;
-          let maxPrice = -Infinity;
-          allWrappers.forEach(function(wrapper) {
-            const priceAttr = wrapper.getAttribute('data-product-price');
-            if (priceAttr && priceAttr.trim() !== '') {
-              const price = parseFloat(priceAttr.toString().trim().replace(/[^\d.]/g, ''));
-              if (!isNaN(price)) {
-                if (price < minPrice) minPrice = price;
-                if (price > maxPrice) maxPrice = price;
-              }
-            }
-          });
-          if (minPrice !== Infinity && maxPrice !== -Infinity) {
-            console.log('💰 Rango de precios encontrado:', minPrice, '-', maxPrice);
-            console.log('   Filtros disponibles: 0-50, 50-150, 150+');
-          }
-        }
       }, 200);
       
       // Restaurar valores desde URL si existen
@@ -556,14 +457,6 @@
       
       console.log('Colores encontrados:', Object.keys(allColorsMap).length, allColorsMap);
       
-      if (Object.keys(allColorsMap).length === 0) {
-        console.warn('⚠️ No se encontraron colores en los productos');
-        console.warn('   Posibles causas:');
-        console.warn('   1. Los productos no tienen una opción de variante llamada "Color" o "Colour"');
-        console.warn('   2. Las variantes no tienen valores en la opción de color');
-        console.warn('   3. Los productos no tienen variantes');
-      }
-      
       // Para talla: recopilar solo de productos que pasaron el filtro de color (si hay)
       productsToConsider.forEach(function(wrapper) {
         const productSizes = wrapper.getAttribute('data-product-sizes');
@@ -585,15 +478,6 @@
       });
       
       console.log('Tallas encontradas:', Object.keys(allSizesMap).length, allSizesMap);
-      
-      if (Object.keys(allSizesMap).length === 0) {
-        console.warn('⚠️ No se encontraron tallas en los productos');
-        console.warn('   Posibles causas:');
-        console.warn('   1. Los productos no tienen una opción de variante llamada "Size", "Talla" o "Tamaño"');
-        console.warn('   2. Los productos no tienen el metafield custom.talla_estandar configurado');
-        console.warn('   3. Las variantes no tienen valores en la opción de talla');
-        console.warn('   4. Los productos no tienen variantes');
-      }
       
       // Actualizar dropdown de color (siempre muestra todos los colores disponibles)
       if (colorFilter) {
@@ -733,8 +617,8 @@
           const productPriceAttr = wrapper.getAttribute('data-product-price');
           
           // Debug: verificar que el atributo existe
-          if (!productPriceAttr || productPriceAttr.trim() === '') {
-            console.warn('⚠️ Producto sin data-product-price:', wrapper);
+          if (!productPriceAttr) {
+            console.warn('Producto sin data-product-price:', wrapper);
             showProduct = false;
           } else {
             // Limpiar el valor de posibles caracteres no numéricos y convertir a número
@@ -747,29 +631,18 @@
             
             // Verificar que el precio sea un número válido
             if (isNaN(productPrice) || productPrice < 0) {
-              console.warn('❌ Precio inválido para producto:', productPriceAttr, '->', productPrice);
-              console.warn('   Valor original:', productPriceAttr);
-              console.warn('   Valor procesado:', priceStr);
+              console.warn('Precio inválido para producto:', productPriceAttr, '->', productPrice);
               showProduct = false;
             } else {
               let priceMatch = false;
               const priceValue = productPrice;
               
-              // Aplicar filtro según rango seleccionado
               if (selectedPrice === '0-50') {
                 priceMatch = priceValue >= 0 && priceValue < 50;
               } else if (selectedPrice === '50-150') {
                 priceMatch = priceValue >= 50 && priceValue <= 150;
               } else if (selectedPrice === '150+') {
                 priceMatch = priceValue >= 150;
-              } else {
-                console.warn('⚠️ Rango de precio desconocido:', selectedPrice);
-                priceMatch = false;
-              }
-              
-              // Debug solo si hay problema
-              if (!priceMatch && visibleCount < 5) {
-                console.log('🔍 Filtro precio - Producto ID:', productId, '| Precio:', priceValue, '| Rango:', selectedPrice, '| No coincide');
               }
               
               if (!priceMatch) {

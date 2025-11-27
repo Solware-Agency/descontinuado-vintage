@@ -1,4 +1,8 @@
 <div style="overflow: hidden" class=" engoj-collection-sidebar engoc_sw_filter_tag">
+  {% comment %} Filtros nativos de Shopify (Search & Discovery) {% endcomment %}
+  {% include 'collection-filters-native' %}
+  
+  {% comment %} Filtros personalizados del tema (opcional, se pueden mantener o eliminar) {% endcomment %}
   {% for i in (1..7) %}
   {% capture collection_widget %}collection_widget_{{i}}{% endcapture %}
   {% if settings[collection_widget] != blank %}

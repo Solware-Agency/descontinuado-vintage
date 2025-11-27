@@ -1,0 +1,366 @@
+{% comment %}
+  Filtros nativos de Shopify (Search & Discovery)
+  Compatible con temas Legacy 1.0
+  Usa collection.filters para renderizar filtros configurados en el admin
+{% endcomment %}
+
+{% if collection.filters.size > 0 %}
+<div class="collection-filters-native">
+  <form class="collection-filters-form" action="{{ collection.url }}" method="get">
+    
+    {% comment %} Mantener parámetros de ordenamiento {% endcomment %}
+    {% if collection.sort_by != blank %}
+      <input type="hidden" name="sort_by" value="{{ collection.sort_by }}">
+    {% endif %}
+    
+    {% comment %} Renderizar cada filtro disponible {% endcomment %}
+    {% for filter in collection.filters %}
+      <div class="filter-group filter-{{ filter.type }}" data-filter-type="{{ filter.type }}">
+        <div class="filter-header">
+          <h3 class="filter-title">{{ filter.label }}</h3>
+          {% if filter.active_values.size > 0 %}
+            <a href="{{ filter.url_to_remove }}" class="filter-clear" title="Limpiar {{ filter.label }}">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12">
+                <path fill="currentColor" d="M11 1L1 11M1 1l10 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </a>
+          {% endif %}
+        </div>
+        
+        <div class="filter-content">
+          {% case filter.type %}
+            {% when 'list' %}
+              {% comment %} Filtro tipo lista (Color, Talla, Marca, etc.) {% endcomment %}
+              <ul class="filter-list">
+                {% for filter_value in filter.values %}
+                  <li class="filter-item">
+                    <label class="filter-checkbox">
+                      <input 
+                        type="checkbox" 
+                        name="{{ filter_value.param_name }}" 
+                        value="{{ filter_value.value }}"
+                        {% if filter_value.active %}checked{% endif %}
+                        {% if filter_value.count == 0 and filter_value.active == false %}disabled{% endif %}
+                        onchange="this.form.submit()"
+                      >
+                      <span class="filter-label-text">
+                        {{ filter_value.label }}
+                        {% if filter_value.count > 0 %}
+                          <span class="filter-count">({{ filter_value.count }})</span>
+                        {% else %}
+                          <span class="filter-count filter-count-zero">(0)</span>
+                        {% endif %}
+                      </span>
+                    </label>
+                  </li>
+                {% endfor %}
+              </ul>
+              
+            {% when 'price_range' %}
+              {% comment %} Filtro de rango de precio {% endcomment %}
+              <div class="filter-price-range">
+                <div class="price-inputs">
+                  <div class="price-input-group">
+                    <label for="filter-{{ filter.min_value.param_name }}">Desde</label>
+                    <input 
+                      type="number" 
+                      id="filter-{{ filter.min_value.param_name }}"
+                      name="{{ filter.min_value.param_name }}" 
+                      value="{{ filter.min_value.value | divided_by: 100 }}"
+                      placeholder="{{ filter.range_min | divided_by: 100 }}"
+                      min="{{ filter.range_min | divided_by: 100 }}"
+                      max="{{ filter.range_max | divided_by: 100 }}"
+                      step="1"
+                    >
+                  </div>
+                  <div class="price-input-group">
+                    <label for="filter-{{ filter.max_value.param_name }}">Hasta</label>
+                    <input 
+                      type="number" 
+                      id="filter-{{ filter.max_value.param_name }}"
+                      name="{{ filter.max_value.param_name }}" 
+                      value="{{ filter.max_value.value | divided_by: 100 }}"
+                      placeholder="{{ filter.range_max | divided_by: 100 }}"
+                      min="{{ filter.range_min | divided_by: 100 }}"
+                      max="{{ filter.range_max | divided_by: 100 }}"
+                      step="1"
+                    >
+                  </div>
+                </div>
+                <button type="submit" class="filter-price-submit">Aplicar</button>
+              </div>
+              
+            {% when 'boolean' %}
+              {% comment %} Filtro booleano (Disponibilidad, etc.) {% endcomment %}
+              <div class="filter-boolean">
+                {% for filter_value in filter.values %}
+                  <label class="filter-checkbox">
+                    <input 
+                      type="checkbox" 
+                      name="{{ filter_value.param_name }}" 
+                      value="{{ filter_value.value }}"
+                      {% if filter_value.active %}checked{% endif %}
+                      onchange="this.form.submit()"
+                    >
+                    <span class="filter-label-text">{{ filter_value.label }}</span>
+                  </label>
+                {% endfor %}
+              </div>
+          {% endcase %}
+        </div>
+      </div>
+    {% endfor %}
+    
+    {% comment %} Botón para limpiar todos los filtros {% endcomment %}
+    {% assign active_filters_count = 0 %}
+    {% for filter in collection.filters %}
+      {% assign active_filters_count = active_filters_count | plus: filter.active_values.size %}
+    {% endfor %}
+    
+    {% if active_filters_count > 0 %}
+      <div class="filter-actions">
+        <a href="{{ collection.url }}" class="filter-clear-all">
+          Limpiar todos los filtros ({{ active_filters_count }})
+        </a>
+      </div>
+    {% endif %}
+    
+  </form>
+</div>
+
+<style>
+  .collection-filters-native {
+    margin-bottom: 30px;
+  }
+  
+  .collection-filters-form {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+  }
+  
+  .filter-group {
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 20px;
+  }
+  
+  .filter-group:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+  
+  .filter-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+  
+  .filter-title {
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #000;
+    margin: 0;
+  }
+  
+  .filter-clear {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    color: #666;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+  
+  .filter-clear:hover {
+    color: #000;
+  }
+  
+  .filter-clear svg {
+    width: 12px;
+    height: 12px;
+  }
+  
+  .filter-content {
+    margin-top: 10px;
+  }
+  
+  /* Estilos para filtros tipo lista */
+  .filter-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+  
+  .filter-item {
+    margin-bottom: 8px;
+  }
+  
+  .filter-item:last-child {
+    margin-bottom: 0;
+  }
+  
+  .filter-checkbox {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 14px;
+    color: #333;
+    user-select: none;
+  }
+  
+  .filter-checkbox input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    margin-right: 10px;
+    cursor: pointer;
+    accent-color: #000;
+  }
+  
+  .filter-checkbox input[type="checkbox"]:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  .filter-label-text {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .filter-count {
+    font-size: 12px;
+    color: #999;
+    margin-left: 8px;
+  }
+  
+  .filter-count-zero {
+    color: #ccc;
+  }
+  
+  /* Estilos para filtro de precio */
+  .filter-price-range {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .price-inputs {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .price-input-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .price-input-group label {
+    font-size: 12px;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .price-input-group input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+    color: #000;
+  }
+  
+  .price-input-group input:focus {
+    outline: none;
+    border-color: #000;
+  }
+  
+  .filter-price-submit {
+    padding: 10px 20px;
+    background: #000;
+    color: #fff;
+    border: none;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .filter-price-submit:hover {
+    background: #333;
+  }
+  
+  /* Estilos para filtro booleano */
+  .filter-boolean {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  /* Botón limpiar todos */
+  .filter-actions {
+    margin-top: 10px;
+    padding-top: 20px;
+    border-top: 1px solid #e0e0e0;
+  }
+  
+  .filter-clear-all {
+    display: inline-block;
+    padding: 10px 15px;
+    background: #f5f5f5;
+    color: #000;
+    text-decoration: none;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: background 0.3s ease;
+  }
+  
+  .filter-clear-all:hover {
+    background: #e0e0e0;
+  }
+  
+  /* Scrollbar personalizado para listas largas */
+  .filter-list::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .filter-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+  
+  .filter-list::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 3px;
+  }
+  
+  .filter-list::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+  
+  /* Responsive */
+  @media (max-width: 991px) {
+    .price-inputs {
+      flex-direction: column;
+    }
+  }
+</style>
+{% else %}
+  {% comment %} Si no hay filtros configurados, mostrar mensaje opcional {% endcomment %}
+  <div class="collection-filters-native-empty">
+    <p style="font-size: 13px; color: #999; margin: 0;">
+      No hay filtros disponibles. Configura los filtros en el panel de administración de Shopify.
+    </p>
+  </div>
+{% endif %}
+
