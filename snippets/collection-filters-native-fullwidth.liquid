@@ -87,8 +87,30 @@
                 {% comment %} Leer parámetros de precio desde la URL (request.params) {% endcomment %}
                 {% assign min_price_param = price_filter.min_value.param_name %}
                 {% assign max_price_param = price_filter.max_value.param_name %}
-                {% assign current_min_cents = request.params[min_price_param] | default: 0 | plus: 0 %}
-                {% assign current_max_cents = request.params[max_price_param] | default: 0 | plus: 0 %}
+                {% assign current_min_raw = request.params[min_price_param] | default: 0 | plus: 0 %}
+                {% assign current_max_raw = request.params[max_price_param] | default: 0 | plus: 0 %}
+                
+                {% comment %} Convertir a dólares si vienen en centavos (valores > 1000 probablemente son centavos) {% endcomment %}
+                {% if current_min_raw > 1000 %}
+                  {% assign current_min = current_min_raw | divided_by: 100 %}
+                {% else %}
+                  {% assign current_min = current_min_raw %}
+                {% endif %}
+                {% if current_max_raw > 1000 %}
+                  {% assign current_max = current_max_raw | divided_by: 100 %}
+                {% else %}
+                  {% assign current_max = current_max_raw %}
+                {% endif %}
+                
+                {% comment %} Determinar qué rango está seleccionado {% endcomment %}
+                {% assign selected_range = '' %}
+                {% if current_min == 0 and current_max == 50 %}
+                  {% assign selected_range = '0-50' %}
+                {% elsif current_min == 50 and current_max == 150 %}
+                  {% assign selected_range = '50-150' %}
+                {% elsif current_min >= 150 and current_max == 0 %}
+                  {% assign selected_range = '150+' %}
+                {% endif %}
                 
                 <select class="filter-dropdown" id="filter-price-native" onchange="applyPriceFilter(this.value, this.form)">
                   <option value="">PRECIO</option>
@@ -97,36 +119,49 @@
                   
                   {% comment %} Rango 0-50 (0 a 50$) {% endcomment %}
                   {% if price_max >= 50 %}
-                    <option value="0-50" {% if current_min_cents == 0 and current_max_cents == 50 %}selected{% endif %}>
+                    <option value="0-50" {% if selected_range == '0-50' %}selected{% endif %}>
                       0 - 50
                     </option>
                   {% endif %}
                   
                   {% comment %} Rango 50-150 (50 a 150$) {% endcomment %}
                   {% if price_max >= 50 %}
-                    <option value="50-150" {% if current_min_cents == 50 and current_max_cents == 150 %}selected{% endif %}>
+                    <option value="50-150" {% if selected_range == '50-150' %}selected{% endif %}>
                       50 - 150
                     </option>
                   {% endif %}
                   
                   {% comment %} Rango 150+ (150+ $, sin máximo) {% endcomment %}
                   {% if price_max > 150 %}
-                    <option value="150+" {% if current_min_cents >= 150 and current_max_cents == 0 %}selected{% endif %}>
+                    <option value="150+" {% if selected_range == '150+' %}selected{% endif %}>
                       150+
                     </option>
                   {% endif %}
                 </select>
                 
-                {% comment %} Inputs ocultos para precio (valores en centavos) {% endcomment %}
-                <input type="hidden" name="{{ price_filter.min_value.param_name }}" id="price-min-input" data-param-name="{{ price_filter.min_value.param_name }}" value="{% if current_min_cents > 0 %}{{ current_min_cents }}{% elsif price_filter.min_value.value %}{{ price_filter.min_value.value }}{% endif %}">
-                <input type="hidden" name="{{ price_filter.max_value.param_name }}" id="price-max-input" data-param-name="{{ price_filter.max_value.param_name }}" value="{% if current_max_cents > 0 %}{{ current_max_cents }}{% elsif price_filter.max_value.value %}{{ price_filter.max_value.value }}{% endif %}">
+                {% comment %} Inputs ocultos para precio (valores en dólares) - solo se envían si hay un rango seleccionado {% endcomment %}
+                <input type="hidden" id="price-min-input" data-param-name="{{ price_filter.min_value.param_name }}" value="{% if current_min > 0 %}{{ current_min }}{% elsif price_filter.min_value.value %}{{ price_filter.min_value.value | divided_by: 100 }}{% endif %}">
+                <input type="hidden" id="price-max-input" data-param-name="{{ price_filter.max_value.param_name }}" value="{% if current_max > 0 %}{{ current_max }}{% elsif price_filter.max_value.value %}{{ price_filter.max_value.value | divided_by: 100 }}{% endif %}">
               </div>
             {% endif %}
             
             {% comment %} Botón Limpiar Filtros {% endcomment %}
             {% assign active_filters_count = 0 %}
+            {% assign price_filter_active = false %}
             {% for filter in collection.filters %}
-              {% assign active_filters_count = active_filters_count | plus: filter.active_values.size %}
+              {% if filter.type == 'price_range' %}
+                {% comment %} Verificar si el filtro de precio está activo {% endcomment %}
+                {% assign min_price_param = filter.min_value.param_name %}
+                {% assign max_price_param = filter.max_value.param_name %}
+                {% assign current_min = request.params[min_price_param] | default: 0 | plus: 0 %}
+                {% assign current_max = request.params[max_price_param] | default: 0 | plus: 0 %}
+                {% if current_min > 0 or current_max > 0 %}
+                  {% assign price_filter_active = true %}
+                  {% assign active_filters_count = active_filters_count | plus: 1 %}
+                {% endif %}
+              {% else %}
+                {% assign active_filters_count = active_filters_count | plus: filter.active_values.size %}
+              {% endif %}
             {% endfor %}
             
             {% if active_filters_count > 0 %}
@@ -265,13 +300,21 @@
     if (range === '' || range === null) {
       const formAction = form.getAttribute('action');
       const url = new URL(formAction, window.location.origin);
+      
+      // Copiar todos los parámetros actuales de la URL
+      const currentUrl = new URL(window.location.href);
+      currentUrl.searchParams.forEach((value, key) => {
+        // Mantener todos los parámetros excepto los de precio
+        if (key !== minInput.getAttribute('data-param-name') && 
+            key !== maxInput.getAttribute('data-param-name')) {
+          url.searchParams.set(key, value);
+        }
+      });
+      
       // Remover parámetros de precio de la URL
       url.searchParams.delete(minInput.getAttribute('data-param-name'));
       url.searchParams.delete(maxInput.getAttribute('data-param-name'));
-      // Mantener otros parámetros (como sort_by)
-      if (form.querySelector('input[name="sort_by"]')) {
-        url.searchParams.set('sort_by', form.querySelector('input[name="sort_by"]').value);
-      }
+      
       window.location.href = url.toString();
       return;
     }
@@ -287,29 +330,141 @@
       maxInput.setAttribute('name', maxParamName);
     }
     
-    // Aplicar rango seleccionado (valores en centavos)
+    // Aplicar rango seleccionado (valores en dólares - Shopify los convertirá internamente si es necesario)
     if (range === '0-50') {
-      minInput.value = '0';
-      maxInput.value = '50'; // 50.00 en centavos
+      minInput.value = '0'; // $0
+      maxInput.value = '50'; // $50
       if (maxParamName && !maxInput.hasAttribute('name')) {
         maxInput.setAttribute('name', maxParamName);
       }
     } else if (range === '50-150') {
-      minInput.value = '50'; // 50.00 en centavos
-      maxInput.value = '150'; // 150.00 en centavos
+      minInput.value = '50'; // $50
+      maxInput.value = '150'; // $150
       if (maxParamName && !maxInput.hasAttribute('name')) {
         maxInput.setAttribute('name', maxParamName);
       }
     } else if (range === '150+') {
-      minInput.value = '150'; // 150.00 en centavos
+      minInput.value = '150'; // $150
       maxInput.value = ''; // Sin máximo
       // Remover el atributo name del max para que no se envíe en la URL
       maxInput.removeAttribute('name');
     }
     
+    // Actualizar el dropdown para que muestre el valor seleccionado antes de enviar
+    const priceSelect = document.getElementById('filter-price-native');
+    if (priceSelect) {
+      priceSelect.value = range;
+    }
+    
     // Enviar formulario
     form.submit();
   }
+  
+  // Restaurar el valor del dropdown después de recargar la página
+  document.addEventListener('DOMContentLoaded', function() {
+    const priceSelect = document.getElementById('filter-price-native');
+    const minInput = document.getElementById('price-min-input');
+    const maxInput = document.getElementById('price-max-input');
+    const form = document.querySelector('.collection-filters-form-horizontal');
+    
+    if (priceSelect && minInput && maxInput && form) {
+      // Función para restaurar el valor del dropdown desde la URL
+      function restorePriceFilterFromURL() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const minParamName = minInput.getAttribute('data-param-name');
+        const maxParamName = maxInput.getAttribute('data-param-name');
+        
+        if (minParamName && maxParamName) {
+          // Leer valores de la URL
+          const urlMin = urlParams.get(minParamName);
+          const urlMax = urlParams.get(maxParamName);
+          
+          if (urlMin || urlMax) {
+            // Convertir a números (pueden venir en centavos o dólares)
+            let currentMin = parseInt(urlMin) || 0;
+            let currentMax = parseInt(urlMax) || 0;
+            
+            // Si los valores son > 1000, probablemente son centavos, convertir a dólares
+            if (currentMin > 1000) {
+              currentMin = currentMin / 100;
+            }
+            if (currentMax > 1000) {
+              currentMax = currentMax / 100;
+            }
+            
+            // Determinar qué rango corresponde
+            let selectedRange = '';
+            if (currentMin === 0 && currentMax === 50) {
+              selectedRange = '0-50';
+            } else if (currentMin === 50 && currentMax === 150) {
+              selectedRange = '50-150';
+            } else if (currentMin >= 150 && currentMax === 0) {
+              selectedRange = '150+';
+            }
+            
+            // Actualizar el dropdown si encontramos un rango válido
+            if (selectedRange && priceSelect.querySelector('option[value="' + selectedRange + '"]')) {
+              priceSelect.value = selectedRange;
+            }
+          }
+        }
+      }
+      
+      // Función para actualizar los inputs de precio según la selección
+      function updatePriceInputs() {
+        const selectedRange = priceSelect.value;
+        const minParamName = minInput.getAttribute('data-param-name');
+        const maxParamName = maxInput.getAttribute('data-param-name');
+        
+        // Leer valores actuales de los inputs (en dólares)
+        const currentMin = parseInt(minInput.value) || 0;
+        const currentMax = parseInt(maxInput.value) || 0;
+        
+        // Si hay valores en los inputs pero no hay rango seleccionado, mantener los atributos name
+        if ((selectedRange === '' || selectedRange === null) && (currentMin > 0 || currentMax > 0)) {
+          // Si hay valores, mantener los atributos name para que se envíen
+          if (minParamName && currentMin > 0) {
+            minInput.setAttribute('name', minParamName);
+          } else {
+            minInput.removeAttribute('name');
+          }
+          
+          if (maxParamName && currentMax > 0) {
+            maxInput.setAttribute('name', maxParamName);
+          } else {
+            maxInput.removeAttribute('name');
+          }
+        } else if (selectedRange === '' || selectedRange === null) {
+          // Si no hay rango seleccionado y no hay valores, remover los atributos name
+          minInput.removeAttribute('name');
+          maxInput.removeAttribute('name');
+        } else {
+          // Si hay rango seleccionado, asegurar que tengan el atributo name
+          if (minParamName) {
+            minInput.setAttribute('name', minParamName);
+          }
+          if (maxParamName && selectedRange !== '150+') {
+            maxInput.setAttribute('name', maxParamName);
+          } else if (selectedRange === '150+') {
+            maxInput.removeAttribute('name');
+          }
+        }
+      }
+      
+      // Primero restaurar el valor del dropdown desde la URL
+      restorePriceFilterFromURL();
+      
+      // Luego actualizar los inputs
+      updatePriceInputs();
+      
+      // Interceptar el envío del formulario para otros filtros (color, size)
+      form.addEventListener('submit', function(e) {
+        // Si el formulario se envía desde otro filtro (no desde applyPriceFilter)
+        // asegurar que los inputs de precio estén correctos
+        updatePriceInputs();
+      });
+    }
+  });
 </script>
 
 {% else %}
