@@ -95,21 +95,21 @@
                   {% assign price_min = price_filter.range_min | divided_by: 100 %}
                   {% assign price_max = price_filter.range_max | divided_by: 100 %}
                   
-                  {% comment %} Rango 0-50 (0 a 5000 centavos) {% endcomment %}
+                  {% comment %} Rango 0-50 (0 a 50$) {% endcomment %}
                   {% if price_max >= 50 %}
                     <option value="0-50" {% if current_min_cents == 0 and current_max_cents == 50 %}selected{% endif %}>
                       0 - 50
                     </option>
                   {% endif %}
                   
-                  {% comment %} Rango 50-150 (5000 a 15000 centavos) {% endcomment %}
+                  {% comment %} Rango 50-150 (50 a 150$) {% endcomment %}
                   {% if price_max >= 50 %}
                     <option value="50-150" {% if current_min_cents == 50 and current_max_cents == 150 %}selected{% endif %}>
                       50 - 150
                     </option>
                   {% endif %}
                   
-                  {% comment %} Rango 150+ (15000+ centavos, sin máximo) {% endcomment %}
+                  {% comment %} Rango 150+ (150+ $, sin máximo) {% endcomment %}
                   {% if price_max > 150 %}
                     <option value="150+" {% if current_min_cents >= 150 and current_max_cents == 0 %}selected{% endif %}>
                       150+
@@ -290,18 +290,18 @@
     // Aplicar rango seleccionado (valores en centavos)
     if (range === '0-50') {
       minInput.value = '0';
-      maxInput.value = '5000'; // 50.00 en centavos
+      maxInput.value = '50'; // 50.00 en centavos
       if (maxParamName && !maxInput.hasAttribute('name')) {
         maxInput.setAttribute('name', maxParamName);
       }
     } else if (range === '50-150') {
-      minInput.value = '5000'; // 50.00 en centavos
-      maxInput.value = '15000'; // 150.00 en centavos
+      minInput.value = '50'; // 50.00 en centavos
+      maxInput.value = '150'; // 150.00 en centavos
       if (maxParamName && !maxInput.hasAttribute('name')) {
         maxInput.setAttribute('name', maxParamName);
       }
     } else if (range === '150+') {
-      minInput.value = '15000'; // 150.00 en centavos
+      minInput.value = '150'; // 150.00 en centavos
       maxInput.value = ''; // Sin máximo
       // Remover el atributo name del max para que no se envíe en la URL
       maxInput.removeAttribute('name');
