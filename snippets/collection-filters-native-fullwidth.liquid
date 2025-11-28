@@ -89,46 +89,45 @@
                   {% assign price_min = price_filter.range_min | divided_by: 100 %}
                   {% assign price_max = price_filter.range_max | divided_by: 100 %}
                   
-                  {% comment %} Detectar rango actual seleccionado {% endcomment %}
-                  {% assign current_min = price_filter.min_value.value | default: 0 | divided_by: 100 %}
-                  {% assign current_max = price_filter.max_value.value | default: price_max | divided_by: 100 %}
-                  {% assign is_0_50 = false %}
-                  {% assign is_50_150 = false %}
-                  {% assign is_150_plus = false %}
+                  {% comment %} Detectar rango actual seleccionado (valores en centavos) {% endcomment %}
+                  {% assign current_min_cents = price_filter.min_value.value | default: 0 | times: 1 %}
+                  {% assign current_max_cents = price_filter.max_value.value | default: '' | times: 1 %}
+                  {% assign selected_range = '' %}
                   
-                  {% if current_min == 0 and current_max <= 50 %}
-                    {% assign is_0_50 = true %}
-                  {% elsif current_min >= 50 and current_max <= 150 %}
-                    {% assign is_50_150 = true %}
-                  {% elsif current_min >= 150 %}
-                    {% assign is_150_plus = true %}
+                  {% comment %} Verificar si hay un rango activo {% endcomment %}
+                  {% if current_min_cents == 0 and current_max_cents == 5000 %}
+                    {% assign selected_range = '0-50' %}
+                  {% elsif current_min_cents == 5000 and current_max_cents == 15000 %}
+                    {% assign selected_range = '50-150' %}
+                  {% elsif current_min_cents >= 15000 and current_max_cents == blank or current_max_cents == '' %}
+                    {% assign selected_range = '150+' %}
                   {% endif %}
                   
                   {% comment %} Rango 0-50 {% endcomment %}
                   {% if price_max >= 50 %}
-                    <option value="0-50" {% if is_0_50 %}selected{% endif %}>
+                    <option value="0-50" {% if selected_range == '0-50' %}selected{% endif %}>
                       0 - 50
                     </option>
                   {% endif %}
                   
                   {% comment %} Rango 50-150 {% endcomment %}
                   {% if price_max >= 50 %}
-                    <option value="50-150" {% if is_50_150 %}selected{% endif %}>
+                    <option value="50-150" {% if selected_range == '50-150' %}selected{% endif %}>
                       50 - 150
                     </option>
                   {% endif %}
                   
                   {% comment %} Rango 150+ {% endcomment %}
                   {% if price_max > 150 %}
-                    <option value="150+" {% if is_150_plus %}selected{% endif %}>
+                    <option value="150+" {% if selected_range == '150+' %}selected{% endif %}>
                       150+
                     </option>
                   {% endif %}
                 </select>
                 
                 {% comment %} Inputs ocultos para precio (valores en centavos) {% endcomment %}
-                <input type="hidden" name="{{ price_filter.min_value.param_name }}" id="price-min-input" value="{{ price_filter.min_value.value }}">
-                <input type="hidden" name="{{ price_filter.max_value.param_name }}" id="price-max-input" value="{{ price_filter.max_value.value }}">
+                <input type="hidden" name="{{ price_filter.min_value.param_name }}" id="price-min-input" data-param-name="{{ price_filter.min_value.param_name }}" value="{% if price_filter.min_value.value %}{{ price_filter.min_value.value }}{% endif %}">
+                <input type="hidden" name="{{ price_filter.max_value.param_name }}" id="price-max-input" data-param-name="{{ price_filter.max_value.param_name }}" value="{% if price_filter.max_value.value %}{{ price_filter.max_value.value }}{% endif %}">
               </div>
             {% endif %}
             
@@ -266,28 +265,57 @@
     const minInput = document.getElementById('price-min-input');
     const maxInput = document.getElementById('price-max-input');
     
-    if (!minInput || !maxInput) return;
-    
-    // Limpiar filtro de precio
-    if (range === '') {
-      minInput.value = '';
-      maxInput.value = '';
-      form.submit();
+    if (!minInput || !maxInput || !form) {
       return;
+    }
+    
+    // Limpiar filtro de precio - redirigir a URL sin parámetros de precio
+    if (range === '' || range === null) {
+      const formAction = form.getAttribute('action');
+      const url = new URL(formAction, window.location.origin);
+      // Remover parámetros de precio de la URL
+      url.searchParams.delete(minInput.getAttribute('data-param-name'));
+      url.searchParams.delete(maxInput.getAttribute('data-param-name'));
+      // Mantener otros parámetros (como sort_by)
+      if (form.querySelector('input[name="sort_by"]')) {
+        url.searchParams.set('sort_by', form.querySelector('input[name="sort_by"]').value);
+      }
+      window.location.href = url.toString();
+      return;
+    }
+    
+    // Asegurar que los inputs tengan el atributo name
+    const minParamName = minInput.getAttribute('data-param-name');
+    const maxParamName = maxInput.getAttribute('data-param-name');
+    
+    if (minParamName && !minInput.hasAttribute('name')) {
+      minInput.setAttribute('name', minParamName);
+    }
+    if (maxParamName && !maxInput.hasAttribute('name')) {
+      maxInput.setAttribute('name', maxParamName);
     }
     
     // Aplicar rango seleccionado (valores en centavos)
     if (range === '0-50') {
       minInput.value = '0';
       maxInput.value = '5000'; // 50.00 en centavos
+      if (maxParamName && !maxInput.hasAttribute('name')) {
+        maxInput.setAttribute('name', maxParamName);
+      }
     } else if (range === '50-150') {
       minInput.value = '5000'; // 50.00 en centavos
       maxInput.value = '15000'; // 150.00 en centavos
+      if (maxParamName && !maxInput.hasAttribute('name')) {
+        maxInput.setAttribute('name', maxParamName);
+      }
     } else if (range === '150+') {
       minInput.value = '15000'; // 150.00 en centavos
       maxInput.value = ''; // Sin máximo
+      // Remover el atributo name del max para que no se envíe en la URL
+      maxInput.removeAttribute('name');
     }
     
+    // Enviar formulario
     form.submit();
   }
 </script>
