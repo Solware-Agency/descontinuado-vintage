@@ -97,21 +97,21 @@
                   
                   {% comment %} Rango 0-50 (0 a 5000 centavos) {% endcomment %}
                   {% if price_max >= 50 %}
-                    <option value="0-50" {% if current_min_cents == 0 and current_max_cents == 5000 %}selected{% endif %}>
+                    <option value="0-50" {% if current_min_cents == 0 and current_max_cents == 50 %}selected{% endif %}>
                       0 - 50
                     </option>
                   {% endif %}
                   
                   {% comment %} Rango 50-150 (5000 a 15000 centavos) {% endcomment %}
                   {% if price_max >= 50 %}
-                    <option value="50-150" {% if current_min_cents == 5000 and current_max_cents == 15000 %}selected{% endif %}>
+                    <option value="50-150" {% if current_min_cents == 50 and current_max_cents == 150 %}selected{% endif %}>
                       50 - 150
                     </option>
                   {% endif %}
                   
                   {% comment %} Rango 150+ (15000+ centavos, sin máximo) {% endcomment %}
                   {% if price_max > 150 %}
-                    <option value="150+" {% if current_min_cents >= 15000 and current_max_cents == 0 %}selected{% endif %}>
+                    <option value="150+" {% if current_min_cents >= 150 and current_max_cents == 0 %}selected{% endif %}>
                       150+
                     </option>
                   {% endif %}
