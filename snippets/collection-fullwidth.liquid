@@ -11,8 +11,9 @@
   <div class="content-page">
     <div class="container container-v1">
       
-      {% comment %} Nuevo sistema de filtros simplificados {% endcomment %}
-      {% include 'collection-filters-simple' %}
+      {% comment %} Filtros nativos de Shopify (Search & Discovery) {% endcomment %}
+      {% comment %} Debug temporal: Filtros disponibles: {{ collection.filters.size }} {% endcomment %}
+      {% include 'collection-filters-native-fullwidth' %}
       
       {% comment %} Grid de productos: 4 columnas desktop, 2 tablet, 1-2 móvil {% endcomment %}
       <div class="row">

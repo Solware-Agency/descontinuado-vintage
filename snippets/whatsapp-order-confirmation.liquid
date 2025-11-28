@@ -1,9 +1,10 @@
 {% comment %}
-  WhatsApp Order Confirmation Block
-  Se inserta dinámicamente en la Order Status Page después del resumen del pedido
+  WhatsApp Order Confirmation - Solución para Plan Básico
+  Muestra popup en la primera página del tema después de completar checkout
+  Solo se muestra UNA VEZ por pedido
 {% endcomment %}
 
-<!-- WhatsApp Confirmation Modal - Solo se muestra en página de agradecimiento -->
+<!-- WhatsApp Confirmation Modal -->
 <div id="whatsapp-confirmation-overlay"></div>
 
 <style>
@@ -530,7 +531,7 @@
   }
 
   // Función para insertar el bloque de WhatsApp
-  function insertWhatsAppBlock() {
+  function insertWhatsAppBlock(message) {
     console.log('[WhatsApp] insertWhatsAppBlock llamado');
     
     // Verificar si el modal ya existe y está visible
@@ -540,38 +541,26 @@
       return;
     }
 
-    // Intentar obtener datos del pedido desde diferentes fuentes
-    console.log('[WhatsApp] Verificando fuentes de datos...');
-    console.log('[WhatsApp] window.Shopify existe:', typeof window.Shopify !== 'undefined');
-    
-    var checkout = getOrderData();
-    var message = '';
-    
-    if (checkout) {
-      console.log('[WhatsApp] Datos del pedido obtenidos, construyendo mensaje...');
-      message = buildWhatsAppMessage(checkout);
-    }
-    
-    // Si no hay mensaje, crear uno genérico
+    // Si no se proporciona mensaje, intentar obtenerlo
     if (!message) {
-      console.log('[WhatsApp] No se pudieron obtener datos completos, creando mensaje genérico...');
-      message = '¡Hola! 👋 Acabo de finalizar una compra en tu tienda.\n\n';
-      message += 'Me gustaría confirmar los detalles del pedido y coordinar el envío.\n\n';
-      message += 'Por favor, comparte conmigo la información del pedido.';
+      console.log('[WhatsApp] No se proporcionó mensaje, intentando obtener datos...');
+      var checkout = getOrderData();
+      
+      if (checkout) {
+        console.log('[WhatsApp] Datos del pedido obtenidos, construyendo mensaje...');
+        message = buildWhatsAppMessage(checkout);
+      }
+      
+      // Si no hay mensaje, crear uno genérico
+      if (!message) {
+        console.log('[WhatsApp] No se pudieron obtener datos completos, creando mensaje genérico...');
+        message = '¡Hola! 👋 Acabo de finalizar una compra en tu tienda.\n\n';
+        message += 'Me gustaría confirmar los detalles del pedido y coordinar el envío.\n\n';
+        message += 'Por favor, comparte conmigo la información del pedido.';
+      }
     }
     
     console.log('[WhatsApp] Mensaje construido exitosamente, longitud:', message.length);
-
-    // Codificar el mensaje para URL
-    var encodedMessage = encodeURIComponent(message);
-    var whatsappUrl = 'https://wa.me/584122150171?text=' + encodedMessage;
-
-    // Función para escapar HTML
-    function escapeHtml(text) {
-      var div = document.createElement('div');
-      div.textContent = text;
-      return div.innerHTML;
-    }
 
     // Codificar el mensaje para URL
     var encodedMessage = encodeURIComponent(message);
@@ -697,90 +686,204 @@
   }
 
   // Función para verificar si estamos en la página de Agradecimiento (Thank You)
-  // DETECCIÓN ESTRICTA - Solo URLs específicas de Shopify
   function isThankYouPage() {
     var path = window.location.pathname.toLowerCase();
     var href = window.location.href.toLowerCase();
     var search = window.location.search.toLowerCase();
     
-    // Verificación ESTRICTA solo por URL - NO por texto del body
-    // Patrones específicos de Shopify Order Status Page
     var isThankYou = 
-      // URLs exactas de Shopify
       path.includes('/thank_you') || 
       path.includes('/thank-you') ||
-      // Checkouts de Shopify con parámetros específicos
       (path.includes('/checkouts/') && (search.includes('thank_you') || search.includes('order_status'))) ||
-      // URLs con order_status
       href.includes('order_status') ||
       href.includes('order-status') ||
-      // Verificar elementos específicos de Shopify Order Status Page
       (document.querySelector('[data-order-status]') && 
        (path.includes('/checkouts/') || path.includes('/thank')));
     
-    console.log('[WhatsApp] Verificando página de Agradecimiento - Path:', path, 'Href:', href, 'Is Thank You Page:', isThankYou);
+    console.log('[WhatsApp] Verificando página de Agradecimiento - Path:', path, 'Is Thank You Page:', isThankYou);
     return isThankYou;
   }
 
-  // Esperar a que el DOM esté listo y Shopify.checkout esté disponible
+  // Obtener número de pedido desde diferentes fuentes
+  function getOrderNumber() {
+    // Método 1: Shopify.checkout.order
+    if (window.Shopify && window.Shopify.checkout && window.Shopify.checkout.order) {
+      var order = window.Shopify.checkout.order;
+      return order.order_number || order.name || null;
+    }
+    
+    // Método 2: URL parameters
+    var urlParams = new URLSearchParams(window.location.search);
+    var orderId = urlParams.get('order') || urlParams.get('order_id');
+    if (orderId) return orderId;
+    
+    // Método 3: Extraer del DOM
+    var domData = extractOrderDataFromDOM();
+    if (domData && domData.order_number) {
+      return domData.order_number;
+    }
+    
+    return null;
+  }
+
+  // Guardar pedido completado en localStorage
+  function saveCompletedOrder(orderNumber) {
+    if (!orderNumber) {
+      console.log('[WhatsApp] No se pudo obtener número de pedido');
+      return false;
+    }
+    
+    try {
+      var orderData = {
+        orderNumber: orderNumber,
+        timestamp: Date.now(),
+        shown: false
+      };
+      
+      localStorage.setItem('shopify_last_completed_order', JSON.stringify(orderData));
+      console.log('[WhatsApp] ✅ Pedido guardado:', orderNumber);
+      return true;
+    } catch(e) {
+      console.error('[WhatsApp] Error guardando pedido:', e);
+      return false;
+    }
+  }
+
+  // Verificar si hay un pedido reciente que no se haya mostrado
+  function getPendingOrder() {
+    try {
+      var stored = localStorage.getItem('shopify_last_completed_order');
+      if (!stored) {
+        return null;
+      }
+      
+      var orderData = JSON.parse(stored);
+      
+      // Verificar que el pedido sea reciente (últimas 2 horas)
+      var twoHoursAgo = Date.now() - (2 * 60 * 60 * 1000);
+      if (orderData.timestamp < twoHoursAgo) {
+        console.log('[WhatsApp] Pedido muy antiguo, eliminando');
+        localStorage.removeItem('shopify_last_completed_order');
+        return null;
+      }
+      
+      // Si ya se mostró, no retornar
+      if (orderData.shown === true) {
+        console.log('[WhatsApp] Pedido ya se mostró:', orderData.orderNumber);
+        return null;
+      }
+      
+      return orderData;
+    } catch(e) {
+      console.error('[WhatsApp] Error leyendo pedido:', e);
+      return null;
+    }
+  }
+
+  // Marcar pedido como mostrado
+  function markOrderAsShown(orderNumber) {
+    try {
+      var stored = localStorage.getItem('shopify_last_completed_order');
+      if (stored) {
+        var orderData = JSON.parse(stored);
+        if (orderData.orderNumber === orderNumber) {
+          orderData.shown = true;
+          localStorage.setItem('shopify_last_completed_order', JSON.stringify(orderData));
+          console.log('[WhatsApp] ✅ Pedido marcado como mostrado:', orderNumber);
+        }
+      }
+    } catch(e) {
+      console.error('[WhatsApp] Error marcando pedido:', e);
+    }
+  }
+
+  // Construir mensaje genérico cuando no tenemos datos completos
+  function buildGenericMessage(orderNumber) {
+    var msg = '¡Hola! 👋 Acabo de finalizar una compra en tu tienda.\n\n';
+    msg += '* Número de Pedido: ' + (orderNumber || 'N/A') + '\n';
+    msg += '* Cliente: [Mi nombre]\n';
+    msg += '* Total Pagado: [Total del pedido]\n\n';
+    msg += 'Me gustaría confirmar los detalles del pedido y coordinar el envío.\n\n';
+    msg += 'Por favor, comparte conmigo la información completa del pedido.';
+    
+    return msg;
+  }
+
+  // Función principal de inicialización
   function initWhatsAppConfirmation() {
     console.log('[WhatsApp] Inicializando...');
-    console.log('[WhatsApp] window.Shopify existe:', typeof window.Shopify !== 'undefined');
-    console.log('[WhatsApp] window.Shopify.checkout existe:', typeof window.Shopify !== 'undefined' && !!window.Shopify.checkout);
     
-    if (typeof window.Shopify !== 'undefined' && window.Shopify.checkout) {
-      console.log('[WhatsApp] Shopify.checkout:', window.Shopify.checkout);
-      console.log('[WhatsApp] Shopify.checkout.order:', window.Shopify.checkout.order);
-    }
-
-    // Verificar si estamos en la página de Agradecimiento
     var isThankYou = isThankYouPage();
     
-    // Si no estamos en la página de Agradecimiento, no hacer nada
-    if (!isThankYou) {
-      console.log('[WhatsApp] No es página de Agradecimiento, saliendo');
+    // CASO 1: Estamos en Order Status Page
+    if (isThankYou) {
+      console.log('[WhatsApp] ✅ Estamos en la página de Agradecimiento!');
+      
+      // Intentar obtener número de pedido y guardarlo
+      function trySaveOrder() {
+        var orderNumber = getOrderNumber();
+        if (orderNumber) {
+          saveCompletedOrder(orderNumber);
+        } else {
+          // Reintentar después de un delay
+          setTimeout(trySaveOrder, 1000);
+        }
+      }
+      
+      // Intentar guardar el pedido
+      trySaveOrder();
+      
+      // También intentar con interval por si tarda más
+      var attempts = 0;
+      var maxAttempts = 10;
+      var interval = setInterval(function() {
+        attempts++;
+        var orderNumber = getOrderNumber();
+        if (orderNumber) {
+          saveCompletedOrder(orderNumber);
+          clearInterval(interval);
+        } else if (attempts >= maxAttempts) {
+          clearInterval(interval);
+          console.log('[WhatsApp] No se pudo obtener número de pedido después de varios intentos');
+        }
+      }, 500);
+      
+      // No mostrar popup aquí, solo guardar el pedido
       return;
     }
-
-    console.log('[WhatsApp] ✅ Estamos en la página de Agradecimiento!');
-
-    console.log('[WhatsApp] Continuando con la inicialización...');
-
-    // No necesitamos insertar nada en el DOM todavía, solo preparar
-    console.log('[WhatsApp] Preparando modal para mostrar después de 3 segundos...');
-
-    // Verificar si ya se mostró el modal en esta sesión
-    var modalShownKey = 'whatsapp_modal_shown';
-    var wasShownInThankYouPage = sessionStorage.getItem('whatsapp_modal_thankyou_shown') === 'true';
     
-    // Función para mostrar el modal (se ejecuta después de 3 segundos)
+    // CASO 2: Estamos en cualquier página del tema
+    // Verificar si hay un pedido pendiente de mostrar
+    var pendingOrder = getPendingOrder();
+    
+    if (!pendingOrder) {
+      console.log('[WhatsApp] No hay pedidos pendientes de mostrar');
+      return;
+    }
+    
+    console.log('[WhatsApp] ✅ Pedido pendiente encontrado:', pendingOrder.orderNumber);
+    
+    // Función para mostrar el modal
     function showModalAfterDelay() {
-      console.log('[WhatsApp] ⏰ Verificando si mostrar modal...');
-      
-      // Verificar si ya se mostró en esta sesión (después de salir de página de agradecimiento)
-      var alreadyShown = sessionStorage.getItem(modalShownKey) === 'true';
-      
-      // Solo mostrar si:
-      // 1. Estamos en página de agradecimiento Y no se ha mostrado todavía
-      // 2. O salimos de página de agradecimiento Y no se ha mostrado todavía (una vez)
-      var isThankYou = isThankYouPage();
-      
-      if (!isThankYou && !wasShownInThankYouPage) {
-        console.log('[WhatsApp] No es página de agradecimiento y no venimos de ahí, cancelando');
-        return;
-      }
-      
-      if (alreadyShown && !isThankYou) {
-        console.log('[WhatsApp] Ya se mostró después de salir de página de agradecimiento, cancelando');
-        return;
-      }
-      
       console.log('[WhatsApp] ⏰ Mostrando modal después de 3 segundos...');
       
-      // Insertar el bloque del modal
-      insertWhatsAppBlock();
+      // Intentar obtener datos completos del pedido
+      var checkout = getOrderData();
+      var message = '';
+      var orderNumber = pendingOrder.orderNumber;
       
-      // Buscar el overlay (ya debería existir en el HTML)
+      if (checkout && checkout.order) {
+        console.log('[WhatsApp] Datos del pedido obtenidos, construyendo mensaje...');
+        message = buildWhatsAppMessage(checkout);
+      } else {
+        console.log('[WhatsApp] No se pudieron obtener datos completos, usando mensaje genérico...');
+        message = buildGenericMessage(orderNumber);
+      }
+      
+      // Insertar el bloque del modal con el mensaje
+      insertWhatsAppBlock(message);
+      
+      // Buscar el overlay
       var overlay = document.getElementById('whatsapp-confirmation-overlay');
       
       if (!overlay) {
@@ -788,7 +891,7 @@
         overlay = document.createElement('div');
         overlay.id = 'whatsapp-confirmation-overlay';
         document.body.appendChild(overlay);
-        insertWhatsAppBlock();
+        insertWhatsAppBlock(message);
       }
       
       // Mostrar el overlay
@@ -796,50 +899,19 @@
         if (overlay) {
           overlay.classList.add('show');
           
-          // Marcar como mostrado
-          if (isThankYou) {
-            sessionStorage.setItem('whatsapp_modal_thankyou_shown', 'true');
-          } else {
-            sessionStorage.setItem(modalShownKey, 'true');
-          }
+          // Marcar pedido como mostrado
+          markOrderAsShown(orderNumber);
           
           console.log('[WhatsApp] ✅ Modal mostrado exitosamente!');
         } else {
           console.error('[WhatsApp] ⚠️ ERROR: No se pudo encontrar el overlay');
         }
-      }, 100);
+      }, 200);
     }
-
-    // Solo ejecutar si estamos en página de agradecimiento O si venimos de ahí
-    if (isThankYou || wasShownInThankYouPage) {
-      console.log('[WhatsApp] ⏱️ Programando modal para aparecer en 3 segundos...');
-      setTimeout(showModalAfterDelay, 3000);
-    } else {
-      console.log('[WhatsApp] No es página de agradecimiento, no se mostrará el modal');
-    }
-
-    // Intentar cada segundo durante 15 segundos por si el objeto se carga más tarde
-    var attempts = 0;
-    var maxAttempts = 15;
-    var interval = setInterval(function() {
-      attempts++;
-      console.log('[WhatsApp] Intento periódico #' + attempts);
-      
-      if (typeof window.Shopify !== 'undefined' && window.Shopify.checkout) {
-        console.log('[WhatsApp] Shopify.checkout encontrado en intento #' + attempts);
-        if (window.Shopify.checkout.order) {
-          console.log('[WhatsApp] Shopify.checkout.order encontrado!');
-          // No hacer nada aquí, el modal se mostrará después de 3 segundos
-          clearInterval(interval);
-        } else {
-          console.log('[WhatsApp] Shopify.checkout existe pero order no está disponible aún');
-        }
-      } else if (attempts >= maxAttempts) {
-        console.log('[WhatsApp] Máximo de intentos alcanzado.');
-        clearInterval(interval);
-        // El modal se mostrará después de 3 segundos de todas formas
-      }
-    }, 1000);
+    
+    // Mostrar después de 3 segundos
+    console.log('[WhatsApp] ⏱️ Programando modal para aparecer en 3 segundos...');
+    setTimeout(showModalAfterDelay, 3000);
   }
 
   // Iniciar cuando el script se carga

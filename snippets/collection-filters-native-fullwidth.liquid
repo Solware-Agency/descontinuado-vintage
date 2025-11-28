@@ -1,0 +1,309 @@
+{% comment %}
+  Filtros nativos de Shopify (Search & Discovery) - Layout Full Width
+  Versión horizontal con dropdowns para mantener el diseño actual
+  Usa collection.filters para renderizar filtros configurados en el admin
+{% endcomment %}
+
+{% comment %} Debug temporal: verificar que los filtros estén disponibles {% endcomment %}
+{% comment %}
+  Filtros disponibles: {{ collection.filters.size }}
+  {% for filter in collection.filters %}
+    - {{ filter.label }} ({{ filter.type }})
+  {% endfor %}
+{% endcomment %}
+
+{% if collection.filters.size > 0 %}
+<div class="collection-filters-native-fullwidth">
+  <div class="container container-v1">
+    <div class="row">
+      <div class="col-12">
+        <form class="collection-filters-form-horizontal" action="{{ collection.url }}" method="get">
+          
+          {% comment %} Mantener parámetros de ordenamiento {% endcomment %}
+          {% if collection.sort_by != blank %}
+            <input type="hidden" name="sort_by" value="{{ collection.sort_by }}">
+          {% endif %}
+          
+          <div class="filters-row d-flex flex-wrap">
+            
+            {% comment %} Recopilar filtros específicos {% endcomment %}
+            {% assign color_filter = null %}
+            {% assign size_filter = null %}
+            {% assign price_filter = null %}
+            {% assign availability_filter = null %}
+            
+            {% for filter in collection.filters %}
+              {% assign filter_label_lower = filter.label | downcase %}
+              {% if filter_label_lower == 'color' or filter_label_lower contains 'color' %}
+                {% assign color_filter = filter %}
+              {% elsif filter_label_lower == 'talla estándar' or filter_label_lower == 'talla estandar' or filter_label_lower contains 'talla' %}
+                {% assign size_filter = filter %}
+              {% elsif filter.type == 'price_range' %}
+                {% assign price_filter = filter %}
+              {% elsif filter_label_lower == 'disponibilidad' or filter_label_lower contains 'disponibilidad' %}
+                {% assign availability_filter = filter %}
+              {% endif %}
+            {% endfor %}
+            
+            {% comment %} Filtro de Color (dropdown) {% endcomment %}
+            {% if color_filter and color_filter.type == 'list' %}
+              <div class="filter-dropdown-wrapper">
+                <select class="filter-dropdown" name="{{ color_filter.param_name }}" id="filter-color-native" onchange="this.form.submit()">
+                  <option value="">{{ color_filter.label | upcase }}</option>
+                  {% for filter_value in color_filter.values %}
+                    <option 
+                      value="{{ filter_value.value }}"
+                      {% if filter_value.active %}selected{% endif %}
+                      {% if filter_value.count == 0 and filter_value.active == false %}disabled{% endif %}
+                    >
+                      {{ filter_value.label }} {% if filter_value.count > 0 %}({{ filter_value.count }}){% endif %}
+                    </option>
+                  {% endfor %}
+                </select>
+              </div>
+            {% endif %}
+            
+            {% comment %} Filtro de Talla (dropdown) {% endcomment %}
+            {% if size_filter and size_filter.type == 'list' %}
+              <div class="filter-dropdown-wrapper">
+                <select class="filter-dropdown" name="{{ size_filter.param_name }}" id="filter-size-native" onchange="this.form.submit()">
+                  <option value="">{{ size_filter.label | upcase }}</option>
+                  {% for filter_value in size_filter.values %}
+                    <option 
+                      value="{{ filter_value.value }}"
+                      {% if filter_value.active %}selected{% endif %}
+                      {% if filter_value.count == 0 and filter_value.active == false %}disabled{% endif %}
+                    >
+                      {{ filter_value.label }} {% if filter_value.count > 0 %}({{ filter_value.count }}){% endif %}
+                    </option>
+                  {% endfor %}
+                </select>
+              </div>
+            {% endif %}
+            
+            {% comment %} Filtro de Precio (dropdown con rangos predefinidos) {% endcomment %}
+            {% if price_filter and price_filter.type == 'price_range' %}
+              <div class="filter-dropdown-wrapper">
+                <select class="filter-dropdown" id="filter-price-native" onchange="applyPriceFilter(this.value, this.form)">
+                  <option value="">PRECIO</option>
+                  {% assign price_min = price_filter.range_min | divided_by: 100 %}
+                  {% assign price_max = price_filter.range_max | divided_by: 100 %}
+                  
+                  {% comment %} Detectar rango actual seleccionado {% endcomment %}
+                  {% assign current_min = price_filter.min_value.value | default: 0 | divided_by: 100 %}
+                  {% assign current_max = price_filter.max_value.value | default: price_max | divided_by: 100 %}
+                  {% assign is_0_50 = false %}
+                  {% assign is_50_150 = false %}
+                  {% assign is_150_plus = false %}
+                  
+                  {% if current_min == 0 and current_max <= 50 %}
+                    {% assign is_0_50 = true %}
+                  {% elsif current_min >= 50 and current_max <= 150 %}
+                    {% assign is_50_150 = true %}
+                  {% elsif current_min >= 150 %}
+                    {% assign is_150_plus = true %}
+                  {% endif %}
+                  
+                  {% comment %} Rango 0-50 {% endcomment %}
+                  {% if price_max >= 50 %}
+                    <option value="0-50" {% if is_0_50 %}selected{% endif %}>
+                      0 - 50
+                    </option>
+                  {% endif %}
+                  
+                  {% comment %} Rango 50-150 {% endcomment %}
+                  {% if price_max >= 50 %}
+                    <option value="50-150" {% if is_50_150 %}selected{% endif %}>
+                      50 - 150
+                    </option>
+                  {% endif %}
+                  
+                  {% comment %} Rango 150+ {% endcomment %}
+                  {% if price_max > 150 %}
+                    <option value="150+" {% if is_150_plus %}selected{% endif %}>
+                      150+
+                    </option>
+                  {% endif %}
+                </select>
+                
+                {% comment %} Inputs ocultos para precio (valores en centavos) {% endcomment %}
+                <input type="hidden" name="{{ price_filter.min_value.param_name }}" id="price-min-input" value="{{ price_filter.min_value.value }}">
+                <input type="hidden" name="{{ price_filter.max_value.param_name }}" id="price-max-input" value="{{ price_filter.max_value.value }}">
+              </div>
+            {% endif %}
+            
+            {% comment %} Botón Limpiar Filtros {% endcomment %}
+            {% assign active_filters_count = 0 %}
+            {% for filter in collection.filters %}
+              {% assign active_filters_count = active_filters_count | plus: filter.active_values.size %}
+            {% endfor %}
+            
+            {% if active_filters_count > 0 %}
+              <div class="filter-clear-wrapper">
+                <a href="{{ collection.url }}" class="filter-clear-all-btn">
+                  Limpiar filtros ({{ active_filters_count }})
+                </a>
+              </div>
+            {% endif %}
+            
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .collection-filters-native-fullwidth {
+    margin: 20px 0;
+    padding: 0;
+  }
+  
+  .collection-filters-form-horizontal {
+    width: 100%;
+  }
+  
+  .filters-row {
+    gap: 15px;
+    margin-bottom: 0;
+    align-items: center;
+  }
+  
+  .filter-dropdown-wrapper {
+    flex: 1;
+    min-width: 150px;
+    position: relative;
+  }
+  
+  .filter-dropdown {
+    width: 100%;
+    padding: 12px 40px 12px 15px;
+    border: 1px solid #000;
+    background: #fff;
+    font-size: 14px;
+    font-weight: 400;
+    color: #000;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23000' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    background-size: 12px;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+  }
+  
+  .filter-dropdown:hover {
+    border-color: #666;
+  }
+  
+  .filter-dropdown:focus {
+    outline: none;
+    border-color: #000;
+  }
+  
+  .filter-dropdown option:disabled {
+    color: #ccc;
+  }
+  
+  .filter-clear-wrapper {
+    flex: 0 0 auto;
+  }
+  
+  .filter-clear-all-btn {
+    display: inline-block;
+    padding: 12px 20px;
+    background: #f5f5f5;
+    color: #000;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: 1px solid #ddd;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+  }
+  
+  .filter-clear-all-btn:hover {
+    background: #e0e0e0;
+    border-color: #000;
+  }
+  
+  /* Responsive */
+  @media (max-width: 991px) {
+    .filters-row {
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    .filter-dropdown-wrapper {
+      width: 100%;
+      min-width: 100%;
+    }
+    
+    .filter-clear-wrapper {
+      width: 100%;
+    }
+    
+    .filter-clear-all-btn {
+      width: 100%;
+      text-align: center;
+    }
+  }
+  
+  @media (max-width: 575px) {
+    .filter-dropdown {
+      padding: 10px 35px 10px 12px;
+      font-size: 13px;
+    }
+  }
+</style>
+
+<script>
+  function applyPriceFilter(range, form) {
+    const minInput = document.getElementById('price-min-input');
+    const maxInput = document.getElementById('price-max-input');
+    
+    if (!minInput || !maxInput) return;
+    
+    // Limpiar filtro de precio
+    if (range === '') {
+      minInput.value = '';
+      maxInput.value = '';
+      form.submit();
+      return;
+    }
+    
+    // Aplicar rango seleccionado (valores en centavos)
+    if (range === '0-50') {
+      minInput.value = '0';
+      maxInput.value = '5000'; // 50.00 en centavos
+    } else if (range === '50-150') {
+      minInput.value = '5000'; // 50.00 en centavos
+      maxInput.value = '15000'; // 150.00 en centavos
+    } else if (range === '150+') {
+      minInput.value = '15000'; // 150.00 en centavos
+      maxInput.value = ''; // Sin máximo
+    }
+    
+    form.submit();
+  }
+</script>
+
+{% else %}
+  {% comment %} Si no hay filtros configurados, mostrar mensaje opcional {% endcomment %}
+  <div class="collection-filters-native-fullwidth-empty">
+    <div class="container container-v1">
+      <div class="row">
+        <div class="col-12">
+          <p style="font-size: 13px; color: #999; margin: 20px 0; text-align: center;">
+            No hay filtros disponibles. Configura los filtros en Search & Discovery.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endif %}
+
