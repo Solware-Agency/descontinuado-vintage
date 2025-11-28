@@ -147,17 +147,21 @@
             
             {% comment %} Botón Limpiar Filtros {% endcomment %}
             {% assign active_filters_count = 0 %}
-            {% assign price_filter_active = false %}
             {% for filter in collection.filters %}
               {% if filter.type == 'price_range' %}
                 {% comment %} Verificar si el filtro de precio está activo {% endcomment %}
                 {% assign min_price_param = filter.min_value.param_name %}
                 {% assign max_price_param = filter.max_value.param_name %}
-                {% assign current_min = request.params[min_price_param] | default: 0 | plus: 0 %}
-                {% assign current_max = request.params[max_price_param] | default: 0 | plus: 0 %}
-                {% if current_min > 0 or current_max > 0 %}
-                  {% assign price_filter_active = true %}
+                {% comment %} Primero verificar si hay valores en el objeto del filtro (Shopify lo marca como activo) {% endcomment %}
+                {% if filter.min_value.value or filter.max_value.value %}
                   {% assign active_filters_count = active_filters_count | plus: 1 %}
+                {% else %}
+                  {% comment %} Si no hay valores en el filtro, verificar parámetros de URL directamente {% endcomment %}
+                  {% assign check_min_raw = request.params[min_price_param] | default: '' %}
+                  {% assign check_max_raw = request.params[max_price_param] | default: '' %}
+                  {% if check_min_raw != '' or check_max_raw != '' %}
+                    {% assign active_filters_count = active_filters_count | plus: 1 %}
+                  {% endif %}
                 {% endif %}
               {% else %}
                 {% assign active_filters_count = active_filters_count | plus: filter.active_values.size %}
