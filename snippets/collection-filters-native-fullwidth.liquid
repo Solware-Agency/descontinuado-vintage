@@ -84,50 +84,42 @@
             {% comment %} Filtro de Precio (dropdown con rangos predefinidos) {% endcomment %}
             {% if price_filter and price_filter.type == 'price_range' %}
               <div class="filter-dropdown-wrapper">
+                {% comment %} Leer parámetros de precio desde la URL (request.params) {% endcomment %}
+                {% assign min_price_param = price_filter.min_value.param_name %}
+                {% assign max_price_param = price_filter.max_value.param_name %}
+                {% assign current_min_cents = request.params[min_price_param] | default: 0 | plus: 0 %}
+                {% assign current_max_cents = request.params[max_price_param] | default: 0 | plus: 0 %}
+                
                 <select class="filter-dropdown" id="filter-price-native" onchange="applyPriceFilter(this.value, this.form)">
                   <option value="">PRECIO</option>
                   {% assign price_min = price_filter.range_min | divided_by: 100 %}
                   {% assign price_max = price_filter.range_max | divided_by: 100 %}
                   
-                  {% comment %} Detectar rango actual seleccionado (valores en centavos) {% endcomment %}
-                  {% assign current_min_cents = price_filter.min_value.value | default: 0 | times: 1 %}
-                  {% assign current_max_cents = price_filter.max_value.value | default: '' | times: 1 %}
-                  {% assign selected_range = '' %}
-                  
-                  {% comment %} Verificar si hay un rango activo {% endcomment %}
-                  {% if current_min_cents == 0 and current_max_cents == 5000 %}
-                    {% assign selected_range = '0-50' %}
-                  {% elsif current_min_cents == 5000 and current_max_cents == 15000 %}
-                    {% assign selected_range = '50-150' %}
-                  {% elsif current_min_cents >= 15000 and current_max_cents == blank or current_max_cents == '' %}
-                    {% assign selected_range = '150+' %}
-                  {% endif %}
-                  
-                  {% comment %} Rango 0-50 {% endcomment %}
+                  {% comment %} Rango 0-50 (0 a 5000 centavos) {% endcomment %}
                   {% if price_max >= 50 %}
-                    <option value="0-50" {% if selected_range == '0-50' %}selected{% endif %}>
+                    <option value="0-50" {% if current_min_cents == 0 and current_max_cents == 5000 %}selected{% endif %}>
                       0 - 50
                     </option>
                   {% endif %}
                   
-                  {% comment %} Rango 50-150 {% endcomment %}
+                  {% comment %} Rango 50-150 (5000 a 15000 centavos) {% endcomment %}
                   {% if price_max >= 50 %}
-                    <option value="50-150" {% if selected_range == '50-150' %}selected{% endif %}>
+                    <option value="50-150" {% if current_min_cents == 5000 and current_max_cents == 15000 %}selected{% endif %}>
                       50 - 150
                     </option>
                   {% endif %}
                   
-                  {% comment %} Rango 150+ {% endcomment %}
+                  {% comment %} Rango 150+ (15000+ centavos, sin máximo) {% endcomment %}
                   {% if price_max > 150 %}
-                    <option value="150+" {% if selected_range == '150+' %}selected{% endif %}>
+                    <option value="150+" {% if current_min_cents >= 15000 and current_max_cents == 0 %}selected{% endif %}>
                       150+
                     </option>
                   {% endif %}
                 </select>
                 
                 {% comment %} Inputs ocultos para precio (valores en centavos) {% endcomment %}
-                <input type="hidden" name="{{ price_filter.min_value.param_name }}" id="price-min-input" data-param-name="{{ price_filter.min_value.param_name }}" value="{% if price_filter.min_value.value %}{{ price_filter.min_value.value }}{% endif %}">
-                <input type="hidden" name="{{ price_filter.max_value.param_name }}" id="price-max-input" data-param-name="{{ price_filter.max_value.param_name }}" value="{% if price_filter.max_value.value %}{{ price_filter.max_value.value }}{% endif %}">
+                <input type="hidden" name="{{ price_filter.min_value.param_name }}" id="price-min-input" data-param-name="{{ price_filter.min_value.param_name }}" value="{% if current_min_cents > 0 %}{{ current_min_cents }}{% elsif price_filter.min_value.value %}{{ price_filter.min_value.value }}{% endif %}">
+                <input type="hidden" name="{{ price_filter.max_value.param_name }}" id="price-max-input" data-param-name="{{ price_filter.max_value.param_name }}" value="{% if current_max_cents > 0 %}{{ current_max_cents }}{% elsif price_filter.max_value.value %}{{ price_filter.max_value.value }}{% endif %}">
               </div>
             {% endif %}
             
