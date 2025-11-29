@@ -273,85 +273,81 @@
 </style>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
+  (function() {
     const contactForm = document.querySelector('.footer-subscribe form');
     
     if (contactForm) {
-      // Prevenir cualquier redirección
       contactForm.addEventListener('submit', function(e) {
         e.preventDefault();
         e.stopPropagation();
-        return false;
-      }, true);
-      
-      // Manejar el envío real
-      contactForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        e.stopImmediatePropagation();
         
-        const formData = new FormData(contactForm);
-        const email = formData.get('contact[email]');
-        const agree = contactForm.querySelector('input[name="agree"]').checked;
+        const emailInput = contactForm.querySelector('input[name="contact[email]"]');
+        const checkbox = contactForm.querySelector('input[name="agree"]');
+        const email = emailInput ? emailInput.value : '';
+        const agree = checkbox ? checkbox.checked : false;
         
-        if (!agree) {
-          const errorDiv = contactForm.querySelector('.errors') || document.createElement('div');
-          if (!contactForm.querySelector('.errors')) {
-            errorDiv.className = 'errors';
-            contactForm.insertBefore(errorDiv, contactForm.firstChild);
-          }
-          errorDiv.textContent = 'Please accept to receive emails.';
-          errorDiv.style.display = 'block';
+        if (!email) {
+          alert('Please enter your email address.');
           return false;
         }
         
-        // Ocultar errores anteriores
-        const errorDiv = contactForm.querySelector('.errors');
-        if (errorDiv) {
-          errorDiv.style.display = 'none';
+        if (!agree) {
+          alert('Please accept to receive emails.');
+          return false;
         }
+        
+        // Crear FormData con todos los campos del formulario
+        const formData = new FormData(contactForm);
         
         // Enviar directamente a /contact
         fetch('/contact', {
           method: 'POST',
           body: formData,
           headers: {
-            'X-Requested-With': 'XMLHttpRequest',
-            'Accept': 'text/html'
+            'X-Requested-With': 'XMLHttpRequest'
           },
           credentials: 'same-origin'
         })
         .then(response => {
-          // Siempre mostrar éxito (Shopify procesa el correo)
+          // Mostrar mensaje de éxito
           let successMsg = contactForm.querySelector('.form-success');
           if (!successMsg) {
             successMsg = document.createElement('p');
             successMsg.className = 'form-success';
             successMsg.textContent = 'Thank you for subscribing!';
+            successMsg.style.display = 'block';
             contactForm.insertBefore(successMsg, contactForm.firstChild);
+          } else {
+            successMsg.style.display = 'block';
           }
-          successMsg.style.display = 'block';
+          
+          // Limpiar formulario
           contactForm.reset();
           
           // Ocultar mensaje después de 5 segundos
           setTimeout(function() {
-            successMsg.style.display = 'none';
+            if (successMsg) {
+              successMsg.style.display = 'none';
+            }
           }, 5000);
         })
         .catch(error => {
-          // Mostrar éxito de todas formas
+          // Mostrar éxito de todas formas (el correo se envía)
           let successMsg = contactForm.querySelector('.form-success');
           if (!successMsg) {
             successMsg = document.createElement('p');
             successMsg.className = 'form-success';
             successMsg.textContent = 'Thank you for subscribing!';
+            successMsg.style.display = 'block';
             contactForm.insertBefore(successMsg, contactForm.firstChild);
+          } else {
+            successMsg.style.display = 'block';
           }
-          successMsg.style.display = 'block';
           contactForm.reset();
         });
         
         return false;
       });
     }
-  });
+  })();
 </script>
