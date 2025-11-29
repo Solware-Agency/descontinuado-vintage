@@ -34,7 +34,7 @@
         </ul>
       </div>
 
-      <!-- Columna 4: Subscribe -->
+     <!-- Columna 4: Subscribe -->
       <div class="footer-col footer-subscribe">
         <h3>SUBSCRIBE AND GET 10% OFF YOUR FIRST ORDER</h3>
         {% form 'contact' %}
@@ -45,7 +45,7 @@
           <input type="email" name="contact[email]" placeholder="email address" required>
           <input type="hidden" name="contact[tags]" value="newsletter">
           <label class="checkbox-container">
-            <input type="checkbox" name="contact[accepts_marketing]" value="true" required>
+            <input type="checkbox" name="agree" required>
             <span>I agree to receive emails from Descontinuado.</span>
           </label>
           <button type="submit" class="footer-button">SUBSCRIBE</button>
@@ -271,3 +271,45 @@
     }
   }
 </style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('newsletter-form');
+    if (form) {
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const email = document.getElementById('newsletter-email').value;
+        const checkbox = document.getElementById('newsletter-checkbox');
+        
+        if (!checkbox.checked) {
+          alert('Please accept to receive emails.');
+          return false;
+        }
+        
+        const formData = new FormData(form);
+        
+        fetch('/contact', {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+          }
+        })
+        .then(function() {
+          document.getElementById('newsletter-success').style.display = 'block';
+          form.reset();
+          setTimeout(function() {
+            document.getElementById('newsletter-success').style.display = 'none';
+          }, 5000);
+        })
+        .catch(function() {
+          document.getElementById('newsletter-success').style.display = 'block';
+          form.reset();
+        });
+        
+        return false;
+      });
+    }
+  });
+</script>
