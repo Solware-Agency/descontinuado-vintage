@@ -37,19 +37,26 @@
       <!-- Columna 4: Subscribe -->
       <div class="footer-col footer-subscribe">
         <h3>SUBSCRIBE AND GET 10% OFF YOUR FIRST ORDER</h3>
-        {% form 'contact' %}
-          {% if form.posted_successfully? %}
-            <p class="form-success">Thank you for subscribing!</p>
-          {% endif %}
-          {{ form.errors | default_errors }}
-          <input type="email" name="contact[email]" placeholder="email address" required>
+        <form action="/contact" method="post" accept-charset="UTF-8" id="newsletter-subscribe-form">
+          <input type="hidden" name="form_type" value="customer">
+          <input type="hidden" name="utf8" value="✓">
           <input type="hidden" name="contact[tags]" value="newsletter">
+          <input type="hidden" name="customer[accepts_marketing]" value="true">
+          
+          <div id="newsletter-success-message" style="display: none;">
+            <p class="form-success">Thank you for subscribing!</p>
+          </div>
+          <div id="newsletter-error-message" style="display: none;" class="errors"></div>
+          
+          <input type="email" name="contact[email]" placeholder="email address" required id="newsletter-email-input">
+          
           <label class="checkbox-container">
-            <input type="checkbox" name="agree" required>
+            <input type="checkbox" name="newsletter_consent" required id="newsletter-consent-checkbox">
             <span>I agree to receive emails from Descontinuado.</span>
           </label>
+          
           <button type="submit" class="footer-button">SUBSCRIBE</button>
-        {% endform %}
+        </form>
       </div>
 
     </div>
@@ -271,3 +278,61 @@
     }
   }
 </style>
+
+<script>
+  (function() {
+    const form = document.getElementById('newsletter-subscribe-form');
+    const successMsg = document.getElementById('newsletter-success-message');
+    const errorMsg = document.getElementById('newsletter-error-message');
+    const emailInput = document.getElementById('newsletter-email-input');
+    
+    if (form) {
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Ocultar mensajes anteriores
+        successMsg.style.display = 'none';
+        errorMsg.style.display = 'none';
+        errorMsg.textContent = '';
+        
+        const formData = new FormData(form);
+        
+        fetch('/contact', {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'Accept': 'application/json'
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === 'success' || data.posted_successfully) {
+            successMsg.style.display = 'block';
+            form.reset();
+            // Scroll suave al mensaje de éxito
+            successMsg.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            // Ocultar mensaje después de 5 segundos
+            setTimeout(function() {
+              successMsg.style.display = 'none';
+            }, 5000);
+          } else {
+            throw new Error('Error en la suscripción');
+          }
+        })
+        .catch(error => {
+          // Si la respuesta no es JSON, asumimos éxito (comportamiento de Shopify)
+          if (error.message.includes('JSON')) {
+            successMsg.style.display = 'block';
+            form.reset();
+            setTimeout(function() {
+              successMsg.style.display = 'none';
+            }, 5000);
+          } else {
+            errorMsg.textContent = 'Hubo un error. Por favor intenta de nuevo.';
+            errorMsg.style.display = 'block';
+          }
+        });
+      });
+    }
+  })();
+</script>
