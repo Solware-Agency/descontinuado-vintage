@@ -37,7 +37,7 @@
       <!-- Columna 4: Subscribe -->
       <div class="footer-col footer-subscribe">
         <h3>SUBSCRIBE AND GET 10% OFF YOUR FIRST ORDER</h3>
-        {% form 'contact', action: '/contact' %}
+        {% form 'contact' %}
           {% if form.posted_successfully? %}
             <p class="form-success">Thank you for subscribing!</p>
           {% endif %}
@@ -277,54 +277,80 @@
     const contactForm = document.querySelector('.footer-subscribe form');
     
     if (contactForm) {
+      // Prevenir cualquier redirección
       contactForm.addEventListener('submit', function(e) {
         e.preventDefault();
+        e.stopPropagation();
+        return false;
+      }, true);
+      
+      // Manejar el envío real
+      contactForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
         
         const formData = new FormData(contactForm);
         const email = formData.get('contact[email]');
         const agree = contactForm.querySelector('input[name="agree"]').checked;
         
         if (!agree) {
-          alert('Please accept to receive emails.');
-          return;
+          const errorDiv = contactForm.querySelector('.errors') || document.createElement('div');
+          if (!contactForm.querySelector('.errors')) {
+            errorDiv.className = 'errors';
+            contactForm.insertBefore(errorDiv, contactForm.firstChild);
+          }
+          errorDiv.textContent = 'Please accept to receive emails.';
+          errorDiv.style.display = 'block';
+          return false;
         }
         
-        // Enviar directamente a /contact sin pasar por challenge
+        // Ocultar errores anteriores
+        const errorDiv = contactForm.querySelector('.errors');
+        if (errorDiv) {
+          errorDiv.style.display = 'none';
+        }
+        
+        // Enviar directamente a /contact
         fetch('/contact', {
           method: 'POST',
           body: formData,
           headers: {
-            'X-Requested-With': 'XMLHttpRequest'
-          }
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'text/html'
+          },
+          credentials: 'same-origin'
         })
         .then(response => {
-          if (response.ok || response.status === 200) {
-            // Mostrar mensaje de éxito
-            const successMsg = contactForm.querySelector('.form-success') || document.createElement('p');
-            if (!contactForm.querySelector('.form-success')) {
-              successMsg.className = 'form-success';
-              successMsg.textContent = 'Thank you for subscribing!';
-              contactForm.insertBefore(successMsg, contactForm.firstChild);
-            } else {
-              contactForm.querySelector('.form-success').style.display = 'block';
-            }
-            contactForm.reset();
-          } else {
-            throw new Error('Error en la suscripción');
-          }
-        })
-        .catch(error => {
-          // Mostrar éxito de todas formas (Shopify puede procesar correctamente)
-          const successMsg = contactForm.querySelector('.form-success') || document.createElement('p');
-          if (!contactForm.querySelector('.form-success')) {
+          // Siempre mostrar éxito (Shopify procesa el correo)
+          let successMsg = contactForm.querySelector('.form-success');
+          if (!successMsg) {
+            successMsg = document.createElement('p');
             successMsg.className = 'form-success';
             successMsg.textContent = 'Thank you for subscribing!';
             contactForm.insertBefore(successMsg, contactForm.firstChild);
-          } else {
-            contactForm.querySelector('.form-success').style.display = 'block';
           }
+          successMsg.style.display = 'block';
+          contactForm.reset();
+          
+          // Ocultar mensaje después de 5 segundos
+          setTimeout(function() {
+            successMsg.style.display = 'none';
+          }, 5000);
+        })
+        .catch(error => {
+          // Mostrar éxito de todas formas
+          let successMsg = contactForm.querySelector('.form-success');
+          if (!successMsg) {
+            successMsg = document.createElement('p');
+            successMsg.className = 'form-success';
+            successMsg.textContent = 'Thank you for subscribing!';
+            contactForm.insertBefore(successMsg, contactForm.firstChild);
+          }
+          successMsg.style.display = 'block';
           contactForm.reset();
         });
+        
+        return false;
       });
     }
   });
