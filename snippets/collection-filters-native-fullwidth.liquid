@@ -1,0 +1,488 @@
+{% comment %}
+  Filtros nativos de Shopify (Search & Discovery) - Layout Full Width
+  Versión horizontal con dropdowns para mantener el diseño actual
+  Usa collection.filters para renderizar filtros configurados en el admin
+{% endcomment %}
+
+{% comment %} Debug temporal: verificar que los filtros estén disponibles {% endcomment %}
+{% comment %}
+  Filtros disponibles: {{ collection.filters.size }}
+  {% for filter in collection.filters %}
+    - {{ filter.label }} ({{ filter.type }})
+  {% endfor %}
+{% endcomment %}
+
+{% if collection.filters.size > 0 %}
+<div class="collection-filters-native-fullwidth">
+  <div class="container container-v1">
+    <div class="row">
+      <div class="col-12">
+        <form class="collection-filters-form-horizontal" action="{{ collection.url }}" method="get">
+          
+          {% comment %} Mantener parámetros de ordenamiento {% endcomment %}
+          {% if collection.sort_by != blank %}
+            <input type="hidden" name="sort_by" value="{{ collection.sort_by }}">
+          {% endif %}
+          
+          <div class="filters-row d-flex flex-wrap">
+            
+            {% comment %} Recopilar filtros específicos {% endcomment %}
+            {% assign color_filter = null %}
+            {% assign size_filter = null %}
+            {% assign price_filter = null %}
+            {% assign availability_filter = null %}
+            
+            {% for filter in collection.filters %}
+              {% assign filter_label_lower = filter.label | downcase %}
+              {% if filter_label_lower == 'color' or filter_label_lower contains 'color' %}
+                {% assign color_filter = filter %}
+              {% elsif filter_label_lower == 'talla estándar' or filter_label_lower == 'talla estandar' or filter_label_lower contains 'talla' %}
+                {% assign size_filter = filter %}
+              {% elsif filter.type == 'price_range' %}
+                {% assign price_filter = filter %}
+              {% elsif filter_label_lower == 'disponibilidad' or filter_label_lower contains 'disponibilidad' %}
+                {% assign availability_filter = filter %}
+              {% endif %}
+            {% endfor %}
+            
+            {% comment %} Filtro de Color (dropdown) {% endcomment %}
+            {% if color_filter and color_filter.type == 'list' %}
+              <div class="filter-dropdown-wrapper">
+                <select class="filter-dropdown" name="{{ color_filter.param_name }}" id="filter-color-native" onchange="this.form.submit()">
+                  <option value="">{{ color_filter.label | upcase }}</option>
+                  {% for filter_value in color_filter.values %}
+                    <option 
+                      value="{{ filter_value.value }}"
+                      {% if filter_value.active %}selected{% endif %}
+                      {% if filter_value.count == 0 and filter_value.active == false %}disabled{% endif %}
+                    >
+                      {{ filter_value.label }} {% if filter_value.count > 0 %}({{ filter_value.count }}){% endif %}
+                    </option>
+                  {% endfor %}
+                </select>
+              </div>
+            {% endif %}
+            
+            {% comment %} Filtro de Talla (dropdown) {% endcomment %}
+            {% if size_filter and size_filter.type == 'list' %}
+              <div class="filter-dropdown-wrapper">
+                <select class="filter-dropdown" name="{{ size_filter.param_name }}" id="filter-size-native" onchange="this.form.submit()">
+                  <option value="">{{ size_filter.label | upcase }}</option>
+                  {% for filter_value in size_filter.values %}
+                    <option 
+                      value="{{ filter_value.value }}"
+                      {% if filter_value.active %}selected{% endif %}
+                      {% if filter_value.count == 0 and filter_value.active == false %}disabled{% endif %}
+                    >
+                      {{ filter_value.label }} {% if filter_value.count > 0 %}({{ filter_value.count }}){% endif %}
+                    </option>
+                  {% endfor %}
+                </select>
+              </div>
+            {% endif %}
+            
+            {% comment %} Filtro de Precio (dropdown con rangos predefinidos) {% endcomment %}
+            {% if price_filter and price_filter.type == 'price_range' %}
+              <div class="filter-dropdown-wrapper">
+                {% comment %} Leer parámetros de precio desde la URL (request.params) {% endcomment %}
+                {% assign min_price_param = price_filter.min_value.param_name %}
+                {% assign max_price_param = price_filter.max_value.param_name %}
+                {% assign current_min_raw = request.params[min_price_param] | default: 0 | plus: 0 %}
+                {% assign current_max_raw = request.params[max_price_param] | default: 0 | plus: 0 %}
+                
+                {% comment %} Convertir a dólares si vienen en centavos (valores > 1000 probablemente son centavos) {% endcomment %}
+                {% if current_min_raw > 1000 %}
+                  {% assign current_min = current_min_raw | divided_by: 100 %}
+                {% else %}
+                  {% assign current_min = current_min_raw %}
+                {% endif %}
+                {% if current_max_raw > 1000 %}
+                  {% assign current_max = current_max_raw | divided_by: 100 %}
+                {% else %}
+                  {% assign current_max = current_max_raw %}
+                {% endif %}
+                
+                {% comment %} Determinar qué rango está seleccionado {% endcomment %}
+                {% assign selected_range = '' %}
+                {% if current_min == 0 and current_max == 50 %}
+                  {% assign selected_range = '0-50' %}
+                {% elsif current_min == 50 and current_max == 150 %}
+                  {% assign selected_range = '50-150' %}
+                {% elsif current_min >= 150 and current_max == 0 %}
+                  {% assign selected_range = '150+' %}
+                {% endif %}
+                
+                <select class="filter-dropdown" id="filter-price-native" onchange="applyPriceFilter(this.value, this.form)">
+                  <option value="">PRECIO</option>
+                  {% assign price_min = price_filter.range_min | divided_by: 100 %}
+                  {% assign price_max = price_filter.range_max | divided_by: 100 %}
+                  
+                  {% comment %} Rango 0-50 (0 a 50$) {% endcomment %}
+                  {% if price_max >= 50 %}
+                    <option value="0-50" {% if selected_range == '0-50' %}selected{% endif %}>
+                      0 - 50
+                    </option>
+                  {% endif %}
+                  
+                  {% comment %} Rango 50-150 (50 a 150$) {% endcomment %}
+                  {% if price_max >= 50 %}
+                    <option value="50-150" {% if selected_range == '50-150' %}selected{% endif %}>
+                      50 - 150
+                    </option>
+                  {% endif %}
+                  
+                  {% comment %} Rango 150+ (150+ $, sin máximo) {% endcomment %}
+                  {% if price_max > 150 %}
+                    <option value="150+" {% if selected_range == '150+' %}selected{% endif %}>
+                      150+
+                    </option>
+                  {% endif %}
+                </select>
+                
+                {% comment %} Inputs ocultos para precio (valores en dólares) - solo se envían si hay un rango seleccionado {% endcomment %}
+                <input type="hidden" id="price-min-input" data-param-name="{{ price_filter.min_value.param_name }}" value="{% if current_min > 0 %}{{ current_min }}{% elsif price_filter.min_value.value %}{{ price_filter.min_value.value | divided_by: 100 }}{% endif %}">
+                <input type="hidden" id="price-max-input" data-param-name="{{ price_filter.max_value.param_name }}" value="{% if current_max > 0 %}{{ current_max }}{% elsif price_filter.max_value.value %}{{ price_filter.max_value.value | divided_by: 100 }}{% endif %}">
+              </div>
+            {% endif %}
+            
+            {% comment %} Botón Limpiar Filtros {% endcomment %}
+            {% assign active_filters_count = 0 %}
+            {% for filter in collection.filters %}
+              {% if filter.type == 'price_range' %}
+                {% comment %} Verificar si el filtro de precio está activo {% endcomment %}
+                {% assign min_price_param = filter.min_value.param_name %}
+                {% assign max_price_param = filter.max_value.param_name %}
+                {% comment %} Primero verificar si hay valores en el objeto del filtro (Shopify lo marca como activo) {% endcomment %}
+                {% if filter.min_value.value or filter.max_value.value %}
+                  {% assign active_filters_count = active_filters_count | plus: 1 %}
+                {% else %}
+                  {% comment %} Si no hay valores en el filtro, verificar parámetros de URL directamente {% endcomment %}
+                  {% assign check_min_raw = request.params[min_price_param] | default: '' %}
+                  {% assign check_max_raw = request.params[max_price_param] | default: '' %}
+                  {% if check_min_raw != '' or check_max_raw != '' %}
+                    {% assign active_filters_count = active_filters_count | plus: 1 %}
+                  {% endif %}
+                {% endif %}
+              {% else %}
+                {% assign active_filters_count = active_filters_count | plus: filter.active_values.size %}
+              {% endif %}
+            {% endfor %}
+            
+            {% if active_filters_count > 0 %}
+              <div class="filter-clear-wrapper">
+                <a href="{{ collection.url }}" class="filter-clear-all-btn">
+                  Limpiar filtros ({{ active_filters_count }})
+                </a>
+              </div>
+            {% endif %}
+            
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .collection-filters-native-fullwidth {
+    margin: 20px 0;
+    padding: 0;
+  }
+  
+  .collection-filters-form-horizontal {
+    width: 100%;
+  }
+  
+  .filters-row {
+    gap: 15px;
+    margin-bottom: 0;
+    align-items: center;
+  }
+  
+  .filter-dropdown-wrapper {
+    flex: 1;
+    min-width: 150px;
+    position: relative;
+  }
+  
+  .filter-dropdown {
+    width: 100%;
+    padding: 12px 40px 12px 15px;
+    border: 1px solid #000;
+    background: #fff;
+    font-size: 14px;
+    font-weight: 400;
+    color: #000;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23000' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    background-size: 12px;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+  }
+  
+  .filter-dropdown:hover {
+    border-color: #666;
+  }
+  
+  .filter-dropdown:focus {
+    outline: none;
+    border-color: #000;
+  }
+  
+  .filter-dropdown option:disabled {
+    color: #ccc;
+  }
+  
+  .filter-clear-wrapper {
+    flex: 0 0 auto;
+  }
+  
+  .filter-clear-all-btn {
+    display: inline-block;
+    padding: 12px 20px;
+    background: #f5f5f5;
+    color: #000;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: 1px solid #ddd;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+  }
+  
+  .filter-clear-all-btn:hover {
+    background: #e0e0e0;
+    border-color: #000;
+  }
+  
+  /* Responsive */
+  @media (max-width: 991px) {
+    .filters-row {
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    .filter-dropdown-wrapper {
+      width: 100%;
+      min-width: 100%;
+    }
+    
+    .filter-clear-wrapper {
+      width: 100%;
+    }
+    
+    .filter-clear-all-btn {
+      width: 100%;
+      text-align: center;
+    }
+  }
+  
+  @media (max-width: 575px) {
+    .filter-dropdown {
+      padding: 10px 35px 10px 12px;
+      font-size: 13px;
+    }
+  }
+</style>
+
+<script>
+  function applyPriceFilter(range, form) {
+    const minInput = document.getElementById('price-min-input');
+    const maxInput = document.getElementById('price-max-input');
+    
+    if (!minInput || !maxInput || !form) {
+      return;
+    }
+    
+    // Limpiar filtro de precio - redirigir a URL sin parámetros de precio
+    if (range === '' || range === null) {
+      const formAction = form.getAttribute('action');
+      const url = new URL(formAction, window.location.origin);
+      
+      // Copiar todos los parámetros actuales de la URL
+      const currentUrl = new URL(window.location.href);
+      currentUrl.searchParams.forEach((value, key) => {
+        // Mantener todos los parámetros excepto los de precio
+        if (key !== minInput.getAttribute('data-param-name') && 
+            key !== maxInput.getAttribute('data-param-name')) {
+          url.searchParams.set(key, value);
+        }
+      });
+      
+      // Remover parámetros de precio de la URL
+      url.searchParams.delete(minInput.getAttribute('data-param-name'));
+      url.searchParams.delete(maxInput.getAttribute('data-param-name'));
+      
+      window.location.href = url.toString();
+      return;
+    }
+    
+    // Asegurar que los inputs tengan el atributo name
+    const minParamName = minInput.getAttribute('data-param-name');
+    const maxParamName = maxInput.getAttribute('data-param-name');
+    
+    if (minParamName && !minInput.hasAttribute('name')) {
+      minInput.setAttribute('name', minParamName);
+    }
+    if (maxParamName && !maxInput.hasAttribute('name')) {
+      maxInput.setAttribute('name', maxParamName);
+    }
+    
+    // Aplicar rango seleccionado (valores en dólares - Shopify los convertirá internamente si es necesario)
+    if (range === '0-50') {
+      minInput.value = '0'; // $0
+      maxInput.value = '50'; // $50
+      if (maxParamName && !maxInput.hasAttribute('name')) {
+        maxInput.setAttribute('name', maxParamName);
+      }
+    } else if (range === '50-150') {
+      minInput.value = '50'; // $50
+      maxInput.value = '150'; // $150
+      if (maxParamName && !maxInput.hasAttribute('name')) {
+        maxInput.setAttribute('name', maxParamName);
+      }
+    } else if (range === '150+') {
+      minInput.value = '150'; // $150
+      maxInput.value = ''; // Sin máximo
+      // Remover el atributo name del max para que no se envíe en la URL
+      maxInput.removeAttribute('name');
+    }
+    
+    // Actualizar el dropdown para que muestre el valor seleccionado antes de enviar
+    const priceSelect = document.getElementById('filter-price-native');
+    if (priceSelect) {
+      priceSelect.value = range;
+    }
+    
+    // Enviar formulario
+    form.submit();
+  }
+  
+  // Restaurar el valor del dropdown después de recargar la página
+  document.addEventListener('DOMContentLoaded', function() {
+    const priceSelect = document.getElementById('filter-price-native');
+    const minInput = document.getElementById('price-min-input');
+    const maxInput = document.getElementById('price-max-input');
+    const form = document.querySelector('.collection-filters-form-horizontal');
+    
+    if (priceSelect && minInput && maxInput && form) {
+      // Función para restaurar el valor del dropdown desde la URL
+      function restorePriceFilterFromURL() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const minParamName = minInput.getAttribute('data-param-name');
+        const maxParamName = maxInput.getAttribute('data-param-name');
+        
+        if (minParamName && maxParamName) {
+          // Leer valores de la URL
+          const urlMin = urlParams.get(minParamName);
+          const urlMax = urlParams.get(maxParamName);
+          
+          if (urlMin || urlMax) {
+            // Convertir a números (pueden venir en centavos o dólares)
+            let currentMin = parseInt(urlMin) || 0;
+            let currentMax = parseInt(urlMax) || 0;
+            
+            // Si los valores son > 1000, probablemente son centavos, convertir a dólares
+            if (currentMin > 1000) {
+              currentMin = currentMin / 100;
+            }
+            if (currentMax > 1000) {
+              currentMax = currentMax / 100;
+            }
+            
+            // Determinar qué rango corresponde
+            let selectedRange = '';
+            if (currentMin === 0 && currentMax === 50) {
+              selectedRange = '0-50';
+            } else if (currentMin === 50 && currentMax === 150) {
+              selectedRange = '50-150';
+            } else if (currentMin >= 150 && currentMax === 0) {
+              selectedRange = '150+';
+            }
+            
+            // Actualizar el dropdown si encontramos un rango válido
+            if (selectedRange && priceSelect.querySelector('option[value="' + selectedRange + '"]')) {
+              priceSelect.value = selectedRange;
+            }
+          }
+        }
+      }
+      
+      // Función para actualizar los inputs de precio según la selección
+      function updatePriceInputs() {
+        const selectedRange = priceSelect.value;
+        const minParamName = minInput.getAttribute('data-param-name');
+        const maxParamName = maxInput.getAttribute('data-param-name');
+        
+        // Leer valores actuales de los inputs (en dólares)
+        const currentMin = parseInt(minInput.value) || 0;
+        const currentMax = parseInt(maxInput.value) || 0;
+        
+        // Si hay valores en los inputs pero no hay rango seleccionado, mantener los atributos name
+        if ((selectedRange === '' || selectedRange === null) && (currentMin > 0 || currentMax > 0)) {
+          // Si hay valores, mantener los atributos name para que se envíen
+          if (minParamName && currentMin > 0) {
+            minInput.setAttribute('name', minParamName);
+          } else {
+            minInput.removeAttribute('name');
+          }
+          
+          if (maxParamName && currentMax > 0) {
+            maxInput.setAttribute('name', maxParamName);
+          } else {
+            maxInput.removeAttribute('name');
+          }
+        } else if (selectedRange === '' || selectedRange === null) {
+          // Si no hay rango seleccionado y no hay valores, remover los atributos name
+          minInput.removeAttribute('name');
+          maxInput.removeAttribute('name');
+        } else {
+          // Si hay rango seleccionado, asegurar que tengan el atributo name
+          if (minParamName) {
+            minInput.setAttribute('name', minParamName);
+          }
+          if (maxParamName && selectedRange !== '150+') {
+            maxInput.setAttribute('name', maxParamName);
+          } else if (selectedRange === '150+') {
+            maxInput.removeAttribute('name');
+          }
+        }
+      }
+      
+      // Primero restaurar el valor del dropdown desde la URL
+      restorePriceFilterFromURL();
+      
+      // Luego actualizar los inputs
+      updatePriceInputs();
+      
+      // Interceptar el envío del formulario para otros filtros (color, size)
+      form.addEventListener('submit', function(e) {
+        // Si el formulario se envía desde otro filtro (no desde applyPriceFilter)
+        // asegurar que los inputs de precio estén correctos
+        updatePriceInputs();
+      });
+    }
+  });
+</script>
+
+{% else %}
+  {% comment %} Si no hay filtros configurados, mostrar mensaje opcional {% endcomment %}
+  <div class="collection-filters-native-fullwidth-empty">
+    <div class="container container-v1">
+      <div class="row">
+        <div class="col-12">
+          <p style="font-size: 13px; color: #999; margin: 20px 0; text-align: center;">
+            No hay filtros disponibles. Configura los filtros en Search & Discovery.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endif %}
+
