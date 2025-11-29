@@ -45,7 +45,7 @@
           <input type="email" name="contact[email]" placeholder="email address" required>
           <input type="hidden" name="contact[tags]" value="newsletter">
           <label class="checkbox-container">
-            <input type="checkbox" name="agree" required>
+            <input type="checkbox" name="contact[accepts_marketing]" value="true" required>
             <span>I agree to receive emails from Descontinuado.</span>
           </label>
           <button type="submit" class="footer-button">SUBSCRIBE</button>
@@ -271,83 +271,3 @@
     }
   }
 </style>
-
-<script>
-  (function() {
-    const contactForm = document.querySelector('.footer-subscribe form');
-    
-    if (contactForm) {
-      contactForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        
-        const emailInput = contactForm.querySelector('input[name="contact[email]"]');
-        const checkbox = contactForm.querySelector('input[name="agree"]');
-        const email = emailInput ? emailInput.value : '';
-        const agree = checkbox ? checkbox.checked : false;
-        
-        if (!email) {
-          alert('Please enter your email address.');
-          return false;
-        }
-        
-        if (!agree) {
-          alert('Please accept to receive emails.');
-          return false;
-        }
-        
-        // Crear FormData con todos los campos del formulario
-        const formData = new FormData(contactForm);
-        
-        // Enviar directamente a /contact
-        fetch('/contact', {
-          method: 'POST',
-          body: formData,
-          headers: {
-            'X-Requested-With': 'XMLHttpRequest'
-          },
-          credentials: 'same-origin'
-        })
-        .then(response => {
-          // Mostrar mensaje de éxito
-          let successMsg = contactForm.querySelector('.form-success');
-          if (!successMsg) {
-            successMsg = document.createElement('p');
-            successMsg.className = 'form-success';
-            successMsg.textContent = 'Thank you for subscribing!';
-            successMsg.style.display = 'block';
-            contactForm.insertBefore(successMsg, contactForm.firstChild);
-          } else {
-            successMsg.style.display = 'block';
-          }
-          
-          // Limpiar formulario
-          contactForm.reset();
-          
-          // Ocultar mensaje después de 5 segundos
-          setTimeout(function() {
-            if (successMsg) {
-              successMsg.style.display = 'none';
-            }
-          }, 5000);
-        })
-        .catch(error => {
-          // Mostrar éxito de todas formas (el correo se envía)
-          let successMsg = contactForm.querySelector('.form-success');
-          if (!successMsg) {
-            successMsg = document.createElement('p');
-            successMsg.className = 'form-success';
-            successMsg.textContent = 'Thank you for subscribing!';
-            successMsg.style.display = 'block';
-            contactForm.insertBefore(successMsg, contactForm.firstChild);
-          } else {
-            successMsg.style.display = 'block';
-          }
-          contactForm.reset();
-        });
-        
-        return false;
-      });
-    }
-  })();
-</script>
