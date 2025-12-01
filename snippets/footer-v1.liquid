@@ -37,13 +37,14 @@
      <!-- Columna 4: Subscribe -->
       <div class="footer-col footer-subscribe">
         <h3>SUBSCRIBE AND GET 10% OFF YOUR FIRST ORDER</h3>
-        {% form 'contact' %}
+        {% form 'customer', id: 'footer-newsletter-form' %}
           {% if form.posted_successfully? %}
             <p class="form-success">Thank you for subscribing!</p>
           {% endif %}
           {{ form.errors | default_errors }}
-          <input type="email" name="contact[email]" placeholder="email address" required>
-          <input type="hidden" name="contact[tags]" value="newsletter">
+          <input type="email" name="customer[email]" placeholder="email address" required>
+          <input type="hidden" name="customer[accepts_marketing]" value="1">
+          <input type="hidden" name="customer[tags]" value="newsletter,footer-newsletter">
           <label class="checkbox-container">
             <input type="checkbox" name="agree" required>
             <span>I agree to receive emails from Descontinuado.</span>
@@ -230,12 +231,14 @@
     .footer-columns {
       flex-wrap: wrap;
       gap: 30px;
+      justify-content: center;
     }
     .footer-links-1,
     .footer-links-2,
     .footer-subscribe {
       flex: 1 1 0;
       min-width: 0;
+      text-align: center;
     }
     .footer-subscribe {
       max-width: none;
@@ -246,6 +249,9 @@
       width: 100%;
       text-align: center;
       margin-top: 40px;
+    }
+    .links-column {
+      align-items: center;
     }
   }
 
@@ -259,57 +265,39 @@
       margin: 0 auto 40px;
     }
     .footer-columns {
-      flex-direction: column;
-      gap: 35px;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      align-items: flex-start;
     }
-    .footer-subscribe { order: 1; }
-    .footer-links-1 { order: 2; }
-    .footer-links-2 { order: 3; }
+    .footer-subscribe { 
+      order: 1; 
+      width: 100%;
+      text-align: center;
+      flex: 1 1 100%;
+    }
+    .footer-links-1 { 
+      order: 2; 
+      flex: 0 1 calc(50% - 10px);
+      text-align: center;
+      min-width: 0;
+    }
+    .footer-links-2 { 
+      order: 3; 
+      flex: 0 1 calc(50% - 10px);
+      text-align: center;
+      min-width: 0;
+    }
     .footer-logo {
       order: 4;
       text-align: center;
+      width: 100%;
+      flex: 1 1 100%;
+      margin-top: 20px;
+    }
+    .links-column {
+      align-items: center;
     }
   }
 </style>
-
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('newsletter-form');
-    if (form) {
-      form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const email = document.getElementById('newsletter-email').value;
-        const checkbox = document.getElementById('newsletter-checkbox');
-        
-        if (!checkbox.checked) {
-          alert('Please accept to receive emails.');
-          return false;
-        }
-        
-        const formData = new FormData(form);
-        
-        fetch('/contact', {
-          method: 'POST',
-          body: formData,
-          headers: {
-            'X-Requested-With': 'XMLHttpRequest'
-          }
-        })
-        .then(function() {
-          document.getElementById('newsletter-success').style.display = 'block';
-          form.reset();
-          setTimeout(function() {
-            document.getElementById('newsletter-success').style.display = 'none';
-          }, 5000);
-        })
-        .catch(function() {
-          document.getElementById('newsletter-success').style.display = 'block';
-          form.reset();
-        });
-        
-        return false;
-      });
-    }
-  });
-</script>
