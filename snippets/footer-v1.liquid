@@ -85,6 +85,12 @@
     color: #fff;
     padding: 70px 5% 20px;
     font-family: 'D-DIN', sans-serif;
+    position: relative;
+  }
+  
+  /* Asegurar que menu_toolbar no aparezca dentro del footer */
+  .footer-v1 .menu_toolbar {
+    display: none !important;
   }
 
   .footer-container {
@@ -258,7 +264,8 @@
   /* Mobile */
   @media (max-width: 767px) {
     .footer-v1 {
-      padding: 50px 0 20px;
+      padding: 50px 0 70px;
+      padding-bottom: 70px; /* Espacio para menu_toolbar fijo */
     }
     .footer-container {
       padding: 0 3%;
