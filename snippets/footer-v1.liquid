@@ -37,20 +37,22 @@
      <!-- Columna 4: Subscribe -->
       <div class="footer-col footer-subscribe">
         <h3>SUBSCRIBE AND GET 10% OFF YOUR FIRST ORDER</h3>
-        {% form 'customer', id: 'footer-newsletter-form' %}
-          {% if form.posted_successfully? %}
-            <p class="form-success">Thank you for subscribing!</p>
-          {% endif %}
-          {{ form.errors | default_errors }}
-          <input type="email" name="customer[email]" placeholder="email address" required>
+        <form id="footer-newsletter-form" method="post" action="/account" accept-charset="UTF-8">
+          <input type="hidden" name="form_type" value="create_customer">
+          <input type="hidden" name="utf8" value="✓">
+          <div id="footer-newsletter-success" class="form-success" style="display: none;">
+            <p>Thank you for subscribing!</p>
+          </div>
+          <div id="footer-newsletter-errors" class="errors" style="display: none;"></div>
+          <input type="email" name="customer[email]" id="footer-newsletter-email" placeholder="email address" required>
           <input type="hidden" name="customer[accepts_marketing]" value="1">
           <input type="hidden" name="customer[tags]" value="newsletter,footer-newsletter">
           <label class="checkbox-container">
-            <input type="checkbox" name="agree" required>
+            <input type="checkbox" id="footer-newsletter-agree" required>
             <span>I agree to receive emails from Descontinuado.</span>
           </label>
           <button type="submit" class="footer-button">SUBSCRIBE</button>
-        {% endform %}
+        </form>
       </div>
 
     </div>
@@ -308,3 +310,73 @@
     }
   }
 </style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('footer-newsletter-form');
+    const successMsg = document.getElementById('footer-newsletter-success');
+    const errorMsg = document.getElementById('footer-newsletter-errors');
+    const agreeCheckbox = document.getElementById('footer-newsletter-agree');
+    
+    if (form) {
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Validar checkbox
+        if (!agreeCheckbox.checked) {
+          errorMsg.textContent = 'Please accept to receive emails.';
+          errorMsg.style.display = 'block';
+          return false;
+        }
+        
+        // Ocultar mensajes anteriores
+        successMsg.style.display = 'none';
+        errorMsg.style.display = 'none';
+        
+        // Obtener datos del formulario
+        const formData = new FormData(form);
+        const email = document.getElementById('footer-newsletter-email').value;
+        
+        // Enviar vía AJAX
+        fetch('/account', {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+          }
+        })
+        .then(function(response) {
+          if (response.ok || response.redirected) {
+            // Éxito
+            successMsg.style.display = 'block';
+            form.reset();
+            // Ocultar mensaje después de 5 segundos
+            setTimeout(function() {
+              successMsg.style.display = 'none';
+            }, 5000);
+          } else {
+            // Error
+            return response.text().then(function(html) {
+              // Intentar extraer errores del HTML de respuesta
+              const parser = new DOMParser();
+              const doc = parser.parseFromString(html, 'text/html');
+              const errors = doc.querySelector('.errors, .form-errors');
+              if (errors) {
+                errorMsg.innerHTML = errors.innerHTML;
+              } else {
+                errorMsg.textContent = 'An error occurred. Please try again.';
+              }
+              errorMsg.style.display = 'block';
+            });
+          }
+        })
+        .catch(function(error) {
+          errorMsg.textContent = 'An error occurred. Please try again.';
+          errorMsg.style.display = 'block';
+        });
+        
+        return false;
+      });
+    }
+  });
+</script>
