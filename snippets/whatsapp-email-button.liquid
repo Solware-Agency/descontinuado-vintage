@@ -192,28 +192,67 @@
 
             {% comment %} Botón de WhatsApp - Construyendo mensaje con datos del pedido {% endcomment %}
             
-            {% comment %} Usar las mismas variables que el correo usa directamente {% endcomment %}
-            {% capture whatsapp_message %}¡Hola! 👋 Soy {% if customer %}{% if customer.first_name %}{{ customer.first_name }}{% if customer.last_name %} {{ customer.last_name }}{% endif %}{% else %}Cliente{% endif %}{% else %}Cliente{% endif %}.
-
-Acabo de hacer una compra en Descontinuado Vintage y quiero confirmar mi pedido:
-
-• Nº de pedido: {{ order_name }}
-• Total pagado: {{ total_price | money_with_currency }}
-• Método de pago: {% if payment_gateway_names.first %}{{ payment_gateway_names.first | replace: '_', ' ' | capitalize }}{% elsif transactions.first.gateway %}{{ transactions.first.gateway | replace: '_', ' ' | capitalize }}{% elsif transactions.first.payment_details.payment_method_name %}{{ transactions.first.payment_details.payment_method_name }}{% else %}No especificado{% endif %}
-• Método de envío: {% if shipping_methods.first.title %}{{ shipping_methods.first.title }}{% elsif shipping_method.title %}{{ shipping_method.title }}{% else %}No especificado{% endif %}
-
-Detalle de los artículos:
-{% if subtotal_line_items.size > 0 %}
-{% for line in subtotal_line_items %}
-{% unless line.delivery_agreement %}
-{% if line.presentment_title %}{{ line.presentment_title }}{% elsif line.title %}{{ line.title }}{% else %}{{ line.product.title }}{% endif %}{% if line.variant.title != blank and line.variant.title != 'Default Title' %} - {{ line.variant.title }}{% endif %} (x{{ line.quantity }}){% if line.final_line_price > 0 %} - {{ line.final_line_price | money }}{% endif %}
-{% endunless %}
-{% endfor %}
-{% else %}
-Los detalles del pedido se enviarán próximamente.
-{% endif %}
-
-Quedo pendiente para coordinar el envío 💚{% endcapture %}
+            {% comment %} Construir mensaje evaluando variables primero, igual que el correo {% endcomment %}
+            {% assign msg_customer = 'Cliente' %}
+            {% if customer %}
+              {% if customer.first_name %}
+                {% assign msg_customer = customer.first_name %}
+                {% if customer.last_name %}
+                  {% assign msg_customer = customer.first_name | append: ' ' | append: customer.last_name %}
+                {% endif %}
+              {% endif %}
+            {% endif %}
+            
+            {% assign msg_order = order_name %}
+            {% assign msg_total = total_price | money_with_currency %}
+            
+            {% assign msg_payment = 'No especificado' %}
+            {% if payment_gateway_names.first %}
+              {% assign msg_payment = payment_gateway_names.first | replace: '_', ' ' | capitalize %}
+            {% elsif transactions.first.gateway %}
+              {% assign msg_payment = transactions.first.gateway | replace: '_', ' ' | capitalize %}
+            {% elsif transactions.first.payment_details.payment_method_name %}
+              {% assign msg_payment = transactions.first.payment_details.payment_method_name %}
+            {% endif %}
+            
+            {% assign msg_shipping = 'No especificado' %}
+            {% if shipping_methods.first.title %}
+              {% assign msg_shipping = shipping_methods.first.title %}
+            {% elsif shipping_method.title %}
+              {% assign msg_shipping = shipping_method.title %}
+            {% endif %}
+            
+            {% assign msg_items = '' %}
+            {% if subtotal_line_items.size > 0 %}
+              {% for line in subtotal_line_items %}
+                {% unless line.delivery_agreement %}
+                  {% assign item_name = '' %}
+                  {% if line.presentment_title %}
+                    {% assign item_name = line.presentment_title %}
+                  {% elsif line.title %}
+                    {% assign item_name = line.title %}
+                  {% elsif line.product.title %}
+                    {% assign item_name = line.product.title %}
+                  {% endif %}
+                  {% if line.variant.title != blank and line.variant.title != 'Default Title' %}
+                    {% assign item_name = item_name | append: ' - ' | append: line.variant.title %}
+                  {% endif %}
+                  {% assign item_text = item_name | append: ' (x' | append: line.quantity | append: ')' %}
+                  {% if line.final_line_price > 0 %}
+                    {% assign item_text = item_text | append: ' - ' | append: line.final_line_price | money %}
+                  {% endif %}
+                  {% if msg_items == '' %}
+                    {% assign msg_items = item_text %}
+                  {% else %}
+                    {% assign msg_items = msg_items | append: '%0A' | append: item_text %}
+                  {% endif %}
+                {% endunless %}
+              {% endfor %}
+            {% else %}
+              {% assign msg_items = 'Los detalles del pedido se enviarán próximamente.' %}
+            {% endif %}
+            
+            {% assign whatsapp_message = '¡Hola! 👋 Soy ' | append: msg_customer | append: '.%0A%0AAcabo de hacer una compra en Descontinuado Vintage y quiero confirmar mi pedido:%0A%0A• Nº de pedido: ' | append: msg_order | append: '%0A• Total pagado: ' | append: msg_total | append: '%0A• Método de pago: ' | append: msg_payment | append: '%0A• Método de envío: ' | append: msg_shipping | append: '%0A%0ADetalle de los artículos:%0A' | append: msg_items | append: '%0A%0AQuedo pendiente para coordinar el envío 💚' %}
             {% assign whatsapp_encoded = whatsapp_message | url_encode %}
             {% assign whatsapp_url = 'https://wa.me/584122150171?text=' | append: whatsapp_encoded %}
             
@@ -249,28 +288,67 @@ Quedo pendiente para coordinar el envío 💚{% endcapture %}
 
             {% comment %} Botón de WhatsApp - Construyendo mensaje con datos del pedido {% endcomment %}
             
-            {% comment %} Usar las mismas variables que el correo usa directamente {% endcomment %}
-            {% capture whatsapp_message %}¡Hola! 👋 Soy {% if customer %}{% if customer.first_name %}{{ customer.first_name }}{% if customer.last_name %} {{ customer.last_name }}{% endif %}{% else %}Cliente{% endif %}{% else %}Cliente{% endif %}.
-
-Acabo de hacer una compra en Descontinuado Vintage y quiero confirmar mi pedido:
-
-• Nº de pedido: {{ order_name }}
-• Total pagado: {{ total_price | money_with_currency }}
-• Método de pago: {% if payment_gateway_names.first %}{{ payment_gateway_names.first | replace: '_', ' ' | capitalize }}{% elsif transactions.first.gateway %}{{ transactions.first.gateway | replace: '_', ' ' | capitalize }}{% elsif transactions.first.payment_details.payment_method_name %}{{ transactions.first.payment_details.payment_method_name }}{% else %}No especificado{% endif %}
-• Método de envío: {% if shipping_methods.first.title %}{{ shipping_methods.first.title }}{% elsif shipping_method.title %}{{ shipping_method.title }}{% else %}No especificado{% endif %}
-
-Detalle de los artículos:
-{% if subtotal_line_items.size > 0 %}
-{% for line in subtotal_line_items %}
-{% unless line.delivery_agreement %}
-{% if line.presentment_title %}{{ line.presentment_title }}{% elsif line.title %}{{ line.title }}{% else %}{{ line.product.title }}{% endif %}{% if line.variant.title != blank and line.variant.title != 'Default Title' %} - {{ line.variant.title }}{% endif %} (x{{ line.quantity }}){% if line.final_line_price > 0 %} - {{ line.final_line_price | money }}{% endif %}
-{% endunless %}
-{% endfor %}
-{% else %}
-Los detalles del pedido se enviarán próximamente.
-{% endif %}
-
-Quedo pendiente para coordinar el envío 💚{% endcapture %}
+            {% comment %} Construir mensaje evaluando variables primero, igual que el correo {% endcomment %}
+            {% assign msg_customer_2 = 'Cliente' %}
+            {% if customer %}
+              {% if customer.first_name %}
+                {% assign msg_customer_2 = customer.first_name %}
+                {% if customer.last_name %}
+                  {% assign msg_customer_2 = customer.first_name | append: ' ' | append: customer.last_name %}
+                {% endif %}
+              {% endif %}
+            {% endif %}
+            
+            {% assign msg_order_2 = order_name %}
+            {% assign msg_total_2 = total_price | money_with_currency %}
+            
+            {% assign msg_payment_2 = 'No especificado' %}
+            {% if payment_gateway_names.first %}
+              {% assign msg_payment_2 = payment_gateway_names.first | replace: '_', ' ' | capitalize %}
+            {% elsif transactions.first.gateway %}
+              {% assign msg_payment_2 = transactions.first.gateway | replace: '_', ' ' | capitalize %}
+            {% elsif transactions.first.payment_details.payment_method_name %}
+              {% assign msg_payment_2 = transactions.first.payment_details.payment_method_name %}
+            {% endif %}
+            
+            {% assign msg_shipping_2 = 'No especificado' %}
+            {% if shipping_methods.first.title %}
+              {% assign msg_shipping_2 = shipping_methods.first.title %}
+            {% elsif shipping_method.title %}
+              {% assign msg_shipping_2 = shipping_method.title %}
+            {% endif %}
+            
+            {% assign msg_items_2 = '' %}
+            {% if subtotal_line_items.size > 0 %}
+              {% for line in subtotal_line_items %}
+                {% unless line.delivery_agreement %}
+                  {% assign item_name_2 = '' %}
+                  {% if line.presentment_title %}
+                    {% assign item_name_2 = line.presentment_title %}
+                  {% elsif line.title %}
+                    {% assign item_name_2 = line.title %}
+                  {% elsif line.product.title %}
+                    {% assign item_name_2 = line.product.title %}
+                  {% endif %}
+                  {% if line.variant.title != blank and line.variant.title != 'Default Title' %}
+                    {% assign item_name_2 = item_name_2 | append: ' - ' | append: line.variant.title %}
+                  {% endif %}
+                  {% assign item_text_2 = item_name_2 | append: ' (x' | append: line.quantity | append: ')' %}
+                  {% if line.final_line_price > 0 %}
+                    {% assign item_text_2 = item_text_2 | append: ' - ' | append: line.final_line_price | money %}
+                  {% endif %}
+                  {% if msg_items_2 == '' %}
+                    {% assign msg_items_2 = item_text_2 %}
+                  {% else %}
+                    {% assign msg_items_2 = msg_items_2 | append: '%0A' | append: item_text_2 %}
+                  {% endif %}
+                {% endunless %}
+              {% endfor %}
+            {% else %}
+              {% assign msg_items_2 = 'Los detalles del pedido se enviarán próximamente.' %}
+            {% endif %}
+            
+            {% assign whatsapp_message = '¡Hola! 👋 Soy ' | append: msg_customer_2 | append: '.%0A%0AAcabo de hacer una compra en Descontinuado Vintage y quiero confirmar mi pedido:%0A%0A• Nº de pedido: ' | append: msg_order_2 | append: '%0A• Total pagado: ' | append: msg_total_2 | append: '%0A• Método de pago: ' | append: msg_payment_2 | append: '%0A• Método de envío: ' | append: msg_shipping_2 | append: '%0A%0ADetalle de los artículos:%0A' | append: msg_items_2 | append: '%0A%0AQuedo pendiente para coordinar el envío 💚' %}
             {% assign whatsapp_encoded = whatsapp_message | url_encode %}
             {% assign whatsapp_url = 'https://wa.me/584122150171?text=' | append: whatsapp_encoded %}
             
