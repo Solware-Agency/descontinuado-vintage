@@ -192,20 +192,19 @@
 
             {% comment %} Botón de WhatsApp - Construyendo mensaje con datos del pedido {% endcomment %}
             
-            {% comment %} Construir mensaje usando capture para mejor manejo {% endcomment %}
-            {% capture whatsapp_message %}
-¡Hola! 👋 Soy {% if customer %}{% if customer.first_name %}{{ customer.first_name }}{% if customer.last_name %} {{ customer.last_name }}{% endif %}{% else %}Cliente{% endif %}{% else %}Cliente{% endif %}.
+            {% comment %} Usar las mismas variables que el correo usa directamente {% endcomment %}
+            {% capture whatsapp_message %}¡Hola! 👋 Soy {% if customer %}{% if customer.first_name %}{{ customer.first_name }}{% if customer.last_name %} {{ customer.last_name }}{% endif %}{% else %}Cliente{% endif %}{% else %}Cliente{% endif %}.
 
 Acabo de hacer una compra en Descontinuado Vintage y quiero confirmar mi pedido:
 
-• Nº de pedido: {% if name %}{{ name }}{% else %}Pendiente{% endif %}
-• Total pagado: {% if total_price and total_price > 0 %}{{ total_price | money_with_currency }}{% else %}Pendiente{% endif %}
+• Nº de pedido: {{ order_name }}
+• Total pagado: {{ total_price | money_with_currency }}
 • Método de pago: {% if payment_gateway_names.first %}{{ payment_gateway_names.first | replace: '_', ' ' | capitalize }}{% elsif transactions.first.gateway %}{{ transactions.first.gateway | replace: '_', ' ' | capitalize }}{% elsif transactions.first.payment_details.payment_method_name %}{{ transactions.first.payment_details.payment_method_name }}{% else %}No especificado{% endif %}
 • Método de envío: {% if shipping_methods.first.title %}{{ shipping_methods.first.title }}{% elsif shipping_method.title %}{{ shipping_method.title }}{% else %}No especificado{% endif %}
 
 Detalle de los artículos:
-{% if line_items.size > 0 %}
-{% for line in line_items %}
+{% if subtotal_line_items.size > 0 %}
+{% for line in subtotal_line_items %}
 {% unless line.delivery_agreement %}
 {% if line.presentment_title %}{{ line.presentment_title }}{% elsif line.title %}{{ line.title }}{% else %}{{ line.product.title }}{% endif %}{% if line.variant.title != blank and line.variant.title != 'Default Title' %} - {{ line.variant.title }}{% endif %} (x{{ line.quantity }}){% if line.final_line_price > 0 %} - {{ line.final_line_price | money }}{% endif %}
 {% endunless %}
@@ -214,8 +213,7 @@ Detalle de los artículos:
 Los detalles del pedido se enviarán próximamente.
 {% endif %}
 
-Quedo pendiente para coordinar el envío 💚
-            {% endcapture %}
+Quedo pendiente para coordinar el envío 💚{% endcapture %}
             {% assign whatsapp_encoded = whatsapp_message | url_encode %}
             {% assign whatsapp_url = 'https://wa.me/584122150171?text=' | append: whatsapp_encoded %}
             
@@ -251,16 +249,15 @@ Quedo pendiente para coordinar el envío 💚
 
             {% comment %} Botón de WhatsApp - Construyendo mensaje con datos del pedido {% endcomment %}
             
-            {% comment %} Construir mensaje usando capture para mejor manejo {% endcomment %}
-            {% capture whatsapp_message %}
-¡Hola! 👋 Soy {% if customer %}{% if customer.first_name %}{{ customer.first_name }}{% if customer.last_name %} {{ customer.last_name }}{% endif %}{% else %}Cliente{% endif %}{% else %}Cliente{% endif %}.
+            {% comment %} Usar las mismas variables que el correo usa directamente {% endcomment %}
+            {% capture whatsapp_message %}¡Hola! 👋 Soy {% if customer %}{% if customer.first_name %}{{ customer.first_name }}{% if customer.last_name %} {{ customer.last_name }}{% endif %}{% else %}Cliente{% endif %}{% else %}Cliente{% endif %}.
 
 Acabo de hacer una compra en Descontinuado Vintage y quiero confirmar mi pedido:
 
-• Nº de pedido: {% if order_name %}{{ order_name }}{% else %}Pendiente{% endif %}
-• Total pagado: {% if total_price and total_price > 0 %}{{ total_price | money_with_currency }}{% else %}Pendiente{% endif %}
-• Método de pago: {% if transactions.first.gateway %}{{ transactions.first.gateway | replace: '_', ' ' | capitalize }}{% elsif transactions.first.payment_details.payment_method_name %}{{ transactions.first.payment_details.payment_method_name }}{% else %}No especificado{% endif %}
-• Método de envío: {% if shipping_method.title %}{{ shipping_method.title }}{% else %}No especificado{% endif %}
+• Nº de pedido: {{ order_name }}
+• Total pagado: {{ total_price | money_with_currency }}
+• Método de pago: {% if payment_gateway_names.first %}{{ payment_gateway_names.first | replace: '_', ' ' | capitalize }}{% elsif transactions.first.gateway %}{{ transactions.first.gateway | replace: '_', ' ' | capitalize }}{% elsif transactions.first.payment_details.payment_method_name %}{{ transactions.first.payment_details.payment_method_name }}{% else %}No especificado{% endif %}
+• Método de envío: {% if shipping_methods.first.title %}{{ shipping_methods.first.title }}{% elsif shipping_method.title %}{{ shipping_method.title }}{% else %}No especificado{% endif %}
 
 Detalle de los artículos:
 {% if subtotal_line_items.size > 0 %}
@@ -273,8 +270,7 @@ Detalle de los artículos:
 Los detalles del pedido se enviarán próximamente.
 {% endif %}
 
-Quedo pendiente para coordinar el envío 💚
-            {% endcapture %}
+Quedo pendiente para coordinar el envío 💚{% endcapture %}
             {% assign whatsapp_encoded = whatsapp_message | url_encode %}
             {% assign whatsapp_url = 'https://wa.me/584122150171?text=' | append: whatsapp_encoded %}
             
