@@ -198,14 +198,14 @@
 
 Acabo de hacer una compra en Descontinuado Vintage y quiero confirmar mi pedido:
 
-• Nº de pedido: {% if order_name %}{{ order_name }}{% else %}Pendiente{% endif %}
+• Nº de pedido: {% if name %}{{ name }}{% else %}Pendiente{% endif %}
 • Total pagado: {% if total_price and total_price > 0 %}{{ total_price | money_with_currency }}{% else %}Pendiente{% endif %}
-• Método de pago: {% if transactions.first.gateway %}{{ transactions.first.gateway | replace: '_', ' ' | capitalize }}{% elsif transactions.first.payment_details.payment_method_name %}{{ transactions.first.payment_details.payment_method_name }}{% else %}No especificado{% endif %}
-• Método de envío: {% if shipping_method.title %}{{ shipping_method.title }}{% else %}No especificado{% endif %}
+• Método de pago: {% if payment_gateway_names.first %}{{ payment_gateway_names.first | replace: '_', ' ' | capitalize }}{% elsif transactions.first.gateway %}{{ transactions.first.gateway | replace: '_', ' ' | capitalize }}{% elsif transactions.first.payment_details.payment_method_name %}{{ transactions.first.payment_details.payment_method_name }}{% else %}No especificado{% endif %}
+• Método de envío: {% if shipping_methods.first.title %}{{ shipping_methods.first.title }}{% elsif shipping_method.title %}{{ shipping_method.title }}{% else %}No especificado{% endif %}
 
 Detalle de los artículos:
-{% if subtotal_line_items.size > 0 %}
-{% for line in subtotal_line_items %}
+{% if line_items.size > 0 %}
+{% for line in line_items %}
 {% unless line.delivery_agreement %}
 {% if line.presentment_title %}{{ line.presentment_title }}{% elsif line.title %}{{ line.title }}{% else %}{{ line.product.title }}{% endif %}{% if line.variant.title != blank and line.variant.title != 'Default Title' %} - {{ line.variant.title }}{% endif %} (x{{ line.quantity }}){% if line.final_line_price > 0 %} - {{ line.final_line_price | money }}{% endif %}
 {% endunless %}
