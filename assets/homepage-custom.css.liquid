@@ -275,7 +275,7 @@
 
 /* Carrusel - oculto por defecto (solo visible en mobile) */
 .get-inspired-carousel {
-  display: none;
+  display: none !important;
   max-width: 100%;
   margin: 0 auto;
   padding: 40px 15px 0;
@@ -343,17 +343,20 @@
 
 /* Estilos para el carrusel Slick */
 .get-inspired-carousel .slick-slide {
-  padding: 0 10px;
+  padding: 0 5px;
+  width: 404px !important;
 }
 
 .get-inspired-carousel .slick-slide > div {
   position: relative;
   width: 100%;
+  height: 100%;
 }
 
 .get-inspired-carousel .inspired-item {
   position: relative;
-  width: 100%;
+  width: 404px !important;
+  margin: 0 auto;
 }
 
 .get-inspired-carousel .inspired-link {
@@ -369,8 +372,11 @@
   pointer-events: auto;
   cursor: pointer;
   display: block;
-  width: 100%;
-  max-width: 100%;
+  width: 404px !important;
+  max-width: 404px !important;
+  height: auto;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
 }
 
 .get-inspired-carousel .slick-dots {
@@ -430,7 +436,7 @@
 
 @media (max-width: 600px) {
   .get-inspired {
-    padding: 50px 0 40px; /* más compacto, menos espacio abajo */
+    padding: 50px 0 60px; /* espacio abajo para los dots */
   }
 
   .get-inspired-title {
@@ -449,41 +455,51 @@
     display: block !important;
     max-width: 100% !important;
     width: 100% !important;
-    padding: 30px 10px 0 !important;
-    margin: 0 !important;
+    padding: 30px 0 0 !important;
+    margin: 0 auto !important;
+    overflow: hidden;
   }
 
   .get-inspired-carousel .slick-list {
-    margin: 0 -5px;
+    margin: 0 !important;
     padding: 0 !important;
+    overflow: visible;
+  }
+
+  .get-inspired-carousel .slick-track {
+    display: flex !important;
+    align-items: center;
   }
 
   .get-inspired-carousel .slick-slide {
-    padding: 0 5px;
+    padding: 0 !important;
+    width: 404px !important;
+    margin: 0 5px;
   }
 
   .get-inspired-carousel .slick-slide > div {
-    width: 100% !important;
-    max-width: 100% !important;
+    width: 404px !important;
+    max-width: 404px !important;
   }
 
   .get-inspired-carousel .inspired-item {
-    width: 100% !important;
-    max-width: 100% !important;
+    width: 404px !important;
+    max-width: 404px !important;
     margin: 0 auto !important;
     padding: 0 !important;
   }
 
   .get-inspired-carousel .inspired-link {
-    width: 100% !important;
+    width: 404px !important;
+    max-width: 404px !important;
     display: block !important;
   }
 
   .get-inspired-carousel .inspired-item img {
-    width: 100% !important;
-    max-width: 100% !important;
+    width: 404px !important;
+    max-width: 404px !important;
     height: auto !important;
-    aspect-ratio: 3 / 4 !important; /* Menos alto: 3/4 en lugar de 4/5 */
+    aspect-ratio: 3 / 4 !important;
     object-fit: cover !important;
     display: block !important;
     pointer-events: auto !important;
@@ -493,18 +509,19 @@
 
   /* Ajustar dots del carrusel */
   .get-inspired-carousel .slick-dots {
-    bottom: -30px !important;
+    bottom: -40px !important;
     margin-top: 20px;
+    position: relative;
   }
 
   /* Ajustar flechas del carrusel */
   .get-inspired-carousel .slick-prev {
-    left: 5px !important;
+    left: 10px !important;
     z-index: 10 !important;
   }
 
   .get-inspired-carousel .slick-next {
-    right: 5px !important;
+    right: 10px !important;
     z-index: 10 !important;
   }
 }
