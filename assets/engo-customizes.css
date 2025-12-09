@@ -19012,7 +19012,8 @@ body.cartover {
     padding-bottom: 0;
     margin-bottom: 0;
     text-align: center;
-    font-size: 20px
+    font-size: 20px;
+    font-family: 'D-DIN', sans-serif;
 }
 
 .minicart .mini-content .mini-cart-head .mini-cart-counter {
@@ -19070,7 +19071,8 @@ body.cartover {
     text-align: justify;
     color: #92959a;
     text-decoration: none;
-    font-weight: 400
+    font-weight: 400;
+    font-family: 'D-DIN', sans-serif;
 }
 
 .minicart .mini-content .prod .product-cart .minicart_item li .product-detail .product_name_mini a:hover {
@@ -19079,18 +19081,25 @@ body.cartover {
 
 .minicart .mini-content .prod .product-cart .minicart_item li .product-detail span {
     font-size: 16px;
-    padding-top: 10px
+    padding-top: 10px;
+    font-family: 'D-DIN', sans-serif;
 }
 
 .minicart .mini-content .prod .product-cart .minicart_item li .product-detail .product_info .price_nosale {
     text-decoration: line-through;
     font-size: 15px;
     color: #c5c5c5;
-    padding-right: 10px
+    padding-right: 10px;
+    font-family: 'D-DIN', sans-serif;
+}
+
+.minicart .mini-content .prod .product-cart .minicart_item li .product-detail .product_info .product_quanity {
+    font-family: 'D-DIN', sans-serif;
 }
 
 .minicart .mini-content .prod .product-cart .minicart_item li .product-detail .product_info .price_sale {
-    font-size: 15px
+    font-size: 15px;
+    font-family: 'D-DIN', sans-serif;
 }
 
 .minicart .mini-content .prod .product-cart .minicart_item li .produc_remove {
@@ -19128,14 +19137,16 @@ body.cartover {
 
 .minicart .mini-content .sub-total .total-title {
     font-size: 18px;
-    font-weight: 500
+    font-weight: 500;
+    font-family: 'D-DIN', sans-serif;
 }
 
 .minicart .mini-content .sub-total .total-price {
     width: auto;
     font-weight: 600;
     display: block;
-    color: #000000
+    color: #000000;
+    font-family: 'D-DIN', sans-serif;
 }
 
 .minicart .mini-content .action-checkout {
@@ -19158,7 +19169,8 @@ body.cartover {
     line-height: 61px;
     color: #fff;
     background-color: #2a2a2a;
-    transition: color .3s ease 0s,background-color .3s ease 0s
+    transition: color .3s ease 0s,background-color .3s ease 0s;
+    font-family: 'D-DIN', sans-serif;
 }
 
 .minicart .mini-content .action-checkout .button-viewcart:hover {
@@ -19178,7 +19190,8 @@ body.cartover {
     line-height: 61px;
     color: #fff;
     background-color: #92959a;
-    transition: color .3s ease 0s,background-color .3s ease 0s
+    transition: color .3s ease 0s,background-color .3s ease 0s;
+    font-family: 'D-DIN', sans-serif;
 }
 
 .minicart .mini-content .action-checkout .button-checkout:hover {
@@ -25674,7 +25687,7 @@ footer .menu-language-wrap #language{
   color: rgba(109, 113, 120, 0.75);
   font-weight: 700;
   text-align: center;
-  font-family: "Playfair Display";
+  font-family: 'D-DIN', sans-serif;
   transition: all .25s linear 0s;
   -webkit-transition: all .25s linear 0s;
   -o-transition: all .25s linear 0s;
@@ -25728,7 +25741,7 @@ footer .menu-language-wrap #language{
   color: rgba(109, 113, 120, 0.75);
   font-weight: 700;
   text-align: center;
-  font-family: "Playfair Display";
+  font-family: 'D-DIN', sans-serif;
   transition: all .25s linear 0s;
   -webkit-transition: all .25s linear 0s;
   -o-transition: all .25s linear 0s;
@@ -25871,7 +25884,7 @@ footer .menu-language-wrap #language{
 
 .section-product-v6 .nav-tabs.title-tab li .ds-prod-1 {
   display: inline-block;
-  font-family: 'Playfair Display',sans-serif;
+  font-family: 'D-DIN', sans-serif;
   font-size: 14px;
   text-transform: uppercase;
   line-height: 22px;
