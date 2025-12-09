@@ -37,19 +37,22 @@
      <!-- Columna 4: Subscribe -->
       <div class="footer-col footer-subscribe">
         <h3>SUBSCRIBE AND GET 10% OFF YOUR FIRST ORDER</h3>
-        {% form 'contact' %}
-          {% if form.posted_successfully? %}
-            <p class="form-success">Thank you for subscribing!</p>
-          {% endif %}
-          {{ form.errors | default_errors }}
-          <input type="email" name="contact[email]" placeholder="email address" required>
-          <input type="hidden" name="contact[tags]" value="newsletter">
+        <form id="footer-newsletter-form" method="post" action="/account" accept-charset="UTF-8">
+          <input type="hidden" name="form_type" value="create_customer">
+          <input type="hidden" name="utf8" value="✓">
+          <div id="footer-newsletter-success" class="form-success" style="display: none;">
+            <p>Thank you for subscribing!</p>
+          </div>
+          <div id="footer-newsletter-errors" class="errors" style="display: none;"></div>
+          <input type="email" name="customer[email]" id="footer-newsletter-email" placeholder="email address" required>
+          <input type="hidden" name="customer[accepts_marketing]" value="1">
+          <input type="hidden" name="customer[tags]" value="newsletter,footer-newsletter">
           <label class="checkbox-container">
-            <input type="checkbox" name="agree" required>
+            <input type="checkbox" id="footer-newsletter-agree" required>
             <span>I agree to receive emails from Descontinuado.</span>
           </label>
           <button type="submit" class="footer-button">SUBSCRIBE</button>
-        {% endform %}
+        </form>
       </div>
 
     </div>
@@ -84,6 +87,12 @@
     color: #fff;
     padding: 70px 5% 20px;
     font-family: 'D-DIN', sans-serif;
+    position: relative;
+  }
+  
+  /* Asegurar que menu_toolbar no aparezca dentro del footer */
+  .footer-v1 .menu_toolbar {
+    display: none !important;
   }
 
   .footer-container {
@@ -230,12 +239,14 @@
     .footer-columns {
       flex-wrap: wrap;
       gap: 30px;
+      justify-content: center;
     }
     .footer-links-1,
     .footer-links-2,
     .footer-subscribe {
       flex: 1 1 0;
       min-width: 0;
+      text-align: center;
     }
     .footer-subscribe {
       max-width: none;
@@ -247,65 +258,121 @@
       text-align: center;
       margin-top: 40px;
     }
+    .links-column {
+      align-items: center;
+    }
   }
 
   /* Mobile */
   @media (max-width: 767px) {
     .footer-v1 {
-      padding: 50px 0 20px;
+      padding: 50px 0 70px;
+      padding-bottom: 70px; /* Espacio para menu_toolbar fijo */
     }
     .footer-container {
       padding: 0 3%;
       margin: 0 auto 40px;
     }
     .footer-columns {
-      flex-direction: column;
-      gap: 35px;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      align-items: flex-start;
     }
-    .footer-subscribe { order: 1; }
-    .footer-links-1 { order: 2; }
-    .footer-links-2 { order: 3; }
+    .footer-subscribe { 
+      order: 1; 
+      width: 100%;
+      text-align: center;
+      flex: 1 1 100%;
+    }
+    .footer-links-1 { 
+      order: 2; 
+      flex: 0 1 calc(50% - 10px);
+      text-align: center;
+      min-width: 0;
+    }
+    .footer-links-2 { 
+      order: 3; 
+      flex: 0 1 calc(50% - 10px);
+      text-align: center;
+      min-width: 0;
+    }
     .footer-logo {
       order: 4;
       text-align: center;
+      width: 100%;
+      flex: 1 1 100%;
+      margin-top: 20px;
+    }
+    .links-column {
+      align-items: center;
     }
   }
 </style>
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('newsletter-form');
+    const form = document.getElementById('footer-newsletter-form');
+    const successMsg = document.getElementById('footer-newsletter-success');
+    const errorMsg = document.getElementById('footer-newsletter-errors');
+    const agreeCheckbox = document.getElementById('footer-newsletter-agree');
+    
     if (form) {
       form.addEventListener('submit', function(e) {
         e.preventDefault();
         
-        const email = document.getElementById('newsletter-email').value;
-        const checkbox = document.getElementById('newsletter-checkbox');
-        
-        if (!checkbox.checked) {
-          alert('Please accept to receive emails.');
+        // Validar checkbox
+        if (!agreeCheckbox.checked) {
+          errorMsg.textContent = 'Please accept to receive emails.';
+          errorMsg.style.display = 'block';
           return false;
         }
         
-        const formData = new FormData(form);
+        // Ocultar mensajes anteriores
+        successMsg.style.display = 'none';
+        errorMsg.style.display = 'none';
         
-        fetch('/contact', {
+        // Obtener datos del formulario
+        const formData = new FormData(form);
+        const email = document.getElementById('footer-newsletter-email').value;
+        
+        // Enviar vía AJAX
+        fetch('/account', {
           method: 'POST',
           body: formData,
           headers: {
             'X-Requested-With': 'XMLHttpRequest'
           }
         })
-        .then(function() {
-          document.getElementById('newsletter-success').style.display = 'block';
-          form.reset();
-          setTimeout(function() {
-            document.getElementById('newsletter-success').style.display = 'none';
-          }, 5000);
+        .then(function(response) {
+          if (response.ok || response.redirected) {
+            // Éxito
+            successMsg.style.display = 'block';
+            form.reset();
+            // Ocultar mensaje después de 5 segundos
+            setTimeout(function() {
+              successMsg.style.display = 'none';
+            }, 5000);
+          } else {
+            // Error
+            return response.text().then(function(html) {
+              // Intentar extraer errores del HTML de respuesta
+              const parser = new DOMParser();
+              const doc = parser.parseFromString(html, 'text/html');
+              const errors = doc.querySelector('.errors, .form-errors');
+              if (errors) {
+                errorMsg.innerHTML = errors.innerHTML;
+              } else {
+                errorMsg.textContent = 'An error occurred. Please try again.';
+              }
+              errorMsg.style.display = 'block';
+            });
+          }
         })
-        .catch(function() {
-          document.getElementById('newsletter-success').style.display = 'block';
-          form.reset();
+        .catch(function(error) {
+          errorMsg.textContent = 'An error occurred. Please try again.';
+          errorMsg.style.display = 'block';
         });
         
         return false;

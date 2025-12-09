@@ -143,3 +143,33 @@
   ]
 }
 {% endschema %}
+
+{% javascript %}
+(function() {
+  function capitalizeCollectionTabs() {
+    var tabs = document.querySelectorAll('.section-product-v2 .ds-prod-1');
+    tabs.forEach(function(tab) {
+      var text = tab.textContent || tab.innerText;
+      if (text) {
+        // Capitalizar "skirts" a "Skirts"
+        text = text.replace(/skirts/gi, 'Skirts');
+        // Capitalizar "jackets" a "Jackets"
+        text = text.replace(/jackets/gi, 'Jackets');
+        if (tab.textContent !== text) {
+          tab.textContent = text;
+        }
+      }
+    });
+  }
+  
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', capitalizeCollectionTabs);
+  } else {
+    capitalizeCollectionTabs();
+  }
+  
+  // Ejecutar también después de un delay para asegurar que los elementos estén cargados
+  setTimeout(capitalizeCollectionTabs, 500);
+  setTimeout(capitalizeCollectionTabs, 1000);
+})();
+{% endjavascript %}

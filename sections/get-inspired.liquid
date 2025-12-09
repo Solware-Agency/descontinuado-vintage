@@ -71,6 +71,7 @@
 <script>
   (function() {
     var sectionId = '{{ section.id }}';
+    var carouselInitialized = false;
     
     function initGetInspiredCarousel() {
       var carousel = document.getElementById('get-inspired-carousel-' + sectionId);
@@ -87,56 +88,74 @@
       
       // Función para inicializar/destruir carrusel según el tamaño de pantalla
       function handleCarousel() {
-        if (window.innerWidth <= 600) {
-          // Mobile: inicializar carrusel
+        var isMobile = window.innerWidth <= 600;
+        
+        if (isMobile) {
+          // Mobile: inicializar carrusel si no está inicializado
           if (!$carousel.hasClass('slick-initialized')) {
             $carousel.slick({
               dots: true,
               arrows: true,
-              infinite: true,
-              speed: 300,
+              infinite: true, // Loop infinito
+              speed: 500,
               slidesToShow: 1,
               slidesToScroll: 1,
               adaptiveHeight: false,
               autoplay: false,
               fade: false,
-              cssEase: 'ease',
+              cssEase: 'ease-in-out',
               swipe: true,
               touchMove: true,
               draggable: true,
-              touchThreshold: 5
+              touchThreshold: 5,
+              centerMode: false,
+              variableWidth: false,
+              responsive: [
+                {
+                  breakpoint: 600,
+                  settings: {
+                    slidesToShow: 1,
+                    slidesToScroll: 1,
+                    infinite: true,
+                    dots: true,
+                    arrows: true
+                  }
+                }
+              ]
             });
             
-            // Asegurar que las imágenes sean clickeables
-            $carousel.on('init', function() {
-              $carousel.find('.inspired-item img').css({
-                'pointer-events': 'auto',
-                'cursor': 'pointer'
-              });
-            });
+            carouselInitialized = true;
           }
         } else {
           // Desktop/Tablet: destruir carrusel si está inicializado
           if ($carousel.hasClass('slick-initialized')) {
             $carousel.slick('unslick');
+            carouselInitialized = false;
           }
         }
       }
       
       // Inicializar al cargar
+      function init() {
+        // Esperar un poco más para asegurar que todo esté listo
+        setTimeout(function() {
+          handleCarousel();
+        }, 300);
+      }
+      
       if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', function() {
-          setTimeout(handleCarousel, 200);
-        });
+        document.addEventListener('DOMContentLoaded', init);
       } else {
-        setTimeout(handleCarousel, 200);
+        init();
       }
       
       // Manejar redimensionamiento
       var resizeTimer;
       window.addEventListener('resize', function() {
         clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(handleCarousel, 250);
+        resizeTimer = setTimeout(function() {
+          handleCarousel();
+        }, 300);
       });
     }
     
