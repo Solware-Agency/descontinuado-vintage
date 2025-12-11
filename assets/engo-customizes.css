@@ -311,6 +311,7 @@
 .swatch .swatch-element {
     float: left;
     -webkit-transform: translateZ(0);
+    transform: translateZ(0);
     -webkit-font-smoothing: antialiased;
     margin: 0 5px 5px 0;
     position: relative
@@ -2503,7 +2504,6 @@ a:focus,a:hover {
 }
 
 .page_aboutus_v1.page_contact .get_find .box_getin.box_find .info_find .icon-box-wrapper .icon-box-icon {
-    display: inline-block;
     float: left;
     width: 30px;
     height: 50px;
@@ -9919,6 +9919,7 @@ a:focus,a:hover {
   box-shadow: 0 1px rgb(212 214 216 / 40%);
   border-radius: 2px;
   -webkit-appearance: none;
+  appearance: none;
   position: absolute;
   left: 0;
   top: 1px;
@@ -10564,6 +10565,7 @@ ul.slick-dots li.slick-active button:before{
 .collection-page-fullwidth .content-page .shop_control .style_layout_prod .sort-pagi-bar .sort-by .select-box select,.collection-page-sidebar .content-page .shop_control .style_layout_prod .sort-pagi-bar .sort-by .select-box select {
     -moz-appearance: none;
     -webkit-appearance: none;
+  appearance: none;
     appearance: none
 }
 
@@ -11157,6 +11159,7 @@ ul.slick-dots li.slick-active button:before{
   box-shadow: 0 1px rgb(212 214 216 / 40%);
   border-radius: 2px;
   -webkit-appearance: none;
+  appearance: none;
   position: absolute;
   left: 0;
   top: 1px;
@@ -11549,6 +11552,7 @@ ul.slick-dots li.slick-active button:before{
   box-shadow: 0 1px rgb(212 214 216 / 40%);
   border-radius: 2px;
   -webkit-appearance: none;
+  appearance: none;
   position: absolute;
   left: 0;
   top: 1px;
@@ -11709,6 +11713,7 @@ ul.slick-dots li.slick-active button:before{
   box-shadow: 0 1px rgb(212 214 216 / 40%);
   border-radius: 2px;
   -webkit-appearance: none;
+  appearance: none;
   position: absolute;
   left: 0;
   top: 1px;
@@ -11725,6 +11730,7 @@ ul.slick-dots li.slick-active button:before{
   box-shadow: 0 1px rgb(212 214 216 / 40%);
   border-radius: 2px;
   -webkit-appearance: none;
+  appearance: none;
   position: absolute;
   left: 0;
   top: 1px;
@@ -12390,7 +12396,6 @@ ul.slick-dots li.slick-active button:before{
 
 .blog-page .content-blog-page .blog-list-view .blog_classic .image_blog {
     width: 50%;
-    display: inline-block;
     float: left
 }
 
@@ -13742,7 +13747,6 @@ ul.slick-dots li.slick-active button:before{
 }
 
 .article-page .blog-comment-detail .comment-details .comment-info .reply-button {
-    display: inline-block;
     float: right;
     color: #c2c2c2
 }
@@ -19275,6 +19279,7 @@ body.cartover {
 .engoc_currencies select {
     -moz-appearance: none;
     -webkit-appearance: none;
+  appearance: none;
     appearance: none
 }
 
