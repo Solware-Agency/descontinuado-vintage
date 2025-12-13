@@ -311,7 +311,6 @@
 .swatch .swatch-element {
     float: left;
     -webkit-transform: translateZ(0);
-    transform: translateZ(0);
     -webkit-font-smoothing: antialiased;
     margin: 0 5px 5px 0;
     position: relative
@@ -2504,6 +2503,7 @@ a:focus,a:hover {
 }
 
 .page_aboutus_v1.page_contact .get_find .box_getin.box_find .info_find .icon-box-wrapper .icon-box-icon {
+    display: inline-block;
     float: left;
     width: 30px;
     height: 50px;
@@ -3210,7 +3210,7 @@ a:focus,a:hover {
   
   font-family: D-DIN;
   
-  text-align: center;
+  text-algin: center;
 }
 
 .product-item-v1 .img-product .countdown-timer li span b {
@@ -3290,7 +3290,7 @@ a:focus,a:hover {
 .product-item-v1 .product-icon-action .add-to-cart a svg,.product-item-v1 .product-icon-action .add-to-cart button svg,.product-item-v1 .product-icon-action .add-wishlist a svg,.product-item-v1 .product-icon-action .add-wishlist button svg,.product-item-v1 .product-icon-action .quick-view a svg,.product-item-v1 .product-icon-action .quick-view button svg {
     width: 20px;
     height: 20px;
-    fill: #92959a;
+    fill: #92959a111
 }
 
 .product-item-v1 .product-icon-action .add-to-cart a:hover,.product-item-v1 .product-icon-action .add-to-cart button:hover,.product-item-v1 .product-icon-action .add-wishlist a:hover,.product-item-v1 .product-icon-action .add-wishlist button:hover,.product-item-v1 .product-icon-action .quick-view a:hover,.product-item-v1 .product-icon-action .quick-view button:hover {
@@ -3530,7 +3530,7 @@ a:focus,a:hover {
 .product-item-v2 .product-icon-action li a svg {
     width: 20px;
     height: 20px;
-    fill: #92959a;
+    fill: #92959a111
 }
 
 .product-item-v2 .product-icon-action li a i {
@@ -3566,7 +3566,7 @@ a:focus,a:hover {
 .product-item-v2 .product-icon-action li button svg {
     width: 20px;
     height: 20px;
-    fill: #92959a;
+    fill: #92959a111
 }
 
 .product-item-v2 .product-icon-action li button:hover {
@@ -3811,7 +3811,7 @@ a:focus,a:hover {
 .product-item-v3 .product-icon-action li a svg {
     width: 20px;
     height: 20px;
-    fill: #92959a;
+    fill: #92959a111
 }
 
 .product-item-v3 .product-icon-action li button {
@@ -3822,7 +3822,7 @@ a:focus,a:hover {
 .product-item-v3 .product-icon-action li button svg {
     width: 20px;
     height: 20px;
-    fill: #92959a;
+    fill: #92959a111
 }
 
 .product-item-v3 .variant-product {
@@ -3999,7 +3999,7 @@ a:focus,a:hover {
 .product-item-v4 .product-icon-action li a svg {
     width: 20px;
     height: 20px;
-    fill: #92959a;
+    fill: #92959a111
 }
 
 .product-item-v4 .product-icon-action li a:hover {
@@ -4039,7 +4039,7 @@ a:focus,a:hover {
 .product-item-v4 .product-icon-action li button svg {
     width: 20px;
     height: 20px;
-    fill: #92959a;
+    fill: #92959a111
 }
 
 .product-item-v4 .product-icon-action li button:hover {
@@ -4299,7 +4299,7 @@ a:focus,a:hover {
 .product-item-v5 .product-icon-action svg {
     width: 20px;
     height: 20px;
-    fill: #92959a;
+    fill: #92959a111
 }
 
 .product-item-v5 .product-icon-action .quick-view {
@@ -4467,7 +4467,7 @@ a:focus,a:hover {
   
   font-family: D-DIN;
   
-  text-align: center
+  text-algin: center
 }
 
 .product-item-v5 .img-product .countdown-timer li span b {
@@ -4652,7 +4652,7 @@ a:focus,a:hover {
 .product-item-v6 .product-icon-action li a svg {
     width: 20px;
     height: 20px;
-    fill: #92959a;
+    fill: #92959a111
 }
 
 .product-item-v6 .product-icon-action li a:hover {
@@ -4692,7 +4692,7 @@ a:focus,a:hover {
 .product-item-v6 .product-icon-action li button svg {
     width: 20px;
     height: 20px;
-    fill: #92959a;
+    fill: #92959a111
 }
 
 .product-item-v6 .product-icon-action li button:hover {
@@ -4844,7 +4844,7 @@ a:focus,a:hover {
   
   font-family: D-DIN;
   
-  text-align: center
+  text-algin: center
 }
 
 .product-item-v6 .img-product .countdown-timer li span b {
@@ -5004,7 +5004,7 @@ a:focus,a:hover {
 .product-item-v7 .product-icon-action li a svg {
     width: 20px;
     height: 20px;
-    fill: #92959a;
+    fill: #92959a111
 }
 
 .product-item-v7 .product-icon-action li a:hover {
@@ -5043,7 +5043,7 @@ a:focus,a:hover {
 .product-item-v7 .product-icon-action li button svg {
     width: 20px;
     height: 20px;
-    fill: #92959a;
+    fill: #92959a111
 }
 
 .product-item-v7 .product-icon-action li button:hover {
@@ -5215,7 +5215,7 @@ a:focus,a:hover {
   
   font-family: D-DIN;
   
-  text-align: center
+  text-algin: center
 }
 
 .product-item-v7 .img-product .countdown-timer li span b {
@@ -5371,7 +5371,7 @@ a:focus,a:hover {
 .product-item-v8 .info_bottom .product-icon-action svg {
     width: 20px;
     height: 20px;
-    fill: #92959a;
+    fill: #92959a111
 }
 
 .product-item-v8 .info_bottom .product-icon-action .add-to-cart a,.product-item-v8 .info_bottom .product-icon-action .add-to-cart button {
@@ -5394,7 +5394,7 @@ a:focus,a:hover {
 .product-item-v8 .info_bottom .product-icon-action .add-to-cart a svg,.product-item-v8 .info_bottom .product-icon-action .add-to-cart button svg {
     width: 20px;
     height: 20px;
-    fill: #92959a;
+    fill: #92959a111
 }
 
 .product-item-v8 .info_bottom .product-icon-action .add-to-cart a:hover,.product-item-v8 .info_bottom .product-icon-action .add-to-cart button:hover {
@@ -5544,7 +5544,7 @@ a:focus,a:hover {
   
   font-family: D-DIN;
   
-  text-align: center
+  text-algin: center
 }
 
 .product-item-v8 .img-product .countdown-timer li span b {
@@ -5714,7 +5714,7 @@ a:focus,a:hover {
 .product-item-v9 .product-icon-action li a svg {
     width: 20px;
     height: 20px;
-    fill: #92959a;
+    fill: #92959a111
 }
 
 .product-item-v9 .product-icon-action li a:hover {
@@ -5754,7 +5754,7 @@ a:focus,a:hover {
 .product-item-v9 .product-icon-action li button svg {
     width: 20px;
     height: 20px;
-    fill: #92959a;
+    fill: #92959a111
 }
 
 .product-item-v9 .product-icon-action li button:hover {
@@ -5996,7 +5996,7 @@ a:focus,a:hover {
 }
 
 .product-list-view .product-item-list .product .info-product .product-icon-action .add-to-cart svg,.product-list-view .product-item-list .product .info-product .product-icon-action .add-wishlist svg,.product-list-view .product-item-list .product .info-product .product-icon-action .quick-view svg {
-    fill: #92959a;;
+    fill: #92959a111;
     width: 20px;
     height: 20px;
     transition: .3s
@@ -6581,7 +6581,7 @@ a:focus,a:hover {
 .prod_largeimg .content-page-detail .detail-info .btn-addwhlist svg {
     height: 14px;
     width: 14px;
-    fill: #92959a;
+    fill: #92959a111
 }
 
 .prod_largeimg .content-page-detail .detail-info .btn-addwhlist:hover {
@@ -7582,6 +7582,9 @@ a:focus,a:hover {
 }
 
 
+.content-page-detail .detail-info .btn-action .js-qty .qty_plus span{
+
+}
 
 .prod_extended .content-page-detail .detail-info .btn-action .js-qty .qty_minus:hover,.prod_extended .content-page-detail .detail-info .btn-action .js-qty .qty_plus:hover,.product_sidebar .content-page-detail .detail-info .btn-action .js-qty .qty_minus:hover,.product_sidebar .content-page-detail .detail-info .btn-action .js-qty .qty_plus:hover {
     color: #000000
@@ -7653,7 +7656,7 @@ a:focus,a:hover {
 .prod_extended .content-page-detail .detail-info .btn-addwhlist svg,.product_sidebar .content-page-detail .detail-info .btn-addwhlist svg {
     width: 14px;
     height: auto;
-    fill: #92959a;
+    fill: #92959a111
 }
 
 .prod_extended .content-page-detail .detail-info .btn-addwhlist:hover,.product_sidebar .content-page-detail .detail-info .btn-addwhlist:hover {
@@ -8771,7 +8774,7 @@ a:focus,a:hover {
 .prod_sticky .content-page-detail .detail-info .btn-addwhlist svg {
     width: 14px;
     height: auto;
-    fill: #92959a;
+    fill: #92959a111
 }
 
 .prod_sticky .content-page-detail .detail-info .btn-addwhlist i {
@@ -9919,7 +9922,6 @@ a:focus,a:hover {
   box-shadow: 0 1px rgb(212 214 216 / 40%);
   border-radius: 2px;
   -webkit-appearance: none;
-  appearance: none;
   position: absolute;
   left: 0;
   top: 1px;
@@ -10565,7 +10567,6 @@ ul.slick-dots li.slick-active button:before{
 .collection-page-fullwidth .content-page .shop_control .style_layout_prod .sort-pagi-bar .sort-by .select-box select,.collection-page-sidebar .content-page .shop_control .style_layout_prod .sort-pagi-bar .sort-by .select-box select {
     -moz-appearance: none;
     -webkit-appearance: none;
-  appearance: none;
     appearance: none
 }
 
@@ -10625,7 +10626,7 @@ ul.slick-dots li.slick-active button:before{
 .collection-page-fullwidth .content-page .shop_control .change_prod .change_collum .icon_change svg,.collection-page-sidebar .content-page .shop_control .change_prod .change_collum .icon_change svg {
     width: 22px;
     height: 22px;
-    fill: #92959a;
+    fill: #92959a111
 }
 
 .collection-page-fullwidth .content-page .shop_control .change_prod .change_collum .icon_change:before,.collection-page-sidebar .content-page .shop_control .change_prod .change_collum .icon_change:before {
@@ -11159,7 +11160,6 @@ ul.slick-dots li.slick-active button:before{
   box-shadow: 0 1px rgb(212 214 216 / 40%);
   border-radius: 2px;
   -webkit-appearance: none;
-  appearance: none;
   position: absolute;
   left: 0;
   top: 1px;
@@ -11552,7 +11552,6 @@ ul.slick-dots li.slick-active button:before{
   box-shadow: 0 1px rgb(212 214 216 / 40%);
   border-radius: 2px;
   -webkit-appearance: none;
-  appearance: none;
   position: absolute;
   left: 0;
   top: 1px;
@@ -11713,7 +11712,6 @@ ul.slick-dots li.slick-active button:before{
   box-shadow: 0 1px rgb(212 214 216 / 40%);
   border-radius: 2px;
   -webkit-appearance: none;
-  appearance: none;
   position: absolute;
   left: 0;
   top: 1px;
@@ -11730,7 +11728,6 @@ ul.slick-dots li.slick-active button:before{
   box-shadow: 0 1px rgb(212 214 216 / 40%);
   border-radius: 2px;
   -webkit-appearance: none;
-  appearance: none;
   position: absolute;
   left: 0;
   top: 1px;
@@ -11754,13 +11751,13 @@ ul.slick-dots li.slick-active button:before{
 
 .filter-accodition .heading_collapse .title_filter .widget-title a.active i {
     transform: rotate(180deg);
-    transition: .3s
+    transtion: .3s
 }
 
 .filter-accodition .heading_collapse .title_filter .widget-title a svg {
     width: 20px;
     height: auto;
-    fill: #92959a;;
+    fill: #92959a111;
     margin-bottom: 9px;
     margin-right: 5px
 }
@@ -11825,12 +11822,12 @@ ul.slick-dots li.slick-active button:before{
 .filter-accodition .content_collapse .widget-cate .list-category-toggle .item-toggle-tab .toggle-menumobile.active i {
     color: #000000;
     transform: rotate(180deg);
-    transition: .3s
+    transtion: .3s
 }
 
 .filter-accodition .content_collapse .widget-cate .list-category-toggle .item-toggle-tab .toggle-menumobile:hover i {
     color: #000000;
-    transition: .3s
+    transtion: .3s
 }
 
 .filter-accodition .content_collapse .widget-cate .list-category-toggle .item-toggle-tab.active a {
@@ -12396,6 +12393,7 @@ ul.slick-dots li.slick-active button:before{
 
 .blog-page .content-blog-page .blog-list-view .blog_classic .image_blog {
     width: 50%;
+    display: inline-block;
     float: left
 }
 
@@ -13747,6 +13745,7 @@ ul.slick-dots li.slick-active button:before{
 }
 
 .article-page .blog-comment-detail .comment-details .comment-info .reply-button {
+    display: inline-block;
     float: right;
     color: #c2c2c2
 }
@@ -15588,6 +15587,9 @@ input,select,textarea {
         font-size: 16px
     }
 
+    .aboutus-pages {
+    }
+
     .aboutus-pages .about-instagram .instagram_v2 .text_top .title_insta {
         font-size: 30px!important;
         margin-bottom: 21px
@@ -16183,6 +16185,9 @@ input,select,textarea {
 
     .contact-page .info-shop .title {
         font-size: 16px
+    }
+
+    .aboutus-pages {
     }
 
     .aboutus-pages .about-instagram .instagram_v2 .text_top .title_insta {
@@ -18678,7 +18683,7 @@ body.cartover {
   line-height: 26px;
   margin: auto;
   margin-bottom: 35px;
-  color: #8b8b8b;
+  color: ##8b8b8b;
 }
 
 .popup3 .modal-window .window-window .window-content .left .sub-title strong {
@@ -18987,7 +18992,7 @@ body.cartover {
 .minicart .mini-content .mini-cart-head .close-mini-cart svg {
     width: 14px;
     height: auto;
-    fill: #92959a;
+    fill: #92959a111
 }
 
 .minicart .mini-content .mini-cart-head .close-mini-cart:hover {
@@ -19007,8 +19012,7 @@ body.cartover {
     padding-bottom: 0;
     margin-bottom: 0;
     text-align: center;
-    font-size: 20px;
-    font-family: 'D-DIN', sans-serif;
+    font-size: 20px
 }
 
 .minicart .mini-content .mini-cart-head .mini-cart-counter {
@@ -19066,8 +19070,7 @@ body.cartover {
     text-align: justify;
     color: #92959a;
     text-decoration: none;
-    font-weight: 400;
-    font-family: 'D-DIN', sans-serif;
+    font-weight: 400
 }
 
 .minicart .mini-content .prod .product-cart .minicart_item li .product-detail .product_name_mini a:hover {
@@ -19076,25 +19079,18 @@ body.cartover {
 
 .minicart .mini-content .prod .product-cart .minicart_item li .product-detail span {
     font-size: 16px;
-    padding-top: 10px;
-    font-family: 'D-DIN', sans-serif;
+    padding-top: 10px
 }
 
 .minicart .mini-content .prod .product-cart .minicart_item li .product-detail .product_info .price_nosale {
     text-decoration: line-through;
     font-size: 15px;
     color: #c5c5c5;
-    padding-right: 10px;
-    font-family: 'D-DIN', sans-serif;
-}
-
-.minicart .mini-content .prod .product-cart .minicart_item li .product-detail .product_info .product_quanity {
-    font-family: 'D-DIN', sans-serif;
+    padding-right: 10px
 }
 
 .minicart .mini-content .prod .product-cart .minicart_item li .product-detail .product_info .price_sale {
-    font-size: 15px;
-    font-family: 'D-DIN', sans-serif;
+    font-size: 15px
 }
 
 .minicart .mini-content .prod .product-cart .minicart_item li .produc_remove {
@@ -19132,16 +19128,14 @@ body.cartover {
 
 .minicart .mini-content .sub-total .total-title {
     font-size: 18px;
-    font-weight: 500;
-    font-family: 'D-DIN', sans-serif;
+    font-weight: 500
 }
 
 .minicart .mini-content .sub-total .total-price {
     width: auto;
     font-weight: 600;
     display: block;
-    color: #000000;
-    font-family: 'D-DIN', sans-serif;
+    color: #000000
 }
 
 .minicart .mini-content .action-checkout {
@@ -19164,8 +19158,7 @@ body.cartover {
     line-height: 61px;
     color: #fff;
     background-color: #2a2a2a;
-    transition: color .3s ease 0s,background-color .3s ease 0s;
-    font-family: 'D-DIN', sans-serif;
+    transition: color .3s ease 0s,background-color .3s ease 0s
 }
 
 .minicart .mini-content .action-checkout .button-viewcart:hover {
@@ -19185,8 +19178,7 @@ body.cartover {
     line-height: 61px;
     color: #fff;
     background-color: #92959a;
-    transition: color .3s ease 0s,background-color .3s ease 0s;
-    font-family: 'D-DIN', sans-serif;
+    transition: color .3s ease 0s,background-color .3s ease 0s
 }
 
 .minicart .mini-content .action-checkout .button-checkout:hover {
@@ -19279,7 +19271,6 @@ body.cartover {
 .engoc_currencies select {
     -moz-appearance: none;
     -webkit-appearance: none;
-  appearance: none;
     appearance: none
 }
 
@@ -20952,7 +20943,7 @@ a.link_active{
     width: 13px;
     height: auto;
     height: auto;
-    fill: #92959a;
+    fill: #92959a111
 }
 
 .section-slideshow-v1 .next-slide:hover,.section-slideshow-v1 .prev-slide:hover {
@@ -22751,7 +22742,7 @@ a.link_active{
   
   font-family: D-DIN;
   
-  text-align: center;
+  text-algin: center;
   height:65px;
   width:65px;
   line-height:65px;
@@ -25079,6 +25070,7 @@ footer .menu-language-wrap #language{
 
 .icon1 {
     font-family: aweicon;
+    speak: none;
     font-style: normal;
     font-weight: 400;
     font-variant: normal;
@@ -25196,7 +25188,7 @@ footer .menu-language-wrap #language{
 .set-16-svg svg {
     width: 16px;
     height: 16px;
-    fill: #92959a;
+    fill: #92959a111
 }
 
 .set-16-svg.fill-white svg {
@@ -25210,7 +25202,7 @@ footer .menu-language-wrap #language{
 .set-12-svg svg {
     width: 12px;
     height: 12px;
-    fill: #92959a;
+    fill: #92959a111
 }
 
 .set-12-svg.fill-white svg {
@@ -25233,7 +25225,7 @@ footer .menu-language-wrap #language{
 .set-14-svg svg {
     width: 14px;
     height: 14px;
-    fill: #92959a;
+    fill: #92959a111
 }
 
 .set-14-svg.fill-white svg {
@@ -25247,7 +25239,7 @@ footer .menu-language-wrap #language{
 .set-18-svg svg {
     width: 18px;
     height: 18px;
-    fill: #92959a;
+    fill: #92959a111
 }
 
 .set-18-svg.fill-white svg {
@@ -25261,7 +25253,7 @@ footer .menu-language-wrap #language{
 .set-20-svg svg {
     width: 20px;
     height: 20px;
-    fill: #92959a;
+    fill: #92959a111
 }
 
 .set-20-svg.fill-white svg {
@@ -25275,7 +25267,7 @@ footer .menu-language-wrap #language{
 .set-22-svg svg {
     width: 22px;
     height: 22px;
-    fill: #92959a;
+    fill: #92959a111
 }
 
 .set-22-svg.fill-white svg {
@@ -25289,7 +25281,7 @@ footer .menu-language-wrap #language{
 .set-24-svg svg {
     width: 24px;
     height: 24px;
-    fill: #92959a;
+    fill: #92959a111
 }
 
 .set-24-svg.fill-white svg {
@@ -25303,7 +25295,7 @@ footer .menu-language-wrap #language{
 .set-26-svg svg {
     width: 26px;
     height: 26px;
-    fill: #92959a;
+    fill: #92959a111
 }
 
 .set-26-svg.fill-white svg {
@@ -25317,7 +25309,7 @@ footer .menu-language-wrap #language{
 .set-28-svg svg {
     width: 28px;
     height: 28px;
-    fill: #92959a;
+    fill: #92959a111
 }
 
 .set-28-svg.fill-white svg {
@@ -25331,7 +25323,7 @@ footer .menu-language-wrap #language{
 .set-30-svg svg {
     width: 30px;
     height: 30px;
-    fill: #92959a;
+    fill: #92959a111
 }
 
 .set-30-svg.fill-white svg {
@@ -25543,7 +25535,7 @@ footer .menu-language-wrap #language{
     width: 13px;
     height: auto;
     height: auto;
-    fill: #92959a;
+    fill: #92959a111
 }
 
 .section-flash-sale .next-slide:hover,.section-flash-sale .prev-slide:hover {
@@ -25736,7 +25728,7 @@ footer .menu-language-wrap #language{
   color: rgba(109, 113, 120, 0.75);
   font-weight: 700;
   text-align: center;
-  font-family: 'D-DIN', sans-serif;
+  font-family: "Playfair Display";
   transition: all .25s linear 0s;
   -webkit-transition: all .25s linear 0s;
   -o-transition: all .25s linear 0s;
@@ -25879,7 +25871,7 @@ footer .menu-language-wrap #language{
 
 .section-product-v6 .nav-tabs.title-tab li .ds-prod-1 {
   display: inline-block;
-  font-family: 'D-DIN', sans-serif;
+  font-family: 'Playfair Display',sans-serif;
   font-size: 14px;
   text-transform: uppercase;
   line-height: 22px;
@@ -28383,7 +28375,7 @@ footer .menu-language-wrap #language{
     width: 13px;
     height: auto;
     height: auto;
-    fill: #92959a;
+    fill: #92959a111
 }
 
 .section-slideshow-v5 .next-slide:hover,.section-slideshow-v5 .prev-slide:hover {
@@ -31199,7 +31191,7 @@ h1,h2,h3,h4,h5,h6{
   right: auto !important;
 }
 .rtl .text-left{
-  text-align:right !important;
+  text-align:right !impotant;
 }
 .rtl .popup_random_prod .prod_sidebar .product_info .info_right{
   text-align:right;
@@ -31848,10 +31840,9 @@ a.social-item i{
     padding-top:20px;
   }
 }
-@media (min-width: 576px) and (max-width: 767.98px) {
+@media (min-width: 576px) and (max-width: 767.98px)
 .rtl .collection-page-fullwidth .shop_control .filter_sortby, .collection-page-sidebar .shop_control .filter_sortby {
     justify-content: end;
-}
 }
 @media(max-width: 576px){
   .rtl .popup_random_prod{
@@ -31905,7 +31896,7 @@ a.social-item i{
 .rtl .count-down .countdown-timer li:first-child{
   margin: 0 0 0 7px;
 }
-.rtl .prod_extended .content-page-detail .detail-info .product-price del,
+.rtl .prod_extended .content-page-detail .detail-info .product-price del.
 .rtl .product_sidebar .content-page-detail .detail-info .product-price del,
 .rtl .prod_sticky .content-page-detail .detail-info .product-price del,
 .rtl .prod_largeimg .content-page-detail .detail-info .product-price del{
@@ -32026,13 +32017,13 @@ a.back-to-top:hover::before{
 
 @-webkit-keyframes shine {
   100% {
-    left: 125%;
+    left: 125%
   }
 }
 
 @keyframes shine {
   100% {
-    left: 125%;
+    left: 125%
   }
 }
 .rtl a.back-to-top{right: auto;left:36px;}
