@@ -12,6 +12,15 @@
   font-display: swap;
 }
 
+/* Fuente Galgo para "OUR PIECES" */
+@font-face {
+  font-family: 'Galgo';
+  src: url('{{ "Galgo.otf" | asset_url }}') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* Título del carrito */
 .minicart .mini-content .mini-cart-head .title {
   font-family: 'D-DIN', sans-serif !important;
@@ -25,6 +34,7 @@
 /* Nombre del producto en el carrito */
 .minicart .mini-content .prod .product-cart .minicart_item li .product-detail .product_name_mini a {
   font-family: 'D-DIN', sans-serif !important;
+  text-transform: uppercase !important;
 }
 
 /* Detalles del producto (talla, color, etc.) */
@@ -116,5 +126,24 @@
 /* Botón de checkout en la página del carrito */
 .page-cart .content-cart-page .cart_totals .cart-check .checkout-button {
   font-family: 'D-DIN', sans-serif !important;
+}
+
+/* ============================================
+   TÍTULO "OUR PIECES" CON FUENTE GALGO
+   ============================================ */
+
+/* Aplicar fuente Galgo al título "OUR PIECES" en todas las secciones de productos */
+.section-product-v1 .title_block h3,
+.section-product-v2 .title_block h3,
+.section-product-v3 .title_block h3,
+.section-product-v4 .title_block h3,
+.section-product-v5 .title_block h3,
+.section-product-v6 .title_block h3 {
+  font-family: 'Galgo', sans-serif !important;
+}
+
+/* Mayúsculas para nombres de productos en la página completa del carrito */
+.page-cart .content-cart-page .shop_table .cart_item .product-name-thumb {
+  text-transform: uppercase !important;
 }
 
