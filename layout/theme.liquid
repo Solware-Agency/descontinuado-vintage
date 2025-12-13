@@ -909,5 +909,61 @@ Add the page template as a class for easy page or template specific styling.
   <!-- WhatsApp Order Confirmation Block -->
   {% include 'whatsapp-order-confirmation' %}
 
+  <!-- Script para eliminar colecciones duplicadas en la barra de categorías -->
+  <script>
+  (function() {
+    function removeDuplicateCollections() {
+      // Buscar todas las barras de categorías en la página
+      var filterCategories = document.querySelectorAll('.filter-category ul.nav-tabs');
+      
+      filterCategories.forEach(function(filterCategory) {
+        var seenTitles = {};
+        var listItems = Array.from(filterCategory.querySelectorAll('li'));
+        var section = filterCategory.closest('[data-section-id]');
+        var tabContent = section ? section.querySelector('.tab-content') : null;
+        var tabPanes = tabContent ? Array.from(tabContent.querySelectorAll('.tab-pane')) : [];
+        
+        listItems.forEach(function(li, index) {
+          var link = li.querySelector('a');
+          if (link) {
+            var title = link.textContent.trim().toLowerCase();
+            var href = link.getAttribute('href');
+            
+            if (seenTitles[title]) {
+              // Si ya vimos este título, eliminar este elemento
+              li.remove();
+              // También eliminar el panel de contenido correspondiente si existe
+              if (href && tabPanes[index]) {
+                tabPanes[index].remove();
+              }
+            } else {
+              // Marcar este título como visto
+              seenTitles[title] = true;
+            }
+          }
+        });
+      });
+    }
+    
+    // Ejecutar cuando el DOM esté listo
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', removeDuplicateCollections);
+    } else {
+      removeDuplicateCollections();
+    }
+    
+    // Ejecutar también después de un pequeño delay para asegurar que todo esté renderizado
+    setTimeout(removeDuplicateCollections, 500);
+    setTimeout(removeDuplicateCollections, 1000);
+    
+    // Ejecutar cuando se cargue una sección dinámicamente (editor de Shopify)
+    if (typeof Shopify !== 'undefined' && Shopify.designMode) {
+      document.addEventListener('shopify:section:load', function() {
+        setTimeout(removeDuplicateCollections, 100);
+      });
+    }
+  })();
+  </script>
+
 </body>
 </html>
