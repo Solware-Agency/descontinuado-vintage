@@ -80,6 +80,43 @@
     border: 1px solid {{section.settings.color_btn_hover}} !important;
   }
 </style>
+
+<script>
+(function() {
+  // Eliminar colecciones duplicadas en la barra de categorías
+  var section = document.querySelector('[data-section-id="{{ section.id }}"]');
+  if (!section) return;
+  
+  var filterCategory = section.querySelector('.filter-category ul.nav-tabs');
+  var tabContent = section.querySelector('.tab-content');
+  
+  if (filterCategory && tabContent) {
+    var seenTitles = {};
+    var listItems = Array.from(filterCategory.querySelectorAll('li'));
+    var tabPanes = Array.from(tabContent.querySelectorAll('.tab-pane'));
+    
+    listItems.forEach(function(li, index) {
+      var link = li.querySelector('a');
+      if (link) {
+        var title = link.textContent.trim().toLowerCase();
+        var href = link.getAttribute('href');
+        
+        if (seenTitles[title]) {
+          // Si ya vimos este título, eliminar este elemento y su panel correspondiente
+          li.remove();
+          if (href && tabPanes[index]) {
+            tabPanes[index].remove();
+          }
+        } else {
+          // Marcar este título como visto
+          seenTitles[title] = true;
+        }
+      }
+    });
+  }
+})();
+</script>
+
 {% schema %}
 {
   "name": "PRODUCT V6",
