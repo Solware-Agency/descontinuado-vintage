@@ -1015,6 +1015,72 @@ Add the page template as a class for easy page or template specific styling.
       attributes: true,
       attributeFilter: ['class']
     });
+    
+    // Función para capitalizar "skirts" y "jackets" en el menú dropdown de SHOP
+    function capitalizeCollectionNames() {
+      // Buscar el menú dropdown de SHOP específicamente
+      var shopDropdowns = document.querySelectorAll('.dropdown-menu.list-woman.shop, .dropdown-menu.shop');
+      
+      shopDropdowns.forEach(function(dropdown) {
+        // Buscar todos los enlaces de nivel 2 (menu_lv2) en el dropdown de SHOP
+        var menuLinks = dropdown.querySelectorAll('a.menu_lv2');
+        
+        menuLinks.forEach(function(link) {
+          var text = link.textContent.trim();
+          
+          // Capitalizar "skirts" a "Skirts" en "Shorts/skirts"
+          if (text.toLowerCase().includes('shorts/skirts') || text.toLowerCase().includes('shorts/ skirts')) {
+            link.textContent = text.replace(/shorts\/skirts/gi, 'Shorts/Skirts').replace(/shorts\/ skirts/gi, 'Shorts/ Skirts');
+          }
+          
+          // Capitalizar "jackets" a "Jackets" en "Sweaters/jackets"
+          if (text.toLowerCase().includes('sweaters/jackets') || text.toLowerCase().includes('sweaters/ jackets')) {
+            link.textContent = text.replace(/sweaters\/jackets/gi, 'Sweaters/Jackets').replace(/sweaters\/ jackets/gi, 'Sweaters/ Jackets');
+          }
+        });
+      });
+    }
+    
+    // Ejecutar cuando el DOM esté listo
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', capitalizeCollectionNames);
+    } else {
+      capitalizeCollectionNames();
+    }
+    
+    // Ejecutar también después de un pequeño delay para asegurar que todo esté renderizado
+    setTimeout(capitalizeCollectionNames, 500);
+    setTimeout(capitalizeCollectionNames, 1000);
+    setTimeout(capitalizeCollectionNames, 2000);
+    
+    // Ejecutar cuando se abra el menú dropdown (hover)
+    document.addEventListener('mouseenter', function(e) {
+      if (e.target.closest('.nav-item.dropdown, .dropdown-menu.list-woman.shop, .dropdown-menu.shop')) {
+        setTimeout(capitalizeCollectionNames, 100);
+      }
+    }, true);
+    
+    // Ejecutar cuando se cargue una sección dinámicamente (editor de Shopify)
+    if (typeof Shopify !== 'undefined' && Shopify.designMode) {
+      document.addEventListener('shopify:section:load', function() {
+        setTimeout(capitalizeCollectionNames, 100);
+      });
+    }
+    
+    // Observar cambios en el DOM para detectar cuando se abre el dropdown
+    var capitalizeObserver = new MutationObserver(function(mutations) {
+      var hasShopDropdown = document.querySelector('.dropdown-menu.list-woman.shop.show, .dropdown-menu.shop.show');
+      if (hasShopDropdown) {
+        setTimeout(capitalizeCollectionNames, 100);
+      }
+    });
+    
+    capitalizeObserver.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['class']
+    });
   })();
   </script>
 
