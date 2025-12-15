@@ -101,6 +101,21 @@
         var title = link.textContent.trim().toLowerCase();
         var href = link.getAttribute('href');
         
+        // Capitalizar "skirts" a "Skirts" en "Shorts/skirts"
+        var linkText = link.textContent.trim();
+        if (linkText.toLowerCase().includes('shorts/skirts') || linkText.toLowerCase().includes('shorts/ skirts')) {
+          link.textContent = linkText.replace(/shorts\/skirts/gi, 'Shorts/Skirts').replace(/shorts\/ skirts/gi, 'Shorts/ Skirts');
+        }
+        
+        // Capitalizar "jackets" a "Jackets" en "Sweaters/jackets"
+        linkText = link.textContent.trim();
+        if (linkText.toLowerCase().includes('sweaters/jackets') || linkText.toLowerCase().includes('sweaters/ jackets')) {
+          link.textContent = linkText.replace(/sweaters\/jackets/gi, 'Sweaters/Jackets').replace(/sweaters\/ jackets/gi, 'Sweaters/ Jackets');
+        }
+        
+        // Actualizar title después de la capitalización
+        title = link.textContent.trim().toLowerCase();
+        
         if (seenTitles[title]) {
           // Si ya vimos este título, eliminar este elemento y su panel correspondiente
           li.remove();
