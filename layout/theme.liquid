@@ -926,23 +926,21 @@ Add the page template as a class for easy page or template specific styling.
         listItems.forEach(function(li, index) {
           var link = li.querySelector('a');
           if (link) {
+            var linkText = link.textContent.trim();
+            var originalText = linkText;
+            
+            // Capitalizar "skirts" a "Skirts" - maneja diferentes variaciones de espacios
+            linkText = linkText.replace(/(shorts)\s*\/\s*(skirts)/gi, 'Shorts/Skirts');
+            
+            // Capitalizar "jackets" a "Jackets" - maneja diferentes variaciones de espacios
+            linkText = linkText.replace(/(sweaters)\s*\/\s*(jackets)/gi, 'Sweaters/Jackets');
+            
+            if (linkText !== originalText) {
+              link.textContent = linkText;
+            }
+            
             var title = link.textContent.trim().toLowerCase();
             var href = link.getAttribute('href');
-            
-            // Capitalizar "skirts" a "Skirts" en "Shorts/skirts"
-            var linkText = link.textContent.trim();
-            if (linkText.toLowerCase().includes('shorts/skirts') || linkText.toLowerCase().includes('shorts/ skirts')) {
-              link.textContent = linkText.replace(/shorts\/skirts/gi, 'Shorts/Skirts').replace(/shorts\/ skirts/gi, 'Shorts/ Skirts');
-            }
-            
-            // Capitalizar "jackets" a "Jackets" en "Sweaters/jackets"
-            linkText = link.textContent.trim();
-            if (linkText.toLowerCase().includes('sweaters/jackets') || linkText.toLowerCase().includes('sweaters/ jackets')) {
-              link.textContent = linkText.replace(/sweaters\/jackets/gi, 'Sweaters/Jackets').replace(/sweaters\/ jackets/gi, 'Sweaters/ Jackets');
-            }
-            
-            // Actualizar title después de la capitalización
-            title = link.textContent.trim().toLowerCase();
             
             if (seenTitles[title]) {
               // Si ya vimos este título, eliminar este elemento
@@ -1031,28 +1029,42 @@ Add the page template as a class for easy page or template specific styling.
       attributeFilter: ['class']
     });
     
-    // Función para capitalizar "skirts" y "jackets" en el menú dropdown de SHOP
+    // Función para capitalizar "skirts" y "jackets" en todas las barras de navegación
     function capitalizeCollectionNames() {
-      // Buscar el menú dropdown de SHOP específicamente
-      var shopDropdowns = document.querySelectorAll('.dropdown-menu.list-woman.shop, .dropdown-menu.shop');
-      
-      shopDropdowns.forEach(function(dropdown) {
-        // Buscar todos los enlaces de nivel 2 (menu_lv2) en el dropdown de SHOP
-        var menuLinks = dropdown.querySelectorAll('a.menu_lv2');
+      // 1. Buscar en la barra de categorías principal (filter-category)
+      var filterCategories = document.querySelectorAll('.filter-category ul.nav-tabs a, .filter-category a');
+      filterCategories.forEach(function(link) {
+        var text = link.textContent.trim();
+        var originalText = text;
         
-        menuLinks.forEach(function(link) {
-          var text = link.textContent.trim();
-          
-          // Capitalizar "skirts" a "Skirts" en "Shorts/skirts"
-          if (text.toLowerCase().includes('shorts/skirts') || text.toLowerCase().includes('shorts/ skirts')) {
-            link.textContent = text.replace(/shorts\/skirts/gi, 'Shorts/Skirts').replace(/shorts\/ skirts/gi, 'Shorts/ Skirts');
-          }
-          
-          // Capitalizar "jackets" a "Jackets" en "Sweaters/jackets"
-          if (text.toLowerCase().includes('sweaters/jackets') || text.toLowerCase().includes('sweaters/ jackets')) {
-            link.textContent = text.replace(/sweaters\/jackets/gi, 'Sweaters/Jackets').replace(/sweaters\/ jackets/gi, 'Sweaters/ Jackets');
-          }
-        });
+        // Capitalizar "skirts" a "Skirts" - maneja diferentes variaciones de espacios
+        text = text.replace(/(shorts)\s*\/\s*(skirts)/gi, 'Shorts/Skirts');
+        text = text.replace(/(shorts)\s*\/\s*(skirts)/gi, 'Shorts/Skirts');
+        
+        // Capitalizar "jackets" a "Jackets" - maneja diferentes variaciones de espacios
+        text = text.replace(/(sweaters)\s*\/\s*(jackets)/gi, 'Sweaters/Jackets');
+        text = text.replace(/(sweaters)\s*\s*\/\s*(jackets)/gi, 'Sweaters/Jackets');
+        
+        if (text !== originalText) {
+          link.textContent = text;
+        }
+      });
+      
+      // 2. Buscar en el menú dropdown de SHOP
+      var shopDropdowns = document.querySelectorAll('.dropdown-menu.list-woman.shop a.menu_lv2, .dropdown-menu.shop a.menu_lv2');
+      shopDropdowns.forEach(function(link) {
+        var text = link.textContent.trim();
+        var originalText = text;
+        
+        // Capitalizar "skirts" a "Skirts"
+        text = text.replace(/(shorts)\s*\/\s*(skirts)/gi, 'Shorts/Skirts');
+        
+        // Capitalizar "jackets" a "Jackets"
+        text = text.replace(/(sweaters)\s*\/\s*(jackets)/gi, 'Sweaters/Jackets');
+        
+        if (text !== originalText) {
+          link.textContent = text;
+        }
       });
     }
     
@@ -1082,10 +1094,11 @@ Add the page template as a class for easy page or template specific styling.
       });
     }
     
-    // Observar cambios en el DOM para detectar cuando se abre el dropdown
+    // Observar cambios en el DOM para detectar cuando se abre el dropdown o se carga la barra de categorías
     var capitalizeObserver = new MutationObserver(function(mutations) {
       var hasShopDropdown = document.querySelector('.dropdown-menu.list-woman.shop.show, .dropdown-menu.shop.show');
-      if (hasShopDropdown) {
+      var hasFilterCategory = document.querySelector('.filter-category');
+      if (hasShopDropdown || hasFilterCategory) {
         setTimeout(capitalizeCollectionNames, 100);
       }
     });
@@ -1095,6 +1108,28 @@ Add the page template as a class for easy page or template specific styling.
       subtree: true,
       attributes: true,
       attributeFilter: ['class']
+    });
+    
+    // Ejecutar también cuando se detecta cualquier cambio en el contenido de texto
+    var textObserver = new MutationObserver(function(mutations) {
+      var shouldCapitalize = false;
+      mutations.forEach(function(mutation) {
+        if (mutation.type === 'childList' || mutation.type === 'characterData') {
+          var target = mutation.target;
+          if (target && (target.classList && (target.classList.contains('filter-category') || target.closest('.filter-category') || target.closest('.dropdown-menu')))) {
+            shouldCapitalize = true;
+          }
+        }
+      });
+      if (shouldCapitalize) {
+        setTimeout(capitalizeCollectionNames, 50);
+      }
+    });
+    
+    textObserver.observe(document.body, {
+      childList: true,
+      subtree: true,
+      characterData: true
     });
   })();
   </script>
