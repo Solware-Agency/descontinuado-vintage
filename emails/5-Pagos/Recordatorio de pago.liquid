@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <title>{{ email_title }}</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width">
+  <link rel="stylesheet" type="text/css" href="/assets/notifications/styles.css">
+  <style>
+    * {
+      font-family: "D-DIN", "DIN", BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+    }
+    body, table, td, p, div, span, h1, h2, h3, h4, h5, h6 {
+      font-family: "D-DIN", "DIN", BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+    }
+    .button__cell { background: {{ shop.email_accent_color }}; }
+    a, a:hover, a:active, a:visited { color: {{ shop.email_accent_color }}; }
+  </style>
+</head>
+
+<body>
+  <table class="body">
+    <tr>
+      <td>
+        <table class="header row">
+  <tr>
+    <td class="header__cell">
+      <center>
+
+        <table class="container">
+          <tr>
+            <td>
+
+              <table class="row">
+                <tr>
+                  <td class="shop-name__cell">
+                    {%- if shop.email_logo_url %}
+                      <img src="{{shop.email_logo_url}}" alt="{{ shop.name }}" width="{{ shop.email_logo_width }}">
+                    {%- else %}
+                      <h1 class="shop-name__text">
+                        <a href="{{shop.url}}">{{ shop.name }}</a>
+                      </h1>
+                    {%- endif %}
+                  </td>
+
+                    <td>
+                      <table class="order-po-number__container">
+                        <tr>
+                          <td class="order-number__cell">
+                            <span class="order-number__text">
+                              Pedido {{ order_name }}
+                            </span>
+                          </td>
+                        </tr>
+                        {%- if po_number %}
+                            <tr>
+                              <td class="po-number__cell">
+                                <span class="po-number__text">
+                                  Orden de compra n.º {{ po_number }}
+                                </span>
+                              </td>
+                            </tr>
+                        {%- endif %}
+                      </table>
+                    </td>
+                </tr>
+              </table>
+
+            </td>
+          </tr>
+        </table>
+
+      </center>
+    </td>
+  </tr>
+</table>
+
+          <table class="row content">
+  <tr>
+    <td class="content__cell">
+      <center>
+        <table class="container">
+          <tr>
+            <td>
+              
+            {% if payment_schedule.overdue? and payment_schedule.number_of_days_overdue == 0 %}
+              <h2>Tu pago vence hoy</h2>
+            {% elsif payment_schedule.due_later? and payment_schedule.due_in_days == 0 %}
+              <h2>Tu pago vence hoy</h2>
+            {% elsif payment_schedule.overdue? and payment_schedule.number_of_days_overdue == 1 %}
+              <h2>El pago venció ayer</h2>
+            {% elsif payment_schedule.due_later? and payment_schedule.due_in_days == 1 %}
+              <h2>El pago vence mañana</h2>
+            {% elsif payment_schedule.due_later? and payment_schedule.due_in_days > 1 %}
+              <h2>El pago vence en {{ payment_schedule.due_in_days}} días</h2>
+            {% else %}
+              <h2>Tu pago venció hace {{ payment_schedule.number_of_days_overdue }} días</h2>
+            {% endif %}
+            {% if custom_message != blank %}
+              <p>{{ custom_message }}</p>
+            {% else %}
+              {% if payment_schedule.overdue? and payment_schedule.number_of_days_overdue == 0 %}
+                <p>
+                  Te recordamos que tienes un pago de {{ payment_schedule.amount_due | money_with_currency }} que vence hoy del pedido {{ name }}.
+
+                </p>
+              {% elsif payment_schedule.due_later? %}
+                <p>
+                  Te recordamos que el pago de {{ payment_schedule.amount_due | money_with_currency }} del pedido {{ name }} vence el {{ payment_schedule.due_at | date: '%B %e, %Y' }}.
+
+                </p>
+              {% else %}
+                <p>
+                  Te recordamos que el pago de {{ payment_schedule.amount_due | money_with_currency }} del pedido {{ name }} venció el {{ payment_schedule.due_at | date: '%B %e, %Y' }}.
+
+                </p>
+              {% endif %}
+              <p>
+                Gracias.
+              </p>
+            {% endif %}
+            {% if checkout_payment_collection_url %}
+              <table class="row actions">
+  <tr>
+    <td class="actions__cell">
+      <table class="button main-action-cell">
+        <tr>
+          <td class="button__cell"><a href="{{ checkout_payment_collection_url }}" class="button__text">Pagar ahora</a></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+
+            {% endif %}
+
+            </td>
+          </tr>
+        </table>
+      </center>
+    </td>
+  </tr>
+</table>
+        <table class="row footer">
+  <tr>
+    <td class="footer__cell">
+      <center>
+        <table class="container">
+          <tr>
+            <td>
+              
+              <p class="disclaimer__subtext">Si tienes alguna pregunta, responde este correo electrónico o contáctanos a través de <a href="mailto:{{ shop.email }}">{{ shop.email }}</a></p>
+            </td>
+          </tr>
+        </table>
+      </center>
+    </td>
+  </tr>
+</table>
+
+<img src="{{ 'notifications/spacer.png' | shopify_asset_url }}" class="spacer" height="1" />
+
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
