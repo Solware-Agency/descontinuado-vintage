@@ -1336,6 +1336,60 @@ Add the page template as a class for easy page or template specific styling.
       });
     }
   })();
+  
+  // Script para eliminar "Best Sellers" del footer
+  (function() {
+    function removeBestSellers() {
+      // Buscar todos los enlaces del footer
+      var footerLinks = document.querySelectorAll('.footer-v1 .links-column a, footer .links-column a');
+      
+      footerLinks.forEach(function(link) {
+        var linkText = link.textContent.trim();
+        // Verificar si el enlace es "Best Sellers" o contiene "best-sellers" en la URL
+        if (linkText.toLowerCase() === 'best sellers' || 
+            link.getAttribute('href') && link.getAttribute('href').toLowerCase().includes('best-sellers')) {
+          // Eliminar el elemento <li> padre
+          var listItem = link.closest('li');
+          if (listItem) {
+            listItem.remove();
+          }
+        }
+      });
+    }
+    
+    // Ejecutar cuando el DOM esté listo
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', removeBestSellers);
+    } else {
+      removeBestSellers();
+    }
+    
+    // Ejecutar también después de delays para asegurar que el footer esté cargado
+    setTimeout(removeBestSellers, 500);
+    setTimeout(removeBestSellers, 1000);
+    setTimeout(removeBestSellers, 2000);
+    
+    // Observar cambios en el DOM para detectar cuando se carga el footer
+    var footerObserver = new MutationObserver(function(mutations) {
+      var hasFooter = document.querySelector('.footer-v1, footer');
+      if (hasFooter) {
+        setTimeout(removeBestSellers, 100);
+      }
+    });
+    
+    footerObserver.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true
+    });
+    
+    // Ejecutar cuando se cargue una sección dinámicamente (editor de Shopify)
+    if (typeof Shopify !== 'undefined' && Shopify.designMode) {
+      document.addEventListener('shopify:section:load', function() {
+        setTimeout(removeBestSellers, 100);
+      });
+    }
+  })();
   </script>
 
 </body>
