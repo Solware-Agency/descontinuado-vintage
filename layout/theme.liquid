@@ -1132,6 +1132,105 @@ Add the page template as a class for easy page or template specific styling.
       characterData: true
     });
   })();
+  
+  // Script para agregar "Tops" al menú desplegable de SHOP
+  (function() {
+    function addTopsToShopMenu() {
+      // Buscar el menú dropdown de SHOP
+      var shopDropdowns = document.querySelectorAll('.dropdown-menu.list-woman.shop, .dropdown-menu.shop');
+      
+      shopDropdowns.forEach(function(dropdown) {
+        // Verificar si "Tops" ya existe en el menú
+        var allMenuLinks = dropdown.querySelectorAll('a.menu_lv2');
+        var topsExists = false;
+        allMenuLinks.forEach(function(link) {
+          var linkText = link.textContent.trim().toLowerCase();
+          var linkHref = link.getAttribute('href') || '';
+          if (linkText === 'tops' || linkHref.toLowerCase().includes('tops')) {
+            topsExists = true;
+          }
+        });
+        if (topsExists) {
+          return; // Ya existe, no hacer nada
+        }
+        
+        // Buscar el contenedor de enlaces del menú
+        var linksContainer = dropdown.querySelector('.row.layout-shop, .row[class*="col-md"]');
+        if (!linksContainer) {
+          // Si no hay contenedor con layout-shop, buscar el primer contenedor de columnas
+          linksContainer = dropdown.querySelector('.row');
+        }
+        
+        if (linksContainer) {
+          // Buscar todas las columnas existentes para determinar el ancho
+          var existingColumns = linksContainer.querySelectorAll('[class*="col-md-"]');
+          var columnWidth = '12'; // Ancho por defecto
+          
+          if (existingColumns.length > 0) {
+            // Extraer el ancho de la primera columna existente
+            var firstColumn = existingColumns[0];
+            var classList = Array.from(firstColumn.classList);
+            var colClass = classList.find(function(cls) {
+              return cls.startsWith('col-md-');
+            });
+            if (colClass) {
+              columnWidth = colClass.replace('col-md-', '');
+            }
+          }
+          
+          // Crear la nueva columna para "Tops"
+          var newColumn = document.createElement('div');
+          newColumn.className = 'col-md-' + columnWidth;
+          
+          // Crear el enlace para "Tops"
+          var topsLink = document.createElement('a');
+          topsLink.href = '/collections/tops';
+          topsLink.className = 'delay03 d-inline-block mb-2 relative menu_lv2';
+          topsLink.textContent = 'Tops';
+          topsLink.title = 'Tops';
+          
+          // Agregar el enlace a la columna
+          newColumn.appendChild(topsLink);
+          
+          // Agregar la columna al contenedor
+          linksContainer.appendChild(newColumn);
+        }
+      });
+    }
+    
+    // Ejecutar cuando el DOM esté listo
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', addTopsToShopMenu);
+    } else {
+      addTopsToShopMenu();
+    }
+    
+    // Ejecutar también después de un pequeño delay
+    setTimeout(addTopsToShopMenu, 500);
+    setTimeout(addTopsToShopMenu, 1000);
+    
+    // Ejecutar cuando se abra el menú dropdown (hover)
+    document.addEventListener('mouseenter', function(e) {
+      if (e.target.closest('.nav-item.dropdown, .dropdown-menu.list-woman.shop, .dropdown-menu.shop')) {
+        setTimeout(addTopsToShopMenu, 100);
+      }
+    }, true);
+    
+    // Observar cambios en el DOM para detectar cuando se abre el dropdown
+    var topsObserver = new MutationObserver(function(mutations) {
+      var hasShopDropdown = document.querySelector('.dropdown-menu.list-woman.shop.show, .dropdown-menu.shop.show');
+      if (hasShopDropdown) {
+        setTimeout(addTopsToShopMenu, 100);
+      }
+    });
+    
+    topsObserver.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['class']
+    });
+  })();
   </script>
 
 </body>
