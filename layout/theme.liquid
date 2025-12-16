@@ -1231,6 +1231,111 @@ Add the page template as a class for easy page or template specific styling.
       attributeFilter: ['class']
     });
   })();
+  
+  // Script para agregar "Tops" a la barra de categorías horizontal
+  (function() {
+    function addTopsToCategoryBar() {
+      // Buscar todas las barras de categorías
+      var filterCategories = document.querySelectorAll('.filter-category ul.nav-tabs');
+      
+      filterCategories.forEach(function(filterCategory) {
+        // Verificar si "Tops" ya existe
+        var existingLinks = filterCategory.querySelectorAll('a.ds-prod-1');
+        var topsExists = false;
+        
+        existingLinks.forEach(function(link) {
+          var linkText = link.textContent.trim().toLowerCase();
+          if (linkText === 'tops') {
+            topsExists = true;
+          }
+        });
+        
+        if (topsExists) {
+          return; // Ya existe, no hacer nada
+        }
+        
+        // Obtener el número de tabs existentes para generar el ID correcto
+        var existingTabs = filterCategory.querySelectorAll('li');
+        var nextIndex = existingTabs.length + 1;
+        
+        // Determinar el prefijo del ID basado en la sección
+        var section = filterCategory.closest('[data-section-id]');
+        var idPrefix = 'c'; // Por defecto para section-product-v6
+        if (section) {
+          var sectionType = section.getAttribute('data-section-type');
+          if (sectionType === 'section-product-v2') {
+            idPrefix = 'a';
+          } else if (sectionType === 'section-product-v3') {
+            idPrefix = 'b';
+          }
+        }
+        
+        // Crear el nuevo elemento <li> para "Tops"
+        var newLi = document.createElement('li');
+        var newLink = document.createElement('a');
+        newLink.href = '#' + idPrefix + nextIndex;
+        newLink.setAttribute('data-toggle', 'tab');
+        newLink.className = 'ds-prod-1';
+        newLink.textContent = 'Tops';
+        
+        newLi.appendChild(newLink);
+        
+        // Agregar "Tops" después del último elemento
+        filterCategory.appendChild(newLi);
+        
+        // También agregar el contenido del tab si existe un contenedor tab-content
+        if (section) {
+          var tabContent = section.querySelector('.tab-content');
+          if (tabContent) {
+            var newTabPane = document.createElement('div');
+            newTabPane.id = idPrefix + nextIndex;
+            newTabPane.className = 'tab-pane fade';
+            
+            // Crear un contenedor de productos vacío (el usuario puede configurar la colección desde el admin)
+            var rowDiv = document.createElement('div');
+            rowDiv.className = 'row';
+            newTabPane.appendChild(rowDiv);
+            
+            tabContent.appendChild(newTabPane);
+          }
+        }
+      });
+    }
+    
+    // Ejecutar cuando el DOM esté listo
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', addTopsToCategoryBar);
+    } else {
+      addTopsToCategoryBar();
+    }
+    
+    // Ejecutar también después de delays para asegurar que las secciones estén cargadas
+    setTimeout(addTopsToCategoryBar, 500);
+    setTimeout(addTopsToCategoryBar, 1000);
+    setTimeout(addTopsToCategoryBar, 2000);
+    
+    // Observar cambios en el DOM para detectar cuando se cargan nuevas secciones
+    var categoryBarObserver = new MutationObserver(function(mutations) {
+      var hasFilterCategory = document.querySelector('.filter-category');
+      if (hasFilterCategory) {
+        setTimeout(addTopsToCategoryBar, 100);
+      }
+    });
+    
+    categoryBarObserver.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['class', 'data-section-id']
+    });
+    
+    // Ejecutar cuando se cargue una sección dinámicamente (editor de Shopify)
+    if (typeof Shopify !== 'undefined' && Shopify.designMode) {
+      document.addEventListener('shopify:section:load', function() {
+        setTimeout(addTopsToCategoryBar, 100);
+      });
+    }
+  })();
   </script>
 
 </body>
