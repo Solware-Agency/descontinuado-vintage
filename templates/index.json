@@ -90,12 +90,36 @@
             "image": "shopify://shop_images/HOME-DESCONTINUADO3.png",
             "alt_text": ""
           }
+        },
+        "image_get_inspired_1": {
+          "type": "image",
+          "settings": {
+            "image_url": "https://cdn.shopify.com/s/files/1/0723/0269/0361/files/get_inspired_1.jpg?v=1766063754",
+            "alt_text": "get_inspired_1"
+          }
+        },
+        "image_get_inspired_2": {
+          "type": "image",
+          "settings": {
+            "image_url": "https://cdn.shopify.com/s/files/1/0723/0269/0361/files/get_inspired_2.jpg?v=1766063754",
+            "alt_text": "get_inspired_2"
+          }
+        },
+        "image_get_inspired_3": {
+          "type": "image",
+          "settings": {
+            "image_url": "https://cdn.shopify.com/s/files/1/0723/0269/0361/files/get_inspired_3.jpg?v=1766063755",
+            "alt_text": "get_inspired_3"
+          }
         }
       },
       "block_order": [
         "image_9Pgzwr",
         "image_RHJQeL",
-        "image_K8yQfj"
+        "image_K8yQfj",
+        "image_get_inspired_1",
+        "image_get_inspired_2",
+        "image_get_inspired_3"
       ],
       "name": "Get Inspired",
       "settings": {

@@ -8,18 +8,23 @@
     <div class="get-inspired-grid">
       {% for block in section.blocks %}
         <div class="inspired-item" {{ block.shopify_attributes }}>
-          {% if block.settings.image != blank %}
+          {% assign image_url = block.settings.image_url | default: blank %}
+          {% if image_url == blank and block.settings.image != blank %}
+            {% assign image_url = block.settings.image | img_url: 'master' %}
+          {% endif %}
+          
+          {% if image_url != blank %}
             {% if block.settings.link_url != blank %}
               <a href="{{ block.settings.link_url }}" class="inspired-link">
                 <img 
-                  src="{{ block.settings.image | img_url: 'master' }}" 
+                  src="{{ image_url }}" 
                   alt="{{ block.settings.alt_text | default: block.settings.image.alt | escape }}"
                   loading="lazy"
                 >
               </a>
             {% else %}
               <img 
-                src="{{ block.settings.image | img_url: 'master' }}" 
+                src="{{ image_url }}" 
                 alt="{{ block.settings.alt_text | default: block.settings.image.alt | escape }}"
                 loading="lazy"
               >
@@ -33,22 +38,27 @@
       {% endfor %}
     </div>
 
-    <!-- Carrusel para Mobile -->
+    <!-- Carrusel para todos los tamaños -->
     <div class="get-inspired-carousel" id="get-inspired-carousel-{{ section.id }}">
       {% for block in section.blocks %}
         <div class="inspired-item" {{ block.shopify_attributes }}>
-          {% if block.settings.image != blank %}
+          {% assign image_url = block.settings.image_url | default: blank %}
+          {% if image_url == blank and block.settings.image != blank %}
+            {% assign image_url = block.settings.image | img_url: 'master' %}
+          {% endif %}
+          
+          {% if image_url != blank %}
             {% if block.settings.link_url != blank %}
               <a href="{{ block.settings.link_url }}" class="inspired-link">
                 <img 
-                  src="{{ block.settings.image | img_url: 'master' }}" 
+                  src="{{ image_url }}" 
                   alt="{{ block.settings.alt_text | default: block.settings.image.alt | escape }}"
                   loading="lazy"
                 >
               </a>
             {% else %}
               <img 
-                src="{{ block.settings.image | img_url: 'master' }}" 
+                src="{{ image_url }}" 
                 alt="{{ block.settings.alt_text | default: block.settings.image.alt | escape }}"
                 loading="lazy"
               >
@@ -86,52 +96,70 @@
       
       var $carousel = jQuery(carousel);
       
-      // Función para inicializar/destruir carrusel según el tamaño de pantalla
+      // Función para inicializar carrusel en todos los tamaños de pantalla
       function handleCarousel() {
-        var isMobile = window.innerWidth <= 600;
+        var windowWidth = window.innerWidth;
+        var slidesToShow = 1;
         
-        if (isMobile) {
-          // Mobile: inicializar carrusel si no está inicializado
-          if (!$carousel.hasClass('slick-initialized')) {
-            $carousel.slick({
-              dots: true,
-              arrows: true,
-              infinite: true, // Loop infinito
-              speed: 500,
-              slidesToShow: 1,
-              slidesToScroll: 1,
-              adaptiveHeight: false,
-              autoplay: false,
-              fade: false,
-              cssEase: 'ease-in-out',
-              swipe: true,
-              touchMove: true,
-              draggable: true,
-              touchThreshold: 5,
-              centerMode: false,
-              variableWidth: false,
-              responsive: [
-                {
-                  breakpoint: 600,
-                  settings: {
-                    slidesToShow: 1,
-                    slidesToScroll: 1,
-                    infinite: true,
-                    dots: true,
-                    arrows: true
-                  }
-                }
-              ]
-            });
-            
-            carouselInitialized = true;
-          }
+        // Determinar cuántas slides mostrar según el tamaño de pantalla
+        if (windowWidth >= 1200) {
+          // Desktop grande: mostrar 3 slides
+          slidesToShow = 3;
+        } else if (windowWidth >= 768) {
+          // Tablet: mostrar 2 slides
+          slidesToShow = 2;
         } else {
-          // Desktop/Tablet: destruir carrusel si está inicializado
-          if ($carousel.hasClass('slick-initialized')) {
-            $carousel.slick('unslick');
-            carouselInitialized = false;
-          }
+          // Mobile: mostrar 1 slide
+          slidesToShow = 1;
+        }
+        
+        // Inicializar carrusel si no está inicializado
+        if (!$carousel.hasClass('slick-initialized')) {
+          $carousel.slick({
+            dots: true,
+            arrows: true,
+            infinite: true,
+            speed: 500,
+            slidesToShow: slidesToShow,
+            slidesToScroll: 1,
+            adaptiveHeight: false,
+            autoplay: false,
+            fade: false,
+            cssEase: 'ease-in-out',
+            swipe: true,
+            touchMove: true,
+            draggable: true,
+            touchThreshold: 5,
+            centerMode: false,
+            variableWidth: false,
+            responsive: [
+              {
+                breakpoint: 1200,
+                settings: {
+                  slidesToShow: 2,
+                  slidesToScroll: 1,
+                  infinite: true,
+                  dots: true,
+                  arrows: true
+                }
+              },
+              {
+                breakpoint: 768,
+                settings: {
+                  slidesToShow: 1,
+                  slidesToScroll: 1,
+                  infinite: true,
+                  dots: true,
+                  arrows: true
+                }
+              }
+            ]
+          });
+          
+          carouselInitialized = true;
+        } else {
+          // Si ya está inicializado, actualizar la configuración
+          $carousel.slick('slickSetOption', 'slidesToShow', slidesToShow, true);
         }
       }
       
@@ -184,6 +212,12 @@
           "type": "image_picker",
           "id": "image",
           "label": "Imagen"
+        },
+        {
+          "type": "text",
+          "id": "image_url",
+          "label": "URL de imagen externa",
+          "info": "Opcional: Si se proporciona, se usará esta URL en lugar de la imagen subida"
         },
         {
           "type": "text",
