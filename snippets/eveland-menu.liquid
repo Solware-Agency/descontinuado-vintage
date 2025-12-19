@@ -40,11 +40,16 @@
       {%- capture apstyle -%}style='width:{{ settings[apwidth] }};{% if template contains 'index' %} left : {{settings[apmenuposition]}}{% else %} left : {{settings[apmenuposition_orther]}}{% endif %}; {%- if settings[apbgimage_enable] -%} {% if settings[apbgimage] != blank %} background:#fff url({{ settings[apbgimage] | img_url : 'master' }}) center ; background-size: cover; {% endif %} {%- endif -%}'{%- endcapture -%}
 
       <li class="nav-item dropdown">
+        {% assign link_title_clean = link.title | split: '[' | first | strip %}
+        {% assign menu_url = link.url %}
+        {% if link_title_clean == 'NEW IN' or link_title_clean == 'new in' or link_title_clean == 'New In' %}
+          {% assign menu_url = '/collections/new-in' %}
+        {% endif %}
         {% if link.title contains '[' %}
         {%- assign label  = link.title | split: '[' | last  | split: ']' | first -%}  
         {%- assign bgc  = link.title | split: '(' | last  | split: ')' | first -%}
 
-        <a href="{{ link.url }}"  class="delay03  relative nav-link menu_lv1 ">{{link.title | split: '[' | first }}
+        <a href="{{ menu_url }}"  class="delay03  relative nav-link menu_lv1 ">{{link.title | split: '[' | first }}
           <span class="absolute label_menu label_menu-{{link.title | handleize}}-{{forloop.index}}" {% if link.title contains '(' %}style="background-color: {{link.title | split: '(' | last  | split: ')' | first}};"{% endif %}><span>{{link.title | split: '[' | last  | split: ']' | first}}</span></span>
           <style>
             .label_menu-{{link.title | handleize}}-{{forloop.index}}:before {
@@ -53,7 +58,7 @@
           </style>
         </a>
         {% else %}
-        <a href="{{ link.url }}" class="delay03 relative nav-link  menu_lv1 ">{{link.title | split: '[' | first }}</a>
+        <a href="{{ menu_url }}" class="delay03 relative nav-link  menu_lv1 ">{{link.title | split: '[' | first }}</a>
         {% endif %}
         <div class="dropdown-menu {% if settings[ena_menu_fullwidth] %} js-full-width {% endif %} {% if settings[megamenu_1] == item %}home{% endif %} list-woman shop show" {{ apstyle }}>
           <div class="{% if settings[ena_menu_fullwidth] %}container container-v4{% endif %} ">
@@ -229,10 +234,15 @@
       {% else %}
       {% if linklists[child_list_handle].links != blank %}
       <li class="nav-item dropdown">
+        {% assign link_title_clean = link.title | split: '[' | first | strip %}
+        {% assign menu_url = link.url %}
+        {% if link_title_clean == 'NEW IN' or link_title_clean == 'new in' or link_title_clean == 'New In' %}
+          {% assign menu_url = '/collections/new-in' %}
+        {% endif %}
         {% if link.title contains '[' %}
         {%- assign label  = link.title | split: '[' | last  | split: ']' | first -%}  
         {%- assign bgc  = link.title | split: '(' | last  | split: ')' | first -%}
-        <a href="{{ link.url }}"  class="delay03  nav-link menu_lv1 ">{{link.title | split: '[' | first }}
+        <a href="{{ menu_url }}"  class="delay03  nav-link menu_lv1 ">{{link.title | split: '[' | first }}
           <span class="absolute label_menu label_menu-{{link.title | handleize}}-{{forloop.index}}" {% if link.title contains '(' %}style="background-color: {{link.title | split: '(' | last  | split: ')' | first}};"{% endif %}><span>{{link.title | split: '[' | last  | split: ']' | first}}</span></span>
           <style>
             .label_menu-{{link.title | handleize}}-{{forloop.index}}:before {
@@ -241,7 +251,7 @@
           </style>
         </a>
         {% else %}
-        <a href="{{ link.url }}" class="delay03 nav-link  menu_lv1 ">{{link.title | split: '[' | first }}</a>
+        <a href="{{ menu_url }}" class="delay03 nav-link  menu_lv1 ">{{link.title | split: '[' | first }}</a>
         {% endif %}
         <div class="dropdown-menu list-woman page show">
           <div class="list-clothing">
@@ -323,10 +333,15 @@
       </li>
       {% else %}
       <li class="nav-item">
+        {% assign link_title_clean = link.title | split: '[' | first | strip %}
+        {% assign menu_url = link.url %}
+        {% if link_title_clean == 'NEW IN' or link_title_clean == 'new in' or link_title_clean == 'New In' %}
+          {% assign menu_url = '/collections/new-in' %}
+        {% endif %}
         {% if link.title contains '[' %}
         {%- assign label  = link.title | split: '[' | last  | split: ']' | first -%}  
         {%- assign bgc  = link.title | split: '(' | last  | split: ')' | first -%}
-        <a href="{{ link.url }}"  class="delay03 relative menu_lv1 nav-link">{{link.title | split: '[' | first }}
+        <a href="{{ menu_url }}"  class="delay03 relative menu_lv1 nav-link">{{link.title | split: '[' | first }}
           <span class="absolute label_menu label_menu-{{link.title | handleize}}-{{forloop.index}}" {% if link.title contains '(' %}style="background-color: {{link.title | split: '(' | last  | split: ')' | first}};"{% endif %}><span>{{link.title | split: '[' | last  | split: ']' | first}}</span></span>
           <style>
 
@@ -338,7 +353,7 @@
           </style>
         </a>
         {% else %}
-        <a href="{{ link.url }}"  class="delay03  relative menu_lv1 nav-link">{{link.title | split: '[' | first }}</a>
+        <a href="{{ menu_url }}"  class="delay03  relative menu_lv1 nav-link">{{link.title | split: '[' | first }}</a>
         {% endif %}
       </li>
       {% endif %}
