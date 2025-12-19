@@ -74,42 +74,51 @@
           "type": "image",
           "settings": {
             "image": "shopify://shop_images/DESCONTINUADO2.png",
-            "alt_text": ""
+            "image_url": "",
+            "alt_text": "",
+            "link_url": ""
           }
         },
         "image_RHJQeL": {
           "type": "image",
           "settings": {
             "image": "shopify://shop_images/DESCONTINUADO1.png",
-            "alt_text": ""
+            "image_url": "",
+            "alt_text": "",
+            "link_url": ""
           }
         },
         "image_K8yQfj": {
           "type": "image",
           "settings": {
             "image": "shopify://shop_images/HOME-DESCONTINUADO3.png",
-            "alt_text": ""
+            "image_url": "",
+            "alt_text": "",
+            "link_url": ""
           }
         },
         "image_get_inspired_1": {
           "type": "image",
           "settings": {
             "image_url": "https://cdn.shopify.com/s/files/1/0723/0269/0361/files/get_inspired_1.jpg?v=1766063754",
-            "alt_text": "get_inspired_1"
+            "alt_text": "get_inspired_1",
+            "link_url": ""
           }
         },
         "image_get_inspired_2": {
           "type": "image",
           "settings": {
             "image_url": "https://cdn.shopify.com/s/files/1/0723/0269/0361/files/get_inspired_2.jpg?v=1766063754",
-            "alt_text": "get_inspired_2"
+            "alt_text": "get_inspired_2",
+            "link_url": ""
           }
         },
         "image_get_inspired_3": {
           "type": "image",
           "settings": {
             "image_url": "https://cdn.shopify.com/s/files/1/0723/0269/0361/files/get_inspired_3.jpg?v=1766063755",
-            "alt_text": "get_inspired_3"
+            "alt_text": "get_inspired_3",
+            "link_url": ""
           }
         }
       },
