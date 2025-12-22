@@ -220,114 +220,13 @@
     return formatted;
   }
 
-  // Función para construir el mensaje de WhatsApp
+  // Función para construir el mensaje de WhatsApp - Mensaje simplificado
   function buildWhatsAppMessage(checkout) {
     if (!checkout || !checkout.order) {
       return '';
     }
 
-    var order = checkout.order;
-    var message = '¡Hola! 👋 Acabo de finalizar una compra.\n\n';
-    
-    // Número de pedido
-    var orderNumber = order.order_number || order.name || 'N/A';
-    message += '* Número de Pedido: ' + orderNumber + '\n';
-    
-    // Nombre del cliente
-    var customerName = 'Cliente';
-    if (order.customer) {
-      var firstName = order.customer.first_name || '';
-      var lastName = order.customer.last_name || '';
-      customerName = (firstName + ' ' + lastName).trim() || 'Cliente';
-    }
-    message += '* Cliente: ' + customerName + '\n';
-    
-    // Total pagado
-    var totalPrice = 'N/A';
-    if (order.total_price_set && order.total_price_set.shop_money) {
-      // Formato preferido de Shopify
-      var amount = parseFloat(order.total_price_set.shop_money.amount);
-      var currency = order.total_price_set.shop_money.currency_code || order.currency || '';
-      totalPrice = amount.toFixed(2) + ' ' + currency;
-    } else if (order.total_price) {
-      // Formato alternativo
-      totalPrice = formatPrice(order.total_price, order.currency);
-    }
-    message += '* Total Pagado: ' + totalPrice + '\n\n';
-    
-    // Detalle de artículos
-    message += 'Detalle de los artículos:\n';
-    if (order.line_items && order.line_items.length > 0) {
-      order.line_items.forEach(function(item, index) {
-        var itemName = item.title || item.name || item.product_title || 'Producto';
-        
-        // Manejar variantes
-        if (item.variant_title && item.variant_title !== 'Default Title') {
-          itemName += ' - ' + item.variant_title;
-        }
-        
-        var quantity = item.quantity || 1;
-        var itemPrice = '';
-        var currency = order.currency || '';
-        
-        // Intentar obtener el precio formateado
-        if (item.price_set && item.price_set.shop_money) {
-          var amount = parseFloat(item.price_set.shop_money.amount);
-          currency = item.price_set.shop_money.currency_code || currency;
-          itemPrice = amount.toFixed(2) + ' ' + currency;
-        } else if (item.price) {
-          itemPrice = formatPrice(item.price, currency);
-        }
-        
-        message += (index + 1) + '. ' + itemName + ' (x' + quantity + ')';
-        if (itemPrice) {
-          message += ' - ' + itemPrice;
-        }
-        message += '\n';
-      });
-    } else {
-      message += 'No hay items disponibles\n';
-    }
-    
-    message += '\n';
-    
-    // Método de envío
-    var shippingMethod = 'No especificado';
-    if (order.shipping_line && order.shipping_line.title) {
-      shippingMethod = order.shipping_line.title;
-    } else if (order.shipping_address) {
-      shippingMethod = 'Envío estándar';
-    }
-    message += '* Método de Envío: ' + shippingMethod + '\n';
-    
-    // Método de pago
-    var paymentMethod = 'No especificado';
-    if (order.transactions && order.transactions.length > 0) {
-      var transaction = order.transactions[0];
-      if (transaction.gateway) {
-        paymentMethod = transaction.gateway;
-        // Limpiar el nombre del gateway (remover guiones bajos y capitalizar)
-        paymentMethod = paymentMethod.replace(/_/g, ' ').replace(/\b\w/g, function(l) {
-          return l.toUpperCase();
-        });
-      } else if (transaction.payment_details && transaction.payment_details.credit_card_company) {
-        // Alternativa: usar la compañía de la tarjeta
-        paymentMethod = transaction.payment_details.credit_card_company;
-      } else if (transaction.kind) {
-        // Alternativa: usar el tipo de transacción
-        paymentMethod = transaction.kind.replace(/_/g, ' ').replace(/\b\w/g, function(l) {
-          return l.toUpperCase();
-        });
-      }
-    } else if (order.payment_gateway_names && order.payment_gateway_names.length > 0) {
-      // Alternativa: usar payment_gateway_names
-      paymentMethod = order.payment_gateway_names[0];
-    }
-    message += '* Método de Pago: ' + paymentMethod + '\n\n';
-    
-    message += 'Ya estoy lista para concretar el envío.';
-    
-    return message;
+    return 'Hola, ya estoy lista para concretar el envío.';
   }
 
   // Función para extraer datos del pedido desde el DOM

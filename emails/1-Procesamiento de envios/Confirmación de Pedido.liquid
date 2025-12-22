@@ -196,73 +196,8 @@
   </tr>
 </table>
 
-            {% comment %} Botón de WhatsApp - Versión mejorada con validaciones {% endcomment %}
-            {% assign whatsapp_message = '¡Hola! 👋 Acabo de finalizar una compra.' %}
-            {% assign whatsapp_message = whatsapp_message | append: '\n\n' %}
-            
-            {% comment %} Número de Pedido {% endcomment %}
-            {% if order_name != blank %}
-              {% assign whatsapp_message = whatsapp_message | append: '* Número de Pedido: ' | append: order_name | append: '\n' %}
-            {% else %}
-              {% assign whatsapp_message = whatsapp_message | append: '* Número de Pedido: Pendiente\n' %}
-            {% endif %}
-            
-            {% comment %} Nombre del Cliente {% endcomment %}
-            {% if customer %}
-              {% assign customer_name = customer.first_name | append: ' ' | append: customer.last_name | strip %}
-              {% if customer_name == blank %}
-                {% assign customer_name = customer.first_name | default: 'Cliente' %}
-              {% endif %}
-            {% else %}
-              {% assign customer_name = 'Cliente' %}
-            {% endif %}
-            {% assign whatsapp_message = whatsapp_message | append: '* Cliente: ' | append: customer_name | append: '\n' %}
-            
-            {% comment %} Total Pagado {% endcomment %}
-            {% if total_price and total_price > 0 %}
-              {% assign whatsapp_message = whatsapp_message | append: '* Total Pagado: ' | append: total_price | money_with_currency | append: '\n\n' %}
-            {% else %}
-              {% assign whatsapp_message = whatsapp_message | append: '* Total Pagado: Pendiente\n\n' %}
-            {% endif %}
-            
-            {% comment %} Detalle de los artículos {% endcomment %}
-            {% assign whatsapp_message = whatsapp_message | append: 'Detalle de los artículos:\n' %}
-            {% if subtotal_line_items.size > 0 %}
-              {% for line in subtotal_line_items %}
-                {% unless line.delivery_agreement %}
-                  {% assign item_name = line.title %}
-                  {% if line.variant_title != blank and line.variant_title != 'Default Title' %}
-                    {% assign item_name = item_name | append: ' - ' | append: line.variant_title %}
-                  {% endif %}
-                  {% assign whatsapp_message = whatsapp_message | append: forloop.index | append: '. ' | append: item_name | append: ' (x' | append: line.quantity | append: ')' %}
-                  {% if line.final_line_price > 0 %}
-                    {% assign whatsapp_message = whatsapp_message | append: ' - ' | append: line.final_line_price | money | append: ' ' | append: currency %}
-                  {% endif %}
-                  {% assign whatsapp_message = whatsapp_message | append: '\n' %}
-                {% endunless %}
-              {% endfor %}
-            {% else %}
-              {% assign whatsapp_message = whatsapp_message | append: 'Los detalles del pedido se enviarán próximamente.\n' %}
-            {% endif %}
-            
-            {% assign whatsapp_message = whatsapp_message | append: '\n' %}
-            
-            {% comment %} Método de Envío {% endcomment %}
-            {% if shipping_method and shipping_method.title != blank %}
-              {% assign whatsapp_message = whatsapp_message | append: '* Método de Envío: ' | append: shipping_method.title | append: '\n' %}
-            {% else %}
-              {% assign whatsapp_message = whatsapp_message | append: '* Método de Envío: No especificado\n' %}
-            {% endif %}
-            
-            {% comment %} Método de Pago {% endcomment %}
-            {% if transactions.first.gateway != blank %}
-              {% assign payment_method = transactions.first.gateway | replace: '_', ' ' | capitalize %}
-              {% assign whatsapp_message = whatsapp_message | append: '* Método de Pago: ' | append: payment_method | append: '\n\n' %}
-            {% else %}
-              {% assign whatsapp_message = whatsapp_message | append: '* Método de Pago: No especificado\n\n' %}
-            {% endif %}
-            
-            {% assign whatsapp_message = whatsapp_message | append: 'Ya estoy lista para concretar el envío.' %}
+            {% comment %} Botón de WhatsApp - Mensaje simplificado {% endcomment %}
+            {% assign whatsapp_message = 'Hola, ya estoy lista para concretar el envío.' %}
             {% assign whatsapp_encoded = whatsapp_message | url_encode %}
             {% assign whatsapp_url = 'https://wa.me/584122150171?text=' | append: whatsapp_encoded %}
             
@@ -296,73 +231,8 @@
     </table>
 {% endif %}
 
-            {% comment %} Botón de WhatsApp - Versión mejorada con validaciones {% endcomment %}
-            {% assign whatsapp_message = '¡Hola! 👋 Acabo de finalizar una compra.' %}
-            {% assign whatsapp_message = whatsapp_message | append: '\n\n' %}
-            
-            {% comment %} Número de Pedido {% endcomment %}
-            {% if order_name != blank %}
-              {% assign whatsapp_message = whatsapp_message | append: '* Número de Pedido: ' | append: order_name | append: '\n' %}
-            {% else %}
-              {% assign whatsapp_message = whatsapp_message | append: '* Número de Pedido: Pendiente\n' %}
-            {% endif %}
-            
-            {% comment %} Nombre del Cliente {% endcomment %}
-            {% if customer %}
-              {% assign customer_name = customer.first_name | append: ' ' | append: customer.last_name | strip %}
-              {% if customer_name == blank %}
-                {% assign customer_name = customer.first_name | default: 'Cliente' %}
-              {% endif %}
-            {% else %}
-              {% assign customer_name = 'Cliente' %}
-            {% endif %}
-            {% assign whatsapp_message = whatsapp_message | append: '* Cliente: ' | append: customer_name | append: '\n' %}
-            
-            {% comment %} Total Pagado {% endcomment %}
-            {% if total_price and total_price > 0 %}
-              {% assign whatsapp_message = whatsapp_message | append: '* Total Pagado: ' | append: total_price | money_with_currency | append: '\n\n' %}
-            {% else %}
-              {% assign whatsapp_message = whatsapp_message | append: '* Total Pagado: Pendiente\n\n' %}
-            {% endif %}
-            
-            {% comment %} Detalle de los artículos {% endcomment %}
-            {% assign whatsapp_message = whatsapp_message | append: 'Detalle de los artículos:\n' %}
-            {% if subtotal_line_items.size > 0 %}
-              {% for line in subtotal_line_items %}
-                {% unless line.delivery_agreement %}
-                  {% assign item_name = line.title %}
-                  {% if line.variant_title != blank and line.variant_title != 'Default Title' %}
-                    {% assign item_name = item_name | append: ' - ' | append: line.variant_title %}
-                  {% endif %}
-                  {% assign whatsapp_message = whatsapp_message | append: forloop.index | append: '. ' | append: item_name | append: ' (x' | append: line.quantity | append: ')' %}
-                  {% if line.final_line_price > 0 %}
-                    {% assign whatsapp_message = whatsapp_message | append: ' - ' | append: line.final_line_price | money | append: ' ' | append: currency %}
-                  {% endif %}
-                  {% assign whatsapp_message = whatsapp_message | append: '\n' %}
-                {% endunless %}
-              {% endfor %}
-            {% else %}
-              {% assign whatsapp_message = whatsapp_message | append: 'Los detalles del pedido se enviarán próximamente.\n' %}
-            {% endif %}
-            
-            {% assign whatsapp_message = whatsapp_message | append: '\n' %}
-            
-            {% comment %} Método de Envío {% endcomment %}
-            {% if shipping_method and shipping_method.title != blank %}
-              {% assign whatsapp_message = whatsapp_message | append: '* Método de Envío: ' | append: shipping_method.title | append: '\n' %}
-            {% else %}
-              {% assign whatsapp_message = whatsapp_message | append: '* Método de Envío: No especificado\n' %}
-            {% endif %}
-            
-            {% comment %} Método de Pago {% endcomment %}
-            {% if transactions.first.gateway != blank %}
-              {% assign payment_method = transactions.first.gateway | replace: '_', ' ' | capitalize %}
-              {% assign whatsapp_message = whatsapp_message | append: '* Método de Pago: ' | append: payment_method | append: '\n\n' %}
-            {% else %}
-              {% assign whatsapp_message = whatsapp_message | append: '* Método de Pago: No especificado\n\n' %}
-            {% endif %}
-            
-            {% assign whatsapp_message = whatsapp_message | append: 'Ya estoy lista para concretar el envío.' %}
+            {% comment %} Botón de WhatsApp - Mensaje simplificado {% endcomment %}
+            {% assign whatsapp_message = 'Hola, ya estoy lista para concretar el envío.' %}
             {% assign whatsapp_encoded = whatsapp_message | url_encode %}
             {% assign whatsapp_url = 'https://wa.me/584122150171?text=' | append: whatsapp_encoded %}
             

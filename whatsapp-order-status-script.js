@@ -38,93 +38,11 @@
     }, 500);
   }
   
-  // Construir mensaje de WhatsApp
+  // Construir mensaje de WhatsApp - Mensaje simplificado
   function buildMessage(checkout) {
     if (!checkout || !checkout.order) return '';
     
-    var order = checkout.order;
-    var msg = '¡Hola! 👋 Acabo de finalizar una compra.\n\n';
-    
-    // Número de pedido
-    msg += '* Número de Pedido: ' + (order.order_number || order.name || 'N/A') + '\n';
-    
-    // Cliente
-    var customerName = 'Cliente';
-    if (order.customer) {
-      var fn = order.customer.first_name || '';
-      var ln = order.customer.last_name || '';
-      customerName = (fn + ' ' + ln).trim() || 'Cliente';
-    }
-    msg += '* Cliente: ' + customerName + '\n';
-    
-    // Total
-    var total = 'N/A';
-    if (order.total_price_set && order.total_price_set.shop_money) {
-      total = parseFloat(order.total_price_set.shop_money.amount).toFixed(2) + ' ' + 
-              (order.total_price_set.shop_money.currency_code || '');
-    } else if (order.total_price) {
-      // Si viene en centavos
-      total = (order.total_price / 100).toFixed(2) + ' ' + (order.currency || '');
-    }
-    msg += '* Total Pagado: ' + total + '\n\n';
-    
-    // Items
-    msg += 'Detalle de los artículos:\n';
-    if (order.line_items && order.line_items.length > 0) {
-      order.line_items.forEach(function(item, i) {
-        var name = item.title || item.name || item.product_title || 'Producto';
-        if (item.variant_title && item.variant_title !== 'Default Title') {
-          name += ' - ' + item.variant_title;
-        }
-        var qty = item.quantity || 1;
-        var price = '';
-        if (item.price_set && item.price_set.shop_money) {
-          price = parseFloat(item.price_set.shop_money.amount).toFixed(2) + ' ' + 
-                  item.price_set.shop_money.currency_code;
-        } else if (item.price) {
-          price = (item.price / 100).toFixed(2) + ' ' + (order.currency || '');
-        }
-        msg += (i + 1) + '. ' + name + ' (x' + qty + ')';
-        if (price) msg += ' - ' + price;
-        msg += '\n';
-      });
-    } else {
-      msg += 'No hay items disponibles\n';
-    }
-    
-    msg += '\n';
-    
-    // Envío
-    var shipping = 'No especificado';
-    if (order.shipping_line && order.shipping_line.title) {
-      shipping = order.shipping_line.title;
-    } else if (order.shipping_address) {
-      shipping = 'Envío estándar';
-    }
-    msg += '* Método de Envío: ' + shipping + '\n';
-    
-    // Pago
-    var payment = 'No especificado';
-    if (order.transactions && order.transactions.length > 0) {
-      var transaction = order.transactions[0];
-      if (transaction.gateway) {
-        payment = transaction.gateway.replace(/_/g, ' ').replace(/\b\w/g, function(l) {
-          return l.toUpperCase();
-        });
-      } else if (transaction.payment_details && transaction.payment_details.credit_card_company) {
-        payment = transaction.payment_details.credit_card_company;
-      } else if (transaction.kind) {
-        payment = transaction.kind.replace(/_/g, ' ').replace(/\b\w/g, function(l) {
-          return l.toUpperCase();
-        });
-      }
-    } else if (order.payment_gateway_names && order.payment_gateway_names.length > 0) {
-      payment = order.payment_gateway_names[0];
-    }
-    msg += '* Método de Pago: ' + payment + '\n\n';
-    
-    msg += 'Ya estoy lista para concretar el envío.';
-    return msg;
+    return 'Hola, ya estoy lista para concretar el envío.';
   }
   
   // Crear y mostrar modal
