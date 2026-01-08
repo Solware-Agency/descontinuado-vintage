@@ -17081,7 +17081,8 @@ body.cartover {
     padding: 50px;
     z-index: 11;
     opacity: 0;
-    visibility: hidden
+    visibility: hidden;
+    font-family: "D-DIN", "DIN", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important
 }
 
 .poup-login-destop.active {
@@ -17092,11 +17093,13 @@ body.cartover {
 
 .poup-login-destop .form-control {
     height: 55px;
-    border-radius: 0
+    border-radius: 0;
+    font-family: "D-DIN", "DIN", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important
 }
 
 .poup-login-destop input::placeholder {
-    font-size: 13px
+    font-size: 13px;
+    font-family: "D-DIN", "DIN", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important
 }
 
 .poup-login-destop input:active::placeholder,.poup-login-destop input:focus::placeholder {
@@ -17124,7 +17127,8 @@ body.cartover {
     padding: 10px;
     background: #f2f2f2;
     border: 1px solid #e8eced;
-    font-size: 14px
+    font-size: 14px;
+    font-family: "D-DIN", "DIN", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important
 }
 
 .poup-login-destop .overlay_login-content .box-register a:hover {
@@ -17143,7 +17147,8 @@ body.cartover {
     margin-top: 20px;
     width: 100%;
     transition: all .3s ease;
-    border: none
+    border: none;
+    font-family: "D-DIN", "DIN", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important
 }
 
 .poup-login-destop .overlay_login-content .btn:hover {
@@ -17165,7 +17170,8 @@ body.cartover {
     font-weight: 400;
     color: #92959a;
     text-transform: unset;
-    padding-top: 20px
+    padding-top: 20px;
+    font-family: "D-DIN", "DIN", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important
 }
 
 .poup-login-destop .overlay_login-content .formlogin-destop .form-check {
@@ -17175,7 +17181,8 @@ body.cartover {
 }
 
 .poup-login-destop .overlay_login-content .formlogin-destop .form-check a {
-    color: #c5c4c4
+    color: #c5c4c4;
+    font-family: "D-DIN", "DIN", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important
 }
 
 .poup-login-destop .overlay_login-content .formlogin-destop .form-check a:hover {
@@ -17189,11 +17196,13 @@ body.cartover {
     padding: 10px;
     background: #f2f2f2;
     border: 1px solid #e8eced;
-    font-size: 14px
+    font-size: 14px;
+    font-family: "D-DIN", "DIN", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important
 }
 
 .poup-login-destop .overlay_login-content .formlogin-destop .or_creat .box-register a {
-    color: #c5c4c4
+    color: #c5c4c4;
+    font-family: "D-DIN", "DIN", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important
 }
 
 .poup-login-destop .overlay_login-content .formlogin-destop .or_creat .box-register a:hover {
@@ -17209,7 +17218,8 @@ body.cartover {
     text-transform: uppercase;
     letter-spacing: .2em;
     font-weight: 500;
-    padding-bottom: 20px
+    padding-bottom: 20px;
+    font-family: "D-DIN", "DIN", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important
 }
 
 .poup-login-destop .overlay_login-content .form_register-destop {
@@ -17224,7 +17234,8 @@ body.cartover {
     font-size: 16px;
     text-transform: uppercase;
     letter-spacing: .2em;
-    font-weight: 500
+    font-weight: 500;
+    font-family: "D-DIN", "DIN", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important
 }
 
 .bg-login-popup {
