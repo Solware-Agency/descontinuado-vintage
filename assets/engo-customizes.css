@@ -17209,6 +17209,10 @@ body.cartover {
     color: #000000
 }
 
+.poup-login-destop .overlay_login-content .block-login {
+    font-family: "D-DIN", "DIN", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important
+}
+
 .poup-login-destop .overlay_login-content .block-login .login-icon {
     font-size: 35px
 }
@@ -17219,6 +17223,28 @@ body.cartover {
     letter-spacing: .2em;
     font-weight: 500;
     padding-bottom: 20px;
+    font-family: "D-DIN", "DIN", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important
+}
+
+.poup-login-destop .overlay_login-content .block-login .form-control {
+    font-family: "D-DIN", "DIN", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important
+}
+
+.poup-login-destop .overlay_login-content .block-login input::placeholder {
+    font-family: "D-DIN", "DIN", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important
+}
+
+.poup-login-destop .overlay_login-content .block-login .register-button,
+.poup-login-destop .overlay_login-content .block-login .btn.register-button {
+    font-family: "D-DIN", "DIN", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important
+}
+
+.poup-login-destop .overlay_login-content .block-login .HideRecoverPasswordLink,
+.poup-login-destop .overlay_login-content .block-login a.HideRecoverPasswordLink {
+    font-family: "D-DIN", "DIN", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important
+}
+
+.poup-login-destop .overlay_login-content .RecoverPasswordForm {
     font-family: "D-DIN", "DIN", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important
 }
 
