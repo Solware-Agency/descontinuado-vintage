@@ -17114,7 +17114,7 @@ body.cartover {
 
 .poup-login-destop .overlay_login-content .eveland-close-login {
     color: #000;
-    font-size: 24px;
+    font-size: 15px;
     position: absolute;
     top: 20px;
     right: 20px;
@@ -17123,9 +17123,9 @@ body.cartover {
     z-index: 100;
     cursor: pointer;
     pointer-events: auto;
-    width: 30px;
-    height: 30px;
-    line-height: 30px;
+    width: 15px;
+    height: 15px;
+    line-height: 15px;
     text-align: center;
     text-decoration: none
 }
