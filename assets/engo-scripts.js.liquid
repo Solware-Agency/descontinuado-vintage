@@ -1909,9 +1909,12 @@ jQuery(document).ready(function($) {
       $('.js-poup-login-destop').addClass('active');
       $('.js-bg-login-popup').addClass('active');
     });
-    $('.js-eveland-close-login').on( 'click', function() {
+    $(document).on('click', '.js-eveland-close-login', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
       $('.js-poup-login-destop').removeClass('active');
       $('.js-bg-login-popup').removeClass('active');
+      return false;
     });
     $('.js-bg-login-popup').on( 'click', function() {
       $('.js-poup-login-destop').removeClass('active');
