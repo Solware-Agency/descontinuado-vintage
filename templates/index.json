@@ -14,7 +14,7 @@
       "name": "Hero Banner",
       "settings": {
         "background_image": "shopify://shop_images/BANNER1.png",
-        "subtitle": "the art of timeless pieces",
+        "subtitle": "",
         "button_text": "SHOP",
         "button_url": "shopify://collections/all",
         "text_alignment": "center",
