@@ -986,6 +986,32 @@ Add the page template as a class for easy page or template specific styling.
           }
         });
       });
+      
+      // 3. Buscar duplicados en el menú móvil (box_contentmenu)
+      var mobileMenus = document.querySelectorAll('.box_contentmenu .tab_content_menu_mobile .tab-content #tab_menu_mobile .menu-horizon-list .menu_lv2');
+      
+      mobileMenus.forEach(function(menuLv2) {
+        var seenTitles = {};
+        // Buscar todos los títulos (title_menu_mb) dentro del menú móvil
+        var titleElements = Array.from(menuLv2.querySelectorAll('.title_menu_mb'));
+        
+        titleElements.forEach(function(titleElement) {
+          var link = titleElement.querySelector('a');
+          if (link) {
+            var title = link.textContent.trim().toLowerCase();
+            // Limpiar el título de etiquetas y espacios extra
+            title = title.replace(/\s+/g, ' ').trim();
+            
+            if (title && seenTitles[title]) {
+              // Si ya vimos este título, eliminar el elemento completo
+              titleElement.remove();
+            } else if (title) {
+              // Marcar este título como visto
+              seenTitles[title] = true;
+            }
+          }
+        });
+      });
     }
     
     // Ejecutar cuando el DOM esté listo
@@ -1014,10 +1040,11 @@ Add the page template as a class for easy page or template specific styling.
       });
     }
     
-    // Observar cambios en el DOM para detectar cuando se abre el dropdown
+    // Observar cambios en el DOM para detectar cuando se abre el dropdown o el menú móvil
     var observer = new MutationObserver(function(mutations) {
       var hasDropdown = document.querySelector('.dropdown-menu.show');
-      if (hasDropdown) {
+      var hasMobileMenu = document.querySelector('.box_contentmenu.active');
+      if (hasDropdown || hasMobileMenu) {
         setTimeout(removeDuplicateCollections, 100);
       }
     });
@@ -1027,6 +1054,13 @@ Add the page template as a class for easy page or template specific styling.
       subtree: true,
       attributes: true,
       attributeFilter: ['class']
+    });
+    
+    // También ejecutar cuando se hace clic en el menú móvil
+    document.addEventListener('click', function(e) {
+      if (e.target.closest('.menuleft, .box_contentmenu')) {
+        setTimeout(removeDuplicateCollections, 300);
+      }
     });
     
     // Función para capitalizar "skirts" y "jackets" en todas las barras de navegación
@@ -1198,16 +1232,60 @@ Add the page template as a class for easy page or template specific styling.
       });
     }
     
+    // Función para agregar "Tops" al menú móvil
+    function addTopsToMobileMenu() {
+      // Buscar el menú móvil cuando SHOP está abierto
+      var mobileMenuLv2 = document.querySelectorAll('.box_contentmenu.active .menu-horizon-list .menu_lv2');
+      
+      mobileMenuLv2.forEach(function(menuLv2) {
+        // Verificar si "Tops" ya existe
+        var existingTitles = menuLv2.querySelectorAll('.title_menu_mb');
+        var topsExists = false;
+        
+        existingTitles.forEach(function(titleElement) {
+          var link = titleElement.querySelector('a');
+          if (link) {
+            var linkText = link.textContent.trim().toLowerCase();
+            if (linkText === 'tops') {
+              topsExists = true;
+            }
+          }
+        });
+        
+        if (topsExists) {
+          return; // Ya existe, no hacer nada
+        }
+        
+        // Crear el elemento "Tops"
+        var topsTitle = document.createElement('h2');
+        topsTitle.className = 'title_menu_mb title_only_one';
+        
+        var topsLink = document.createElement('a');
+        topsLink.href = '/collections/tops';
+        topsLink.textContent = 'Tops';
+        topsLink.title = 'Tops';
+        
+        topsTitle.appendChild(topsLink);
+        
+        // Agregar "Tops" al final del menú
+        menuLv2.appendChild(topsTitle);
+      });
+    }
+    
     // Ejecutar cuando el DOM esté listo
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', addTopsToShopMenu);
+      document.addEventListener('DOMContentLoaded', addTopsToMobileMenu);
     } else {
       addTopsToShopMenu();
+      addTopsToMobileMenu();
     }
     
     // Ejecutar también después de un pequeño delay
     setTimeout(addTopsToShopMenu, 500);
     setTimeout(addTopsToShopMenu, 1000);
+    setTimeout(addTopsToMobileMenu, 500);
+    setTimeout(addTopsToMobileMenu, 1000);
     
     // Ejecutar cuando se abra el menú dropdown (hover)
     document.addEventListener('mouseenter', function(e) {
@@ -1219,12 +1297,38 @@ Add the page template as a class for easy page or template specific styling.
     // Observar cambios en el DOM para detectar cuando se abre el dropdown
     var topsObserver = new MutationObserver(function(mutations) {
       var hasShopDropdown = document.querySelector('.dropdown-menu.list-woman.shop.show, .dropdown-menu.shop.show');
-      if (hasShopDropdown) {
+      var hasMobileMenu = document.querySelector('.box_contentmenu.active');
+      if (hasShopDropdown || hasMobileMenu) {
         setTimeout(addTopsToShopMenu, 100);
+        setTimeout(addTopsToMobileMenu, 100);
       }
     });
     
     topsObserver.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['class']
+    });
+    
+    // Ejecutar cuando se hace clic en el menú móvil
+    document.addEventListener('click', function(e) {
+      if (e.target.closest('.menuleft, .box_contentmenu, .toggle-menumobile, .js_icon_horizon-menu')) {
+        setTimeout(addTopsToMobileMenu, 300);
+        setTimeout(removeDuplicateCollections, 300);
+      }
+    });
+    
+    // Ejecutar cuando el menú móvil se abre
+    var mobileMenuObserver = new MutationObserver(function(mutations) {
+      var hasActiveMobileMenu = document.querySelector('.box_contentmenu.active');
+      if (hasActiveMobileMenu) {
+        setTimeout(addTopsToMobileMenu, 300);
+        setTimeout(removeDuplicateCollections, 300);
+      }
+    });
+    
+    mobileMenuObserver.observe(document.body, {
       childList: true,
       subtree: true,
       attributes: true,
